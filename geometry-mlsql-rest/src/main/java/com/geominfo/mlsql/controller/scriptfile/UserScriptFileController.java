@@ -38,12 +38,12 @@ public class UserScriptFileController {
         MlsqlScriptFile mlsqlScriptFile = scripteFileSvervice.getScriptById(Integer.valueOf(id) ) ;
         if(mlsqlScriptFile != null ){
             if(mlsqlScriptFile.getIs_dir() == 1){
-                return message.ok(200,"id对应的是目录").addData("data", mlsqlScriptFile);
+                return message.ok(200,"id is catalog").addData("data", mlsqlScriptFile);
             }
-            return message.ok(200,"脚本执行成功").addData("data", mlsqlScriptFile);
+            return message.ok(200,"get content success").addData("data", mlsqlScriptFile);
         }else
         {
-            return message.error(400,"不存在id对应文件内容").addData("data", id);
+            return message.error(400,"id not exists").addData("data", id);
         }
     }
 }

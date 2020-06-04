@@ -35,7 +35,7 @@ public class SwaggerConfiguration {
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
 				.title("MLSQL CONSOLE 后端功能平台接口规范")
-				.description("一站式大数据平台")
+				.description("数据开发平台-开源版")
 				.termsOfServiceUrl("http://localhost:8080/swagger-ui.html")
 				.version("1.0")
 				.build();

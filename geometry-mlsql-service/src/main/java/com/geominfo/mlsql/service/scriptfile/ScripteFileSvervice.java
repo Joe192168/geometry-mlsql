@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
  * @version: 3.0.0
  */
 @Service
-@Log4j2
 public class ScripteFileSvervice implements ScriptFileServiceImpl {
 
 

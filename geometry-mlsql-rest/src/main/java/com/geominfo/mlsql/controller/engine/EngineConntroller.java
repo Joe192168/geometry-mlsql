@@ -87,11 +87,11 @@ public class EngineConntroller {
         ResponseEntity<String> responseEntityPost = restTemplate.postForEntity(engileUrl, requestEntity, String.class);
         if(responseEntityPost.getStatusCode().value() == 200 ){
             return message
-                    .ok(200, "engine发送成功")
+                    .ok(200, "engine success")
                     .addData("data", responseEntityPost.getBody());
         }else{
             return message
-                    .error(400, "engine发送失败")
+                    .error(400, "engine  faild")
                     .addData("data", sql);
         }
     }
@@ -100,10 +100,10 @@ public class EngineConntroller {
     public Message getAsyncRunSqlResult(@RequestParam Map<String, String> map){
         if(map != null && map.get("stat").equals("succeeded"))
         {
-            log.info("执行结果标识：" + map.get("stat"));
-            log.info("执行结果：" + map.get("res"));
-            return message.ok("异步执行结果成功返回");
+            log.info("result status：" + map.get("stat"));
+            log.info("result：" + map.get("res"));
+            return message.ok("async get success");
         }
-        return message.error("异步执行结果返回失败");
+        return message.error("aysnc get faild");
     }
 }

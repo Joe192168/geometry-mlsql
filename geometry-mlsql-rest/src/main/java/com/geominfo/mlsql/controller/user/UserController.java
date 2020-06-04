@@ -56,7 +56,7 @@ public class UserController {
             return message.error(400,"msg:" + userName + "has been lock");
         }
 
-        return message.ok(200,"用户登录成功").addData("data",user);
+        return message.ok(200,"user login success").addData("data",user);
     }
 
 
@@ -67,7 +67,7 @@ public class UserController {
     public Message findAll(){
         List<MlsqlUser> user =  userService.getAllUsers();
         if(user != null){
-            return message.ok(200,"获取所有用户成功").addData("data",user);
+            return message.ok(200,"get user success").addData("data",user);
         }else{
             return message.error(200,"no user exists");
         }
@@ -84,6 +84,6 @@ public class UserController {
     public Message findAllByPage(@RequestParam(value = "pageNum", required = true) int pageNum
             ,@RequestParam(value = "pageSize", required = true) int pageSize){
         List<MlsqlUser> user =  userService.getUserByPage(pageNum, pageSize);
-        return message.ok(200,"获取用户成功").addData("data",user);
+        return message.ok(200,"get user success").addData("data",user);
     }
 }
