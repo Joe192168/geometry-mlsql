@@ -46,6 +46,7 @@
 		<maven-scala-plugin.version>2.15.2</maven-scala-plugin.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+		<fastjson.version>1.2.47</fastjson.version>
 	</properties>
 
 	<build>
