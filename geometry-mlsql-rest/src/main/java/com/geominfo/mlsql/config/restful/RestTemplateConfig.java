@@ -22,7 +22,10 @@ import java.util.concurrent.TimeUnit;
 public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory factory){
-        return new RestTemplate(factory);
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(new CustomResponseErrorHandler());
+        restTemplate.setRequestFactory(factory);
+        return restTemplate;
     }
     /**
      * ClientHttpRequestFactory接口的另一种实现方式（推荐使用），即：
@@ -66,7 +69,6 @@ public class RestTemplateConfig {
         requestFactory.setConnectionRequestTimeout(200);
         //缓冲请求数据，默认为true。通过POST或者PUT大量发送数据时，建议将此更改为false，以免耗尽内存
         requestFactory.setBufferRequestBody(false);
-
         return requestFactory;
     }
 }

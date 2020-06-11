@@ -1,10 +1,13 @@
 server:
-  port: 8080
+  port: 8088
   servlet:
     context-path: /
 
 engine:
    url: http://10.0.0.152:9003/run/script
+
+cluster:
+   url: http://10.0.0.152:8080/run/script
 
 
 
@@ -78,9 +81,9 @@ jasypt:
 spring:
     profiles: dev
     datasource:
-      url: jdbc:mysql://192.168.3.69:3306/dev_mlsql_console
+      url: jdbc:mysql://10.0.0.152:3306/dev_mlsql_console
       username: root
-      password: ENC(dDDdKbUfeKDH0ERliSO7Wg==)
+      password: ENC(Kp81sGHFKiduY28ZCwSC6A==)
     redis:
       # 服务器IP地址
       host: 127.0.0.1

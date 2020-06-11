@@ -1,13 +1,16 @@
 package com.geominfo.mlsql;
 
 import com.alibaba.fastjson.JSONObject;
+import com.geominfo.mlsql.domain.vo.MLSQLExecInfo;
 import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
+import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +42,10 @@ public class EngineConntrollerTest {
 
     @Autowired
     private WebApplicationContext context;
+
+    @Autowired
+    private MockHttpServletRequest mockHttpServletRequest;
+
 
     @Before
     public void setUp(){
@@ -76,9 +83,9 @@ public class EngineConntrollerTest {
 
     @Test
     public void getFileContentRunSql() throws Exception{
-        String responseString = mvc.perform(MockMvcRequestBuilders.get("/script_file/getcontent")
+        String responseString = mvc.perform(MockMvcRequestBuilders.get("/scriptfile/getcontent")
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .param("id", "185"))
+                .param("id", "72"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
@@ -101,6 +108,89 @@ public class EngineConntrollerTest {
                 .andReturn().getResponse().getContentAsString(Charset.forName("UTF8"));
 
 
+        System.out.println("执行结果 = " + responseString);
+    }
+    /**
+      * description: 权限验证测试用例
+      * author: anan
+      * date: 2020/6/8
+      * param: awh_test1赋权、awh_test2未赋权
+      * return:
+     */
+
+    @Test
+    public void addAuthRunScript() throws Exception {
+        MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
+        String sql = " set user=\"root\";\n" +
+                "\n" +
+                " connect jdbc where\n" +
+                " url=\"jdbc:mysql://10.0.0.165:3306/wow?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false\"\n" +
+                " and driver=\"com.mysql.jdbc.Driver\"\n" +
+                " and user=\"root\"\n" +
+                " and password=\"mysql\"\n" +
+                " as db_1;\n" +
+                " \n" +
+                " load jdbc.`db_1.awh_test2` as table1;\n" +
+                "\n" +
+                "select * from table1 as output;";
+        //sql = "!show resource;";
+        params.add("sql",sql);
+        params.add("owner","awh@gmail.com");
+        //权限验证 false 开启验证；true不开启
+        params.add("skipAuth","false");
+        params.add("context.__auth_client__","streaming.dsl.auth.meta.client.MLSQLConsoleClient");
+        params.add("context.__auth_server_url__","http://10.0.0.152:9002/api_v1/table/auth");
+        params.add("context.__auth_secret__","123");
+
+
+
+        String responseString = mvc.perform(post("/run/script")
+                .contentType(MediaType.APPLICATION_JSON)
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString(Charset.forName("UTF8"));
+        System.out.println("执行结果1 = " + responseString);
+    }
+
+    /**
+      * description: 绑定多个engine，根据策略选择一个engine执行
+      * author: anan
+      * date: 2020/6/9
+      * param:
+      * return:
+     */
+
+    @Test
+    public void strategyEngine() throws Exception {
+        String responseString = mvc.perform(MockMvcRequestBuilders.get("/user/login")
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .param("userName", "awh@gmail.com")
+                .param("password", "123456"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString(Charset.forName("UTF8"));
+
+        JSONObject resultJson = JSONObject.parseObject(responseString);
+        String dataOne = resultJson.get("data").toString();
+        JSONObject dataOneValue = JSONObject.parseObject(dataOne);
+        JSONObject dataTwo = JSONObject.parseObject(dataOneValue.getString("data"));
+        MlsqlUser mlsqlUser = dataTwo.toJavaObject(MlsqlUser.class);
+        String backend_tags = mlsqlUser.getBackend_tags();
+
+        MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
+        params.add("sql","select 1 as a,'安静' as b as bbc;");
+        params.add("tags",backend_tags);
+
+        responseString = mvc.perform(post("/run/script")
+                .contentType(MediaType.APPLICATION_JSON)
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString(Charset.forName("UTF8"));
         System.out.println("执行结果 = " + responseString);
     }
 }
