@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.service.scriptfile.impl;
+package com.geominfo.mlsql.service.progress;
 
 
 /**
@@ -8,7 +8,7 @@ package com.geominfo.mlsql.service.scriptfile.impl;
  * @create: 2020-06-10 17:48
  * @version: 1.0.0
  */
-public interface ExecutedProgressServiceImpl {
+public interface ExecutedProgressService {
 
     void getProgress(String jobName, String callBackUrl);
 

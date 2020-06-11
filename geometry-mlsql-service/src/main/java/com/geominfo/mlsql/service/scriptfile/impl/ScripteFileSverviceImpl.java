@@ -1,9 +1,8 @@
-package com.geominfo.mlsql.service.scriptfile;
+package com.geominfo.mlsql.service.scriptfile.impl;
 
 import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
 import com.geominfo.mlsql.mapper.ScriptFileMapper;
-import com.geominfo.mlsql.service.scriptfile.impl.ScriptFileServiceImpl;
-import lombok.extern.log4j.Log4j2;
+import com.geominfo.mlsql.service.scriptfile.ScriptFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @version: 3.0.0
  */
 @Service
-public class ScripteFileSvervice implements ScriptFileServiceImpl {
+public class ScripteFileSverviceImpl implements ScriptFileService {
 
 
     @Autowired

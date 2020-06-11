@@ -13,7 +13,7 @@ import java.util.List;
  * @version: 1.0.0
  */
 @Data
-public class MlsqlJobInfo implements Serializable {
+public class MlsqlProgressInfo implements Serializable {
 
    private String groupId;
    private Integer activeJobsNum;

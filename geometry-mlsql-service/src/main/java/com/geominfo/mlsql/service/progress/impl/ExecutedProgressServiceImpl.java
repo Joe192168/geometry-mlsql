@@ -1,6 +1,6 @@
-package com.geominfo.mlsql.service.scriptfile;
+package com.geominfo.mlsql.service.progress.impl;
 
-import com.geominfo.mlsql.service.scriptfile.impl.ExecutedProgressServiceImpl;
+import com.geominfo.mlsql.service.progress.ExecutedProgressService;
 import com.geominfo.mlsql.utils.NetWorkUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import org.springframework.util.StringUtils;
  */
 @Service
 @Log4j2
-public class ExecutedProgressService implements ExecutedProgressServiceImpl{
+public class ExecutedProgressServiceImpl implements ExecutedProgressService {
 
     @Autowired
     private NetWorkUtil netWorkUtil ;
@@ -43,10 +43,10 @@ public class ExecutedProgressService implements ExecutedProgressServiceImpl{
            return ;
         }
 
-        String script = "!show jobs  " + jobName + " ; ";
+        String script = "!show jobs  " + jobName.trim() + " ; ";
         MultiValueMap<String, String> curpostParameters = new LinkedMultiValueMap<String, String>();
         curpostParameters.add("sql" ,script);
-        curpostParameters.add("callback", callBackUrl);
+        curpostParameters.add("callback", callBackUrl.trim());
         netWorkUtil.aynPost(curpostParameters);
     }
 

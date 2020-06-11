@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
@@ -44,7 +45,6 @@ public class NetWorkUtil {
       *
       * @return: 请求结果
      */
-
     public  ResponseEntity<String> synPost(MultiValueMap<String, String>  postParameters){
         if(postParameters == null || postParameters.size() == 0)
         {
@@ -91,13 +91,13 @@ public class NetWorkUtil {
      */
     public void aynPost(MultiValueMap<String, String>  postParameters)
     {
-        if(postParameters == null || postParameters.size() == 0)
+        if(CollectionUtils.isEmpty(postParameters))
         {
             log.info("请求参数不能为空!");
             return  ;
         }
 
-       if( postParameters.get("callback").toString().equals("") || postParameters.get("callback") == null)
+       if( !postParameters.containsKey("callback"))
        {
            log.info("必须填写回调接口!");
            return  ;

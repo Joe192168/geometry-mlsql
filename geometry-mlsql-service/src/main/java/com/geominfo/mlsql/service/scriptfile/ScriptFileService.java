@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.service.scriptfile.impl;
+package com.geominfo.mlsql.service.scriptfile;
 
 import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
 
@@ -10,7 +10,7 @@ import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
  * @version: 3.0.0
  */
 
-public interface ScriptFileServiceImpl {
+public interface ScriptFileService {
 
     MlsqlScriptFile getScriptById(Integer id);
 }
