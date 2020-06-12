@@ -2,6 +2,7 @@ package com.geominfo.mlsql.controller.scriptfile;
 
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
+import com.geominfo.mlsql.service.scriptfile.ScriptFileService;
 import com.geominfo.mlsql.service.scriptfile.impl.ScripteFileSverviceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -33,7 +34,7 @@ public class ScriptFileController {
     private Message message;
 
     @Autowired
-    private ScripteFileSverviceImpl scripteFileSvervice;
+    private ScriptFileService scripteFileSvervice;
 
 
     /**

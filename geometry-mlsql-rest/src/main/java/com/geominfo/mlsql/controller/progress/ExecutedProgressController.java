@@ -3,7 +3,7 @@ package com.geominfo.mlsql.controller.progress;
 import com.alibaba.fastjson.JSONArray;
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlProgressInfo;
-import com.geominfo.mlsql.service.progress.impl.ExecutedProgressServiceImpl;
+import com.geominfo.mlsql.service.progress.ExecutedProgressService;
 import com.github.pagehelper.util.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -36,7 +36,7 @@ public class ExecutedProgressController {
     private Message message ;
 
     @Autowired
-    private ExecutedProgressServiceImpl executedProgressService;
+    private ExecutedProgressService executedProgressService;
 
     /**
      * @description: 获取脚本执行进度回调接口

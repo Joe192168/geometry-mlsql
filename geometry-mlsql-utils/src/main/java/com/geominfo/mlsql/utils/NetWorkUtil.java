@@ -46,7 +46,7 @@ public class NetWorkUtil {
       * @return: 请求结果
      */
     public  ResponseEntity<String> synPost(MultiValueMap<String, String>  postParameters){
-        if(postParameters == null || postParameters.size() == 0)
+        if(CollectionUtils.isEmpty(postParameters))
         {
             log.info("请求参数不能为空!");
             return null ;
