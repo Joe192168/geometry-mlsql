@@ -2,12 +2,8 @@ package com.geominfo.mlsql.controller.engine;
 
 import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.config.restful.CustomException;
-import com.geominfo.mlsql.config.restful.CustomResponseErrorHandler;
-import com.geominfo.mlsql.domain.vo.MLSQLExecInfo;
-//import com.geominfo.mlsql.domain.vo.MLSQLJobInfo;
 import com.geominfo.mlsql.domain.vo.MLSQLJobInfo;
 import com.geominfo.mlsql.domain.vo.Message;
-import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -108,7 +100,7 @@ public class EngineConntroller {
                     .ok(200, "engine send success")
                     .addData("data", responseEntityPost.getBody());
         }catch (CustomException e){
-            log.info("getBody_error:" + e.getBody());
+            log.info("getBody_error : {}", e.getBody());
             return message
                     .error(400, "engine send faild")
                     .addData("data", e.getBody());
@@ -120,13 +112,12 @@ public class EngineConntroller {
         if(map.size()>0 )
         {
             String stat = map.get("stat").toString();
-            String result = stat.equals("succeeded")==true?map.get("res").toString():map.get("msg").toString();
+            String result = stat.equals("succeeded") == true? map.get("res").toString() : map.get("msg").toString();
             MLSQLJobInfo mlsqlJobInfo = JSONObject.parseObject(map.get("jobInfo")).toJavaObject(MLSQLJobInfo.class);
-            log.info("async message status：" + stat);
-            log.info("async message content：" + result);
-            log.info("async message jobInfo：" + mlsqlJobInfo.getGroupId()
-                    + "-" + mlsqlJobInfo.getJobName()
-                    + "-" + mlsqlJobInfo.getOwner()
+            log.info("async message status ：{}" , stat);
+            log.info("async message content ： {}", result);
+            log.info("async message jobInfo groupId：{}, jobName: {}, owner: {}", mlsqlJobInfo.getGroupId()
+                    ,mlsqlJobInfo.getJobName(), mlsqlJobInfo.getOwner()
             );
             return message.ok("async get message sucess");
         }
