@@ -71,7 +71,7 @@ public class FileController {
 
 
     @RequestMapping("/api_v1/file/upload/callback")
-    @ApiOperation(value = "文件上传回调接口", httpMethod = "get")
+    @ApiOperation(value = "文件上传回调接口", httpMethod = "GET")
     public String uploadcallback() {
         logger.info("uploadcallback!");
         return Constants.SUCCESS;
