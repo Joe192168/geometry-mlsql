@@ -1,11 +1,12 @@
 package com.geominfo.mlsql.utils;
 
+
+import com.geominfo.mlsql.constants.Constants;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.ExecutionException;
 
 /**
  * @program: geometry-mlsql
@@ -27,12 +29,8 @@ import org.springframework.web.client.RestTemplate;
 @Log4j2
 public class NetWorkUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
 
-    @Value("${engine.url}")
-    private String engileUrl;
-
+   private RestTemplate restTemplate = new RestTemplate() ;
 
     /**
       * @description:  同步请求
@@ -45,14 +43,14 @@ public class NetWorkUtil {
       *
       * @return: 请求结果
      */
-    public  ResponseEntity<String> synPost(MultiValueMap<String, String>  postParameters){
+    public ResponseEntity<String> synPost(String url , MultiValueMap<String, String> postParameters){
         if(CollectionUtils.isEmpty(postParameters))
         {
             log.info("请求参数不能为空!");
             return null ;
         }
-
-        return synNetWorkUtil(postParameters) ;
+        log.info("synPost url = "+ url);
+        return synNetWorkUtil(url ,postParameters) ;
     }
 
     /**
@@ -67,12 +65,12 @@ public class NetWorkUtil {
       * @return: ResponseEntity<String>
      */
 
-    private ResponseEntity<String> synNetWorkUtil(MultiValueMap<String, String> postParameters) {
+    private ResponseEntity<String> synNetWorkUtil(String url  , MultiValueMap<String, String> postParameters) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "application/json");
+        headers.add(Constants.ACCEPT, Constants.APPLICATION_JSON);
         HttpEntity<MultiValueMap<String, String>> requestEntity =
                 new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
-        ResponseEntity<String> responseEntityPost = restTemplate.postForEntity(engileUrl,
+        ResponseEntity<String> responseEntityPost = restTemplate.postForEntity(url,
                 requestEntity, String.class);
         return responseEntityPost ;
     }
@@ -89,22 +87,22 @@ public class NetWorkUtil {
       *
       * @return:
      */
-    public void aynPost(MultiValueMap<String, String>  postParameters)
+    public ResponseEntity<String> aynPost(String url ,MultiValueMap<String, String> postParameters)
     {
         if(CollectionUtils.isEmpty(postParameters))
         {
             log.info("请求参数不能为空!");
-            return  ;
+            return  new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-       if( !postParameters.containsKey("callback"))
+       if( !postParameters.containsKey(Constants.CALLBACK))
        {
            log.info("必须填写回调接口!");
-           return  ;
+           return  new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
        }
 
-        postParameters.add("async", "true");
-        aynNetWorkUtil(postParameters) ;
+        postParameters.add(Constants.ASYNC, Constants.TRUE);
+       return aynNetWorkUtil(url ,postParameters) ;
 
     }
 
@@ -120,23 +118,31 @@ public class NetWorkUtil {
       *
       * @return: void
      */
-    private void aynNetWorkUtil(MultiValueMap<String, String> postParameters) {
+    private ResponseEntity<String> aynNetWorkUtil(String url , MultiValueMap<String, String> postParameters) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "application/json");
+        headers.add(Constants.ACCEPT, Constants.APPLICATION_JSON);
         HttpEntity<MultiValueMap<String, String>> requestEntity =
                 new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
-        ListenableFuture<ResponseEntity<String>> entity = asyncRestTemplate().postForEntity(engileUrl,
+        ListenableFuture<ResponseEntity<String>> entity = asyncRestTemplate().postForEntity(url,
                 requestEntity, String.class);
 
-    }
+        try {
+            return entity.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
+        return new ResponseEntity(HttpStatus.OK) ;
+    }
 
 
     private AsyncRestTemplate asyncRestTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(100);
-        factory.setReadTimeout(200);
+        factory.setConnectTimeout(Constants.ONE_HUNDRED);
+        factory.setReadTimeout(Constants.TOW_HUNDRED);
         factory.setTaskExecutor(new SimpleAsyncTaskExecutor());
         return new AsyncRestTemplate(factory);
     }

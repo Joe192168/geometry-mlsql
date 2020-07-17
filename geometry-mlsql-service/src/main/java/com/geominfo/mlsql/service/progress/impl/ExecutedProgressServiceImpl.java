@@ -1,7 +1,11 @@
 package com.geominfo.mlsql.service.progress.impl;
 
+import com.geominfo.mlsql.constants.Constants;
+import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.service.progress.ExecutedProgressService;
+import com.geominfo.mlsql.utils.NetWorkProxy;
 import com.geominfo.mlsql.utils.NetWorkUtil;
+import com.sun.istack.internal.NotNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +25,9 @@ import org.springframework.util.StringUtils;
 @Log4j2
 public class ExecutedProgressServiceImpl implements ExecutedProgressService {
 
-    @Autowired
-    private NetWorkUtil netWorkUtil ;
+
+   @Autowired
+   private ClusterUrlService clusterUrlService ;
 
     /**
       * @description: 异步获取脚本执行进度
@@ -36,19 +41,17 @@ public class ExecutedProgressServiceImpl implements ExecutedProgressService {
       * @return:
      */
     @Override
-    public void getProgress(String jobName ,String callBackUrl ) {
+    public void getProgress(@NotNull String jobName , @NotNull String callBackUrl ) {
 
-        if(StringUtils.isEmpty(jobName) || StringUtils.isEmpty(callBackUrl)){
-            log.info("JobName 和 回调接口不能为空!");
-           return ;
-        }
-
-        String script = "!show jobs  " + jobName.trim() + " ; ";
+        String script = Constants.SHOW_JOBS + jobName.trim() +  Constants.SEMICOLON;
         MultiValueMap<String, String> curpostParameters = new LinkedMultiValueMap<String, String>();
-        curpostParameters.add("sql" ,script);
-        curpostParameters.add("callback", callBackUrl.trim());
-        netWorkUtil.aynPost(curpostParameters);
+        curpostParameters.add(Constants.SQL ,script);
+        curpostParameters.add( Constants.CALLBACK, callBackUrl.trim());
+        clusterUrlService.aynRunScript(curpostParameters) ;
+//        netWorkUtil.aynPost(Constants.RUN_SCRIPT ,curpostParameters);
     }
+
+
 
 
 }

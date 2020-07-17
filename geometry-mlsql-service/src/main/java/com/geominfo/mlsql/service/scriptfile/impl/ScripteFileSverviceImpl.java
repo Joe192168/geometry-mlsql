@@ -3,6 +3,7 @@ package com.geominfo.mlsql.service.scriptfile.impl;
 import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
 import com.geominfo.mlsql.mapper.ScriptFileMapper;
 import com.geominfo.mlsql.service.scriptfile.ScriptFileService;
+import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
     private ScriptFileMapper scriptFileMapper ;
 
     @Override
-    public MlsqlScriptFile getScriptById(Integer id) {
+    public MlsqlScriptFile getScriptById(@NotNull Integer id) {
         return scriptFileMapper.getScriptById(id);
     }
 }

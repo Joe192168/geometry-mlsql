@@ -4,10 +4,12 @@ import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
 import com.geominfo.mlsql.service.scriptfile.ScriptFileService;
 import com.geominfo.mlsql.service.scriptfile.impl.ScripteFileSverviceImpl;
+import com.sun.istack.internal.NotNull;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,12 +50,11 @@ public class ScriptFileController {
       *
       * @return:  脚本内容
      */
-
     @RequestMapping("/getcontent")
     @ApiOperation(value = "通过ID获取脚本内容", httpMethod = "GET")
     @ApiImplicitParams({@ApiImplicitParam(value = "脚本id", name = "id", dataType = "String", paramType = "query", required = true)
     })
-    public Message getcontent(@RequestParam(value = "id", required = true) String id) {
+    public Message getcontent(@RequestParam(value = "id", required = true)@NotNull String id) {
         MlsqlScriptFile mlsqlScriptFile = scripteFileSvervice.getScriptById(Integer.valueOf(id));
         if (!ObjectUtils.isEmpty(mlsqlScriptFile)) {
             if (mlsqlScriptFile.getIs_dir() == 1) {

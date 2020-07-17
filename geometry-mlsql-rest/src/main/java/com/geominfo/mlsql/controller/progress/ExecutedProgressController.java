@@ -5,6 +5,7 @@ import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlProgressInfo;
 import com.geominfo.mlsql.service.progress.ExecutedProgressService;
 import com.github.pagehelper.util.StringUtil;
+import com.sun.istack.internal.NotNull;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -88,15 +89,8 @@ public class ExecutedProgressController {
             @ApiImplicitParam(value = "callBackUrl", name = "callBackUrl",
                     dataType = "String", paramType = "query", required = true)
     })
-    public Message getprogress(@RequestParam(value = "jobName", required = true) String jobName
-            , @RequestParam(value = "callBackUrl", required = true) String callBackUrl) {
-
-
-        if(StringUtils.isEmpty(jobName) || StringUtil.isEmpty(callBackUrl)){
-            log.info("jobName 和 callback不能为空");
-            return message.error(400, "jobName 和 callback不能为空").
-                    addData("data", "fail");
-        }
+    public Message getprogress(@RequestParam(value = "jobName", required = true)@NotNull String jobName
+            , @RequestParam(value = "callBackUrl", required = true)@NotNull String callBackUrl) {
 
         executedProgressService.getProgress(jobName, callBackUrl);
         return message.ok(200, "get progress success").addData("data", "success");
