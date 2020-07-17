@@ -3,6 +3,7 @@ package com.geominfo.mlsql.service.user;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: MLSQL CONSOLE后端接口
@@ -19,7 +20,7 @@ public interface UserService {
      * param:
      * return: List<MlsqlUser>
      */
-    List<MlsqlUser> getAllUsers();
+    List<MlsqlUser> getAllUsers(Map<String,Object> map);
     /**
      * description:分页获取用户
      * author: anan
@@ -35,5 +36,30 @@ public interface UserService {
       * param: [userName]
       * return: MlsqlUser
      */
-    MlsqlUser userLogin(String userName);
+    MlsqlUser getUserByName(String userName);
+
+    /**
+      * description: update password
+      * author: anan
+      * date: 2020/7/9
+      * param: [userName,newPassword]
+      * return: int
+     */
+    int changePassword(String userName, String newPassword);
+    /**
+      * description: register user
+      * author: anan
+      * date: 2020/7/9
+      * param:
+      * return:
+     */
+    int register(MlsqlUser user);
+    /**
+      * description:
+      * author: anan
+      * date: 2020/7/10
+      * param:
+      * return:
+     */
+    int updateUser(MlsqlUser mlsqlUser);
 }

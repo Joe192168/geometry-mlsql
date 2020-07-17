@@ -99,6 +99,11 @@
 			<artifactId>druid</artifactId>
 			<version>${druid.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>${jwt.version}</version>
+		</dependency>
 		<!--Log4J2-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

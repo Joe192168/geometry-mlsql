@@ -1,8 +1,10 @@
 package com.geominfo.mlsql.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @program: geometry-mlsql
@@ -16,11 +18,15 @@ public class MlsqlScriptFile implements Serializable{
 
     private Integer id ;
     private String name;
-    private Integer has_caret;
+    private Integer hasCaret;
     private String icon;
     private String label;
-    private Integer parent_id;
-    private Integer is_dir;
+    private Integer parentId;
+    private Integer isDir;
     private String content;
-    private Integer is_expanded;
+    private Integer isExpanded=1;
+    @JsonIgnore
+    private List<ScriptUserRw> scriptUserRws;
+    public static int DIR = 1;
+    public static int FILE = 2;
 }

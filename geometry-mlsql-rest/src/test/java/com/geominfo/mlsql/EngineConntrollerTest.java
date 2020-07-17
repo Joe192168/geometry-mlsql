@@ -178,7 +178,7 @@ public class EngineConntrollerTest {
         JSONObject dataOneValue = JSONObject.parseObject(dataOne);
         JSONObject dataTwo = JSONObject.parseObject(dataOneValue.getString("data"));
         MlsqlUser mlsqlUser = dataTwo.toJavaObject(MlsqlUser.class);
-        String backend_tags = mlsqlUser.getBackend_tags();
+        String backend_tags = mlsqlUser.getBackendTags();
 
         MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
         params.add("sql","select 1 as a,'安静' as b as bbc;");

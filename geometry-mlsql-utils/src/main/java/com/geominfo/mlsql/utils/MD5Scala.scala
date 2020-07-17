@@ -13,4 +13,8 @@ object MD5Scala {
     def md5(s: String) = {
     new String(MessageDigest.getInstance("MD5").digest(s.getBytes))
   }
+
+  def main(args: Array[String]): Unit = {
+    println(md5("12"))
+  }
 }

@@ -8,7 +8,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: MLSQL CONSOLE后端接口
@@ -24,40 +26,39 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 
-    /**
-     * description:获取所有用户
-     * author: anan
-     * date: 2020/6/3
-     * param:
-     * return: List<MlsqlUser>
-     */
     @Override
-    public List<MlsqlUser> getAllUsers() {
-        return userMapper.getAllUsers();
+    public List<MlsqlUser> getAllUsers(Map<String,Object> map) {
+        return userMapper.getAllUsers(map);
     }
 
-    /**
-     * description:分页获取用户
-     * author: anan
-     * date: 2020/6/3
-     * param: [pageNum, pageSize]
-     * return: List<MlsqlUser>
-     */
     @Override
     public List<MlsqlUser> getUserByPage(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<MlsqlUser> lists = userMapper.getAllUsers();
+        Map<String,Object> map = new HashMap<String,Object>();
+        List<MlsqlUser> lists = userMapper.getAllUsers(map);
         return lists;
     }
-    /**
-     * description:用户登录接口
-     * author: anan
-     * date: 2020/6/3
-     * param: [userName]
-     * return: MlsqlUser
-     */
+
     @Override
-    public MlsqlUser userLogin(String userName) {
-        return userMapper.userLogin(userName);
+    public MlsqlUser getUserByName(String userName) {
+        return userMapper.getUserByName(userName);
+    }
+
+    @Override
+    public int changePassword(String userName, String newPassword) {
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("userName", userName);
+        map.put("newPassword", newPassword);
+        return userMapper.changePassword(map);
+    }
+
+    @Override
+    public int register(MlsqlUser user) {
+        return userMapper.register(user);
+    }
+
+    @Override
+    public int updateUser(MlsqlUser mlsqlUser) {
+        return userMapper.updateUser(mlsqlUser);
     }
 }

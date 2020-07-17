@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.TeamRoleMapper">
+    <select id="getGroupByName"  parameterType="java.lang.String" resultType="com.geominfo.mlsql.domain.vo.MlsqlGroup">
+        SELECT *
+        FROM mlsql_group
+        WHERE name=#{teamName}
+    </select>
+    <insert id="insertGroup" parameterType="java.lang.String">
+        INSERT INTO mlsql_group(name)
+        VALUES(#{teamName,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertGroupUser">
+        INSERT INTO mlsql_group_user(mlsql_group_id,mlsql_user_id,status)
+        VALUES(
+        #{groupId,jdbcType=INTEGER},
+        #{userId,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER}
+        )
+    </insert>
+    <select id="getGroupUser" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupUser" resultType="com.geominfo.mlsql.domain.vo.MlsqlGroupUser">
+        SELECT id
+        ,mlsql_group_id as groupId
+        ,mlsql_user_id as userId
+        ,status
+        FROM mlsql_group_user
+        WHERE mlsql_group_id=#{groupId} AND mlsql_user_id=#{userId}
+    </select>
+    <resultMap id="getGroupUserMap" type="com.geominfo.mlsql.domain.vo.MlsqlGroupUser">
+        <id property="id" column="id" />
+        <result property="status" column="status" />
+        <result property="userId" column="mlsql_user_id" />
+        <association property="mlsqlUser" column="mlsql_user_id"
+                     javaType="com.geominfo.mlsql.domain.vo.MlsqlUser"
+                     select="com.geominfo.mlsql.mapper.UserMapper.getUserById"></association>
+    </resultMap>
+    <select id="getGroupUserList" parameterType="map" resultMap="getGroupUserMap">
+        SELECT id,mlsql_user_id,status
+        FROM mlsql_group_user
+        WHERE mlsql_group_id=#{mlsql_group_id}
+        <if test="status != null and status.size() > 0">
+            AND status IN
+            <foreach item="status" collection="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+        </if>
+    </select>
+    <update id="updateGroupUser" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupUser">
+        UPDATE mlsql_group_user
+        SET status=#{status}
+        WHERE mlsql_group_id=#{groupId} AND mlsql_user_id=#{userId}
+    </update>
+    <delete id="deleteGroupUser" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupUser">
+        DELETE
+        FROM mlsql_group_user
+        WHERE mlsql_group_id=#{groupId} AND mlsql_user_id=#{userId}
+    </delete>
+    <select id="getGroupRole" parameterType="map" resultType="com.geominfo.mlsql.domain.vo.MlsqlGroupRole">
+        SELECT id,name,mlsql_group_id AS groupId
+        FROM mlsql_group_role
+        WHERE name=#{name} AND mlsql_group_id=#{groupId}
+    </select>
+    <select id="getGroupRoleList" parameterType="java.lang.Integer" resultType="com.geominfo.mlsql.domain.vo.MlsqlGroupRole">
+        SELECT id,name,mlsql_group_id AS groupId
+        FROM mlsql_group_role
+        WHERE mlsql_group_id=#{groupId}
+    </select>
+    <insert id="insertGroupRole" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupRole">
+        INSERT INTO mlsql_group_role(name, mlsql_group_id)
+        VALUES (#{name}, #{groupId})
+    </insert>
+    <delete id="deleteGroupRole" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupRole">
+        DELETE FROM mlsql_group_role
+        WHERE name=#{name} AND mlsql_group_id=#{groupId}
+    </delete>
+    <select id="getRoleMember" parameterType="map" resultType="com.geominfo.mlsql.domain.vo.MlsqlRoleMember">
+        SELECT id, mlsql_user_id AS userId,mlsql_group_role_id AS groupRoleId
+        FROM mlsql_role_member
+        WHERE mlsql_group_role_id=#{groupRoleId}
+        <if test="userId != null">
+            AND mlsql_user_id=#{userId}
+        </if>
+    </select>
+    <insert id="insertRoleMember" parameterType="com.geominfo.mlsql.domain.vo.MlsqlRoleMember">
+        INSERT INTO mlsql_role_member(mlsql_user_id,mlsql_group_role_id)
+        VALUES(#{userId},#{groupRoleId})
+    </insert>
+    <delete id="deleteRoleMember" parameterType="com.geominfo.mlsql.domain.vo.MlsqlRoleMember">
+        DELETE FROM mlsql_role_member
+        WHERE mlsql_user_id=#{userId} AND mlsql_group_role_id=#{groupRoleId}
+    </delete>
+    <select id="getGroups" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupUser" resultType="com.geominfo.mlsql.domain.vo.MlsqlGroup">
+        SELECT groups.id,groups.name
+        FROM mlsql_group_user groupUser
+        JOIN mlsql_group groups ON groupUser.mlsql_group_id=groups.id
+        WHERE groupUser.mlsql_user_id=#{userId} AND groupUser.status IN (#{status})
+    </select>
+    <select id="getGroupBackendProxy" parameterType="com.geominfo.mlsql.domain.vo.MlsqlBackendProxy" resultType="java.lang.String">
+        SELECT backend_name
+        FROM mlsql_backend_proxy
+        WHERE mlsql_group_id=#{groupId}
+    </select>
+</mapper>

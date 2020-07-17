@@ -17,4 +17,8 @@ public class GlobalConstant {
     public static final TableTypeMeta HDFS = new TableTypeMeta("hdfs", new HashSet<String>(Arrays.asList("parquet", "json", "csv", "image", "text", "xml", "excel")));
     public static final TableTypeMeta TEMP = new TableTypeMeta("temp", new HashSet<String>(Arrays.asList("jsonStr", "script", "csvStr", "mockStream", "console")));
     public static final TableTypeMeta GRAMMAR = new TableTypeMeta("grammar", new HashSet<String>(Arrays.asList("grammar")));
+    public static final String TOKEN_SERVER = "token-server";
+    public static final int DEFAULT_INT_VALUE = 1;
+    public static final String LOGIN_NAME = "appId";
+    public static final String APP_NAME = "MLSQL_CONSOLE";
 }

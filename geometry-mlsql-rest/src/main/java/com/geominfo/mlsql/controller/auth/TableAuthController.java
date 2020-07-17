@@ -2,13 +2,14 @@ package com.geominfo.mlsql.controller.auth;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.geominfo.mlsql.domain.vo.MLSQLAuthTable;
-import com.geominfo.mlsql.domain.vo.MLSQLTable;
-import com.geominfo.mlsql.domain.vo.Message;
+import com.geominfo.mlsql.domain.vo.*;
+import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.auth.TableAuthService;
+import com.geominfo.mlsql.service.user.TeamRoleService;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,25 +27,15 @@ import java.util.Map;
  * @version: 1.0.0
  */
 @RestController
-@RequestMapping(value = "/auth")
-@Api(value="权限接口类",tags={"权限接口"})
+@RequestMapping(value = "/api_v1")
+@Api(value="用户表访问权限类",tags={"用户表访问权限接口"})
 @Log4j2
 public class TableAuthController {
     @Autowired
-    private Message message ;
-
-    @Autowired
     private TableAuthService tableAuthService;
 
-    @RequestMapping("/tables")
-    @ApiOperation(value = "获取用户表授权接口", httpMethod = "GET")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
-    })
-    public List<MLSQLAuthTable> getUserAuths(@RequestParam(value = "userName", required = true) String userName){
-        List<MLSQLAuthTable> authTables = tableAuthService.fetchAuth(userName);
-        return authTables;
-    }
+    @Autowired
+    private TeamRoleService teamRoleService;
 
     @RequestMapping("/verify/tables")
     @ApiOperation(value = "验证表是否授权接口", httpMethod = "GET")
@@ -62,8 +53,8 @@ public class TableAuthController {
         Map<String, String> authTables = new HashMap<String, String>();
         List<Boolean> verifyAuth = new ArrayList<Boolean>();
         for(MLSQLAuthTable table : authTablesInit){
-           String key =  table.getDb() + "_" + table.getTableName() + "_" + table.getTable_type() + "_" + table.getSource_type();
-           String operateType = table.getOperate_type();
+           String key =  table.getDb() + "_" + table.getTableName() + "_" + table.getTableType() + "_" + table.getSourceType();
+           String operateType = table.getOperateType();
            authTables.put(key, operateType);
         }
 
@@ -79,6 +70,114 @@ public class TableAuthController {
             verifyAuth.add(verify);
         }
         return verifyAuth;
+    }
+
+    @RequestMapping("/team/tables")
+    @ApiOperation(value = "获取组授权表", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
+    })
+    public Message teamTables(@RequestParam(value = "teamName", required = true) String teamName){
+        MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
+        if(mlsqlGroup == null){
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+        }
+        List<Map<String, Object>> teamTables = tableAuthService.fetchTables(mlsqlGroup);
+        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get team table list").addData("data", teamTables);
+    }
+
+    @RequestMapping("/team/table/add")
+    @ApiOperation(value = "组新增表授权", httpMethod = "POST")
+    public Message teamTableAdd(@RequestBody MLSQLAuthTable mlsqlAuthTable){
+        MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(mlsqlAuthTable.getTeamName());
+        if(mlsqlGroup == null){
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+        }
+        String teamTables = tableAuthService.addTableForTeam(mlsqlAuthTable, mlsqlGroup.getId());
+        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"team add table auth").addData("data", teamTables);
+    }
+
+    @RequestMapping("/team/table/remove")
+    @ApiOperation(value = "删除授权表", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "表id", name = "tableId", dataType = "int", paramType = "query", required = true)
+    })
+    public Message teamTableRemove(@RequestParam(value = "teamName", required = true) String teamName,
+                                    @RequestParam(value = "tableId", required = true) int tableId){
+        MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
+        if(mlsqlGroup == null){
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+        }
+        String res = tableAuthService.removeTable(mlsqlGroup, tableId);
+        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove table").addData("data", res);
+    }
+
+    @RequestMapping("/role/table/add")
+    @ApiOperation(value = "角色新增表授权", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "角色名", name = "roleName", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "表id列表(多个逗号分隔)", name = "tableIds", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "操作列表(多个逗号分隔)", name = "operateTypes", dataType = "String", paramType = "query", required = true)
+    })
+    public Message roleTableAdd(@RequestParam(value = "teamName", required = true) String teamName,
+                                 @RequestParam(value = "roleName", required = true) String roleName,
+                                 @RequestParam(value = "tableIds", required = true) String tableIds,
+                                 @RequestParam(value = "operateTypes", required = true) String operateTypes){
+        MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
+        if(mlsqlGroup == null){
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("name", roleName);
+        map.put("groupId", mlsqlGroup.getId());
+        MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
+        if(mlsqlGroupRole == null){
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
+        }
+        String res = tableAuthService.addTableForRole(mlsqlGroupRole.getId(), tableIds, operateTypes);
+        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"add role table operator auth").addData("data", res);
+    }
+
+    @RequestMapping("/role/table/remove")
+    @ApiOperation(value = "角色移除表授权", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "角色名", name = "roleName", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "表id", name = "tableId", dataType = "int", paramType = "query", required = true)
+    })
+    public Message roleTableRemove(@RequestParam(value = "teamName", required = true) String teamName,
+                                @RequestParam(value = "roleName", required = true) String roleName,
+                                @RequestParam(value = "tableId", required = true) int tableId){
+        MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
+        if(mlsqlGroup == null){
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("name", roleName);
+        map.put("groupId", mlsqlGroup.getId());
+        MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
+        if(mlsqlGroupRole == null){
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
+        }
+        String res = tableAuthService.removeRoleTable(mlsqlGroupRole.getId(), tableId);
+        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove role table auth").addData("data", res);
+    }
+
+    @RequestMapping("/role/tables")
+    @ApiOperation(value = "获取授权表详细信息", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "角色名", name = "roleName", dataType = "String", paramType = "query", required = true)
+    })
+    public Message roleTableRemove(@RequestParam(value = "teamName", required = true) String teamName,
+                                   @RequestParam(value = "roleName", required = true) String roleName){
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("roleName", roleName);
+        map.put("teamName", teamName);
+        List<Map<String, Object>> authTableDetail = tableAuthService.getAuthTableDetail(map);
+        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get table auth detail").addData("data", authTableDetail);
     }
 
 }

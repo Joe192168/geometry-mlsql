@@ -3,6 +3,7 @@ package com.geominfo.mlsql.service.auth;
 
 import com.geominfo.mlsql.domain.vo.MLSQLAuthTable;
 import com.geominfo.mlsql.domain.vo.MLSQLTable;
+import com.geominfo.mlsql.domain.vo.MlsqlGroup;
 
 import java.util.List;
 import java.util.Map;
@@ -55,4 +56,58 @@ public interface TableAuthService {
      * return:
      */
     public String unifyColumn(String column);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/15
+      * param: 
+      * return: 
+     */
+    
+    List<Map<String, Object>> fetchTables(MlsqlGroup mlsqlGroup);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/15
+      * param: 
+      * return: 
+     */
+    
+    String addTableForTeam(MLSQLAuthTable AuthTable, int groupId);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/15
+      * param: 
+      * return: 
+     */
+    
+    String removeTable(MlsqlGroup mlsqlGroup, int tableId);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/15
+      * param: 
+      * return: 
+     */
+    
+    String addTableForRole(int groupRoleId, String roleNames, String operatorTypes);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/15
+      * param: 
+      * return: 
+     */
+    
+    String removeRoleTable(int groupRoleId,int tableId);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/15
+      * param:
+      * return: 
+     */
+    
+    List<Map<String, Object>> getAuthTableDetail(Map<String, Object> map);
 }

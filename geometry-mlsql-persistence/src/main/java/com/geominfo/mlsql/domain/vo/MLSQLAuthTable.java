@@ -11,11 +11,12 @@ import lombok.Data;
  */
 @Data
 public class MLSQLAuthTable {
+    private int id;
     private String teamName;
     private String roleName;
     private String db;
     private String tableName;
-    private String table_type;
-    private String source_type;
-    private String operate_type;
+    private String tableType;
+    private String sourceType;
+    private String operateType;
 }
