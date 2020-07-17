@@ -14,5 +14,5 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public interface ClusterProxyService {
 
-    <T> T clusterManager(HttpServletRequest request) ;
+    <T> T clusterManager(Object o) ;
 }

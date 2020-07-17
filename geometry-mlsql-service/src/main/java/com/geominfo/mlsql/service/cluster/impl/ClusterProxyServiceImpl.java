@@ -31,7 +31,7 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
     private ClusterUrlService clusterUrlService;
 
     @Override
-    public <T> T clusterManager(HttpServletRequest request) {
+    public <T> T clusterManager(Object o) {
 
         ResponseEntity<String> result = null;
 
@@ -39,12 +39,13 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
         paramsMap.add(Constants.CONTEXT_DEFAULT_INCLUDE_URL, myUrl + Constants.SCRIPT_FILE_INCLUDE);
         paramsMap.remove(Constants.TEAM_NAME);
 
-        String[] actions = params(Constants.ACTION, request);
-
-        if(actions.length == Constants.ZERO )
-            return (T)"参数异常";
-
-        String action = actions[Constants.ZERO] ;
+//        String[] actions = params(Constants.ACTION, request);
+//
+//        if(actions.length == Constants.ZERO )
+//            return (T)"参数异常";
+//
+//        String action = actions[Constants.ZERO] ;
+        String action = (String)o ;
 
         switch (action) {
             case Constants.BACKEND_LIST:

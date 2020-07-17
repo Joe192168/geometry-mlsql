@@ -17,6 +17,7 @@ import java.util.UUID;
 @Component
 public class CommandUtil {
 
+
     private static ParamsUtil paramsUtil = new ParamsUtil();
 
     public static String mlsqlClusterUrl(){

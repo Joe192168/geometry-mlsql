@@ -3,10 +3,7 @@ package com.geominfo.mlsql.controller.cluster;
 
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.service.cluster.ClusterProxyService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,13 +34,13 @@ public class ClusterProxyController {
     private ClusterProxyService clusterProxyService ;
 
     @RequestMapping("/api_v1/cluster")
-    @ApiOperation(value = "获取用户表授权接口", httpMethod = "POST")
+    @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "执行action", name = "action", required = true)
+            @ApiImplicitParam(value = "执行动作", name = "action", dataType = "String", paramType = "query", required = true)
     })
-    public ResponseEntity<String> clusterManager(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<String> clusterManager(@ApiParam(value="action", required = true) String action){
 
-        ResponseEntity<String> result = clusterProxyService.clusterManager(request) ;
+        ResponseEntity<String> result = clusterProxyService.clusterManager(action) ;
         return result ;
 
     }

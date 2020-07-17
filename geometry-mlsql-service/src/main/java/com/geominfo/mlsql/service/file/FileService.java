@@ -16,6 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 public interface FileService<T> {
 
     T formUpload(HttpServletRequest request) ;
-    T download(HttpServletRequest request, HttpServletResponse response) ;
-    T publicDownload(HttpServletRequest request, HttpServletResponse response) ;
+    T download(Object o, HttpServletResponse response) ;
+    T publicDownload(Object o , HttpServletResponse response) ;
 }

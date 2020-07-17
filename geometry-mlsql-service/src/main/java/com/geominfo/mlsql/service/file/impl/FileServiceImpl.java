@@ -11,6 +11,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,20 +199,20 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
 
     @Override
-    public T download(HttpServletRequest request, HttpServletResponse response) {
+    public T download(Object o, HttpServletResponse response) {
 
-        if (!hasParam(Constants.AUTH_SECRET, request) ||
-                !param(Constants.AUTH_SECRET, request).equals(CommandUtil.auth_secret()))
-            return  (T)"forbidden";
+//        if (!hasParam(Constants.AUTH_SECRET, request) ||
+//                !param(Constants.AUTH_SECRET, request).equals(CommandUtil.auth_secret()))
+//            return  (T)"forbidden";
+//
+//        if (!hasParam(Constants.FILE_NAME, request))
+//            return (T)"fileName required";
 
-        if (!hasParam(Constants.FILE_NAME, request))
-            return (T)"fileName required";
-
-        String fileName = param(Constants.FILE_NAME, request);
+        String fileName = (String)o;
 
         String targetFilePath =
                 new PathFunUtil(Constants.DEFAULT_TEMP_PATH +
-                        CommandUtil.md5(param(Constants.USER_NAME, request))).add(fileName).toPath();
+                        CommandUtil.md5("userName")).add(fileName).toPath();
 
 
         if (fileName.startsWith(Constants.PUBLIC))
@@ -220,7 +221,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
         logger.info("Write " + targetFilePath + " to response");
 
         try {
-            if (param(Constants.FILE_NAME, request).endsWith(Constants.TAR))
+            if ("userName".endsWith(Constants.TAR))
                 DownloadRunner.getTarFileByTarFile(response, targetFilePath);
             else
                 DownloadRunner.getTarFileByPath(response, targetFilePath);
@@ -236,15 +237,17 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
 
     @Override
-    public T publicDownload(HttpServletRequest request , HttpServletResponse response) {
+    public T publicDownload(Object o , HttpServletResponse response) {
 
 
-        if (!hasParam(Constants.FILE_NAME, request))
-            return (T) "fileName required";
+//        if (!hasParam(Constants.FILE_NAME, request))
+//            return (T) "fileName required";
 
-        runUpload(param(Constants.FILE_NAME, request), Constants.ONE);
+        String fileName = (String)o ;
 
-        List<String> newFiles = Arrays.asList(param(Constants.FILE_NAME, request)
+        runUpload(fileName, Constants.ONE);
+
+        List<String> newFiles = Arrays.asList(fileName
                 .split(Constants.HTTP_SEPARATED)).stream().filter(f -> !f.isEmpty()).collect(Collectors.toList());
         String newFile = newFiles.get(newFiles.size() - Constants.ONE);
 

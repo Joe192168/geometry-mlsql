@@ -5,7 +5,6 @@ import com.geominfo.mlsql.constants.Constants;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.utils.NetWorkProxy;
 import com.geominfo.mlsql.utils.NetWorkUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
