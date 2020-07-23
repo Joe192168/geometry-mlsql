@@ -1,5 +1,6 @@
 package com.geominfo.mlsql.service.user.impl;
 
+import com.geominfo.mlsql.domain.vo.Account;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import com.geominfo.mlsql.mapper.UserMapper;
 import com.geominfo.mlsql.service.user.UserService;
@@ -60,5 +61,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updateUser(MlsqlUser mlsqlUser) {
         return userMapper.updateUser(mlsqlUser);
+    }
+
+    @Override
+    public Account loadAccount(String appId) {
+        MlsqlUser user = userMapper.getUserByName(appId);
+        return user != null ? new Account(user.getName(),user.getPassword(), "") : null;
     }
 }

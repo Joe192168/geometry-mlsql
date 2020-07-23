@@ -92,12 +92,28 @@
     <select id="getGroups" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupUser" resultType="com.geominfo.mlsql.domain.vo.MlsqlGroup">
         SELECT groups.id,groups.name
         FROM mlsql_group_user groupUser
-        JOIN mlsql_group groups ON groupUser.mlsql_group_id=groups.id
+            JOIN mlsql_group groups ON groupUser.mlsql_group_id=groups.id
         WHERE groupUser.mlsql_user_id=#{userId} AND groupUser.status IN (#{status})
     </select>
     <select id="getGroupBackendProxy" parameterType="com.geominfo.mlsql.domain.vo.MlsqlBackendProxy" resultType="java.lang.String">
         SELECT backend_name
         FROM mlsql_backend_proxy
         WHERE mlsql_group_id=#{groupId}
+    </select>
+    <select id="getRolesByUserName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT group_concat(concat(roles.name)) AS roles
+        FROM mlsql_user users
+            JOIN mlsql_role_member members ON users.id=members.mlsql_user_id
+            JOIN mlsql_group_role roles ON roles.id=members.mlsql_group_role_id
+        WHERE  users.name=#{userName}
+        GROUP BY users.name
+    </select>
+    <select id="getRolesAll" resultType="java.lang.String">
+        SELECT group_concat(concat(roleNames)) AS roleNames
+        FROM
+            (
+                SELECT name as roleNames FROM mlsql_group_role
+                GROUP BY  name
+            )roles
     </select>
 </mapper>

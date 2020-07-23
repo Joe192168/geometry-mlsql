@@ -1,11 +1,13 @@
 package com.geominfo.mlsql.controller.scriptfile;
 
+import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.scriptfile.ScriptFileService;
 import com.geominfo.mlsql.service.user.UserService;
+import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -33,7 +35,7 @@ import java.util.List;
 @RequestMapping("/api_v1")
 @Api(value = "脚本维护类接口", tags = {"脚本维护类接口"})
 @Log4j2
-public class ScriptFileController {
+public class ScriptFileController extends BaseController {
     @Autowired
     private ScriptFileService scripteFileSvervice;
 
@@ -61,21 +63,20 @@ public class ScriptFileController {
         MlsqlScriptFile mlsqlScriptFile = scripteFileSvervice.getScriptById(Integer.valueOf(id));
         if (!ObjectUtils.isEmpty(mlsqlScriptFile)) {
             if (mlsqlScriptFile.getIsDir() == 1) {
-                return new Message().ok(200, "id is catalog").addData("data", mlsqlScriptFile);
+                return success(200, "id is catalog").addData("data", mlsqlScriptFile);
             }
-            return new Message().ok(200, "get content success").addData("data", mlsqlScriptFile.getContent());
+            return success(200, "get content success").addData("data", mlsqlScriptFile.getContent());
         } else {
-            return new Message().error(400, "id not exists").addData("data", id);
+            return error(400, "id not exists").addData("data", id);
         }
     }
 
     @RequestMapping("/script_file")
     @ApiOperation(value = "保存脚本", httpMethod = "POST")
     public Message scriptFile(@RequestBody MlsqlScriptFile mlsqlScriptFile){
-        String userName = "awh@gmail.com"; //replace token
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         if(mlsqlUser.getStatus().equals(MlsqlUser.STATUS_PAUSE)){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, "you can not operate because this account have be set pause");
+            return error(ReturnCode.RETURN_ERROR_STATUS, "you can not operate because this account have be set pause");
         }
         String msg = "";
         if(mlsqlScriptFile.getId() > 0 ){
@@ -83,8 +84,8 @@ public class ScriptFileController {
         }else{
             msg = scripteFileSvervice.insertScriptFile(mlsqlScriptFile,mlsqlUser.getId());
         }
-        return msg.equals(ReturnCode.SUCCESS)?new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS, "save opeator sucess")
-                :new Message().error(ReturnCode.RETURN_ERROR_STATUS, "save opeator faild");
+        return msg.equals(InterfaceReturnInformation.SUCCESS)?success(ReturnCode.RETURN_SUCCESS_STATUS, "save opeator sucess")
+                :error(ReturnCode.RETURN_ERROR_STATUS, "save opeator faild");
     }
 
     @RequestMapping("/script_file/remove")
@@ -92,22 +93,19 @@ public class ScriptFileController {
     @ApiImplicitParams({@ApiImplicitParam(value = "脚本或目录id", name = "id", dataType = "int", paramType = "query", required = true)
     })
     public Message removeScriptFile(@RequestParam(value = "id", required = true) int id){
-        String userName = "awh@gmail.com"; //replace token
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         if(mlsqlUser.getStatus() !=null && mlsqlUser.getStatus().equals(MlsqlUser.STATUS_PAUSE)){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, "you can not operate because this account have be set pause");
+            return error(ReturnCode.RETURN_ERROR_STATUS, "you can not operate because this account have be set pause");
         }
         String msg = scripteFileSvervice.removeFile(id, mlsqlUser);
-        return msg.equals(ReturnCode.SUCCESS)?new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS, "delete opeator sucess")
-                :new Message().error(ReturnCode.RETURN_ERROR_STATUS, "delete opeator faild");
+        return msg.equals(InterfaceReturnInformation.SUCCESS)?success(ReturnCode.RETURN_SUCCESS_STATUS, "delete opeator sucess")
+                :error(ReturnCode.RETURN_ERROR_STATUS, "delete opeator faild");
     }
 
     @RequestMapping("/getFileByUser")
     @ApiOperation(value = "获取用户脚本列表", httpMethod = "GET")
-    @ApiImplicitParams({@ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
-    })
-    public Message listScriptFile(@RequestParam(value = "userName", required = true) String userName){
-        MlsqlUser mlsqlUser = userService.getUserByName(userName); //replace token
+    public Message listScriptFile(){
+        MlsqlUser mlsqlUser = userService.getUserByName(userName);
         List<MlsqlScriptFile> mlsqlScriptFileList = scripteFileSvervice.listScriptFileByUser(mlsqlUser);
         if(mlsqlScriptFileList == null || mlsqlScriptFileList.size() == 0){
             MlsqlScriptFile mlsqlScriptFile = new MlsqlScriptFile();
@@ -117,7 +115,7 @@ public class ScriptFileController {
             mlsqlScriptFile.setParentId(-1);
             scripteFileSvervice.insertScriptFile(mlsqlScriptFile, mlsqlUser.getId());
         }
-        return new Message().ok(200, "get script file list").addData("data", mlsqlScriptFileList);
+        return success(200, "get script file list").addData("data", mlsqlScriptFileList);
     }
 
     @RequestMapping("/script_file/include")
@@ -129,11 +127,11 @@ public class ScriptFileController {
                                      @RequestParam(value = "path", required = true) String path){
         MlsqlUser mlsqlUser = userService.getUserByName(owner);
         if(mlsqlUser == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS,"user:" + owner + "is not exists");
+            return error(ReturnCode.RETURN_ERROR_STATUS,"user:" + owner + "is not exists");
         }
         String msg = scripteFileSvervice.findScriptFileByPath(mlsqlUser, path);
-        return msg.equals(ReturnCode.SCRIPT_FILE_NO_EXISTS) == false?new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS, "get content by path sucess").addData("data", msg)
-                :new Message().error(ReturnCode.RETURN_ERROR_STATUS, "get content by path  faild").addData("data", msg);
+        return msg.equals(InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS) == false?success(ReturnCode.RETURN_SUCCESS_STATUS, "get content by path sucess").addData("data", msg)
+                :error(ReturnCode.RETURN_ERROR_STATUS, "get content by path  faild").addData("data", msg);
     }
 
 }

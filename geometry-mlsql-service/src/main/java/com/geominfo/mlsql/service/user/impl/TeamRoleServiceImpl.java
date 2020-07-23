@@ -6,6 +6,7 @@ import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.mapper.TeamRoleMapper;
 import com.geominfo.mlsql.mapper.UserMapper;
 import com.geominfo.mlsql.service.user.TeamRoleService;
+import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,16 +87,16 @@ public class TeamRoleServiceImpl implements TeamRoleService {
     @Transactional(rollbackFor = Exception.class)
     public String createTeam(MlsqlUser user, String teamName) {
         if(teamRoleMapper.getGroupByName(teamName) != null){
-            return ReturnCode.TEAM_EXISTS;
+            return InterfaceReturnInformation.TEAM_EXISTS;
         }
         teamRoleMapper.insertGroup(teamName);
         MlsqlGroup mlsqlGroup = teamRoleMapper.getGroupByName(teamName);
         MlsqlGroupUser mlsqlGroupUser = new MlsqlGroupUser();
         mlsqlGroupUser.setGroupId(mlsqlGroup.getId());
         mlsqlGroupUser.setUserId(user.getId());
-        mlsqlGroupUser.setStatus(ReturnCode.UserOwner);
+        mlsqlGroupUser.setStatus(MlsqlGroupUser.owner);
         teamRoleMapper.insertGroupUser(mlsqlGroupUser);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
@@ -103,7 +104,7 @@ public class TeamRoleServiceImpl implements TeamRoleService {
     public String addRoles(String teamName, List<String> roleNames) {
         MlsqlGroup mlsqlGroup = teamRoleMapper.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return ReturnCode.TEAM_NOT_EXISTS;
+            return InterfaceReturnInformation.TEAM_NOT_EXISTS;
         }
         for (String roleName : roleNames){
             Map<String,Object> map = new HashMap<String,Object>();
@@ -116,7 +117,7 @@ public class TeamRoleServiceImpl implements TeamRoleService {
                 teamRoleMapper.insertGroupRole(mlsqlGroupRole);
             }
         }
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
@@ -125,14 +126,14 @@ public class TeamRoleServiceImpl implements TeamRoleService {
         MlsqlUser user = userMapper.getUserByName(userName);
         MlsqlGroup mlsqlGroup = teamRoleMapper.getGroupByName(teamName);
         if(user == null || mlsqlGroup == null){
-            return ReturnCode.TEAM_OR_USER_NOT_EXISTS;
+            return InterfaceReturnInformation.TEAM_OR_USER_NOT_EXISTS;
         }
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("name", roleName );
         map.put("groupId", mlsqlGroup.getId() );
         MlsqlGroupRole mlsqlGroupRole = teamRoleMapper.getGroupRole(map);
         if(mlsqlGroupRole == null){
-            return ReturnCode.TEAM_ROLE_NOT_EXISTS;
+            return InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS;
         }
         map = new HashMap<String,Object>();
         map.put("userId", user.getId() );
@@ -144,7 +145,7 @@ public class TeamRoleServiceImpl implements TeamRoleService {
             mlsqlRoleMember.setGroupRoleId(mlsqlGroupRole.getId());
             teamRoleMapper.insertRoleMember(mlsqlRoleMember);
         }
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
@@ -170,13 +171,13 @@ public class TeamRoleServiceImpl implements TeamRoleService {
     public String addMember(String teamName, List<String> userNames) {
         MlsqlGroup mlsqlGroup = getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return ReturnCode.TEAM_NOT_EXISTS;
+            return InterfaceReturnInformation.TEAM_NOT_EXISTS;
         }
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("userNames", userNames);
         List<MlsqlUser> users = userMapper.getAllUsers(map);
         if (users.size() != userNames.size()) {
-            return ReturnCode.USER_NOT_EXISTS;
+            return InterfaceReturnInformation.USER_NOT_EXISTS;
         }
         for (MlsqlUser user : users) {
             MlsqlGroupUser mlsqlGroupUser = new MlsqlGroupUser();
@@ -196,7 +197,7 @@ public class TeamRoleServiceImpl implements TeamRoleService {
 
             }
         }
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
@@ -204,7 +205,7 @@ public class TeamRoleServiceImpl implements TeamRoleService {
     public String updateMemberStatus(MlsqlUser user, String teamName, int status) {
         MlsqlGroup mlsqlGroup = teamRoleMapper.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return ReturnCode.TEAM_NOT_EXISTS;
+            return InterfaceReturnInformation.TEAM_NOT_EXISTS;
         }
         MlsqlGroupUser mlsqlGroupUserR = new MlsqlGroupUser();
         mlsqlGroupUserR.setGroupId(mlsqlGroup.getId());
@@ -212,24 +213,24 @@ public class TeamRoleServiceImpl implements TeamRoleService {
         MlsqlGroupUser mlsqlGroupUser = teamRoleMapper.getGroupUser(mlsqlGroupUserR);
         mlsqlGroupUser.setStatus(status);
         teamRoleMapper.updateGroupUser(mlsqlGroupUser);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
     public String removeMember(String teamName, String userName) {
         MlsqlGroup mlsqlGroup = teamRoleMapper.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return ReturnCode.TEAM_NOT_EXISTS;
+            return InterfaceReturnInformation.TEAM_NOT_EXISTS;
         }
         MlsqlUser mlsqlUser = userMapper.getUserByName(userName);
         if(mlsqlUser == null){
-            return ReturnCode.USER_NOT_EXISTS;
+            return InterfaceReturnInformation.USER_NOT_EXISTS;
         }
         MlsqlGroupUser mlsqlGroupUserR = new MlsqlGroupUser();
         mlsqlGroupUserR.setUserId(mlsqlUser.getId());
         mlsqlGroupUserR.setGroupId(mlsqlGroup.getId());
         teamRoleMapper.deleteGroupUser(mlsqlGroupUserR);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
@@ -277,5 +278,15 @@ public class TeamRoleServiceImpl implements TeamRoleService {
         mlsqlBackendProxy.setGroupId(mlsqlGroup.getId());
         List<String> mlsqlBackendProxyList = teamRoleMapper.getGroupBackendProxy(mlsqlBackendProxy);
         return mlsqlBackendProxyList;
+    }
+
+    @Override
+    public String getRolesByUserName(String userName) {
+        return teamRoleMapper.getRolesByUserName(userName);
+    }
+
+    @Override
+    public String getRolesAll() {
+        return teamRoleMapper.getRolesAll();
     }
 }

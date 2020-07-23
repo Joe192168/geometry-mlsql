@@ -161,4 +161,21 @@ public interface TeamRoleMapper {
      * return:
      */
     List<String> getGroupBackendProxy(MlsqlBackendProxy mlsqlBackendProxy);
+    /**
+      * description: get Roles by userName
+      * author: anan
+      * date: 2020/7/22
+      * param: userName
+      * return:roles(split ,)
+     */
+
+    String getRolesByUserName(String userName);
+    /**
+      * description: get roles all
+      * author: anan
+      * date: 2020/7/23
+      * param:
+      * return:
+     */
+    String getRolesAll();
 }

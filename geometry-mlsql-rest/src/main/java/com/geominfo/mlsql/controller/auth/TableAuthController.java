@@ -6,6 +6,7 @@ import com.geominfo.mlsql.domain.vo.*;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.auth.TableAuthService;
 import com.geominfo.mlsql.service.user.TeamRoleService;
+import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class TableAuthController {
     public Message teamTables(@RequestParam(value = "teamName", required = true) String teamName){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         List<Map<String, Object>> teamTables = tableAuthService.fetchTables(mlsqlGroup);
         return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get team table list").addData("data", teamTables);
@@ -91,7 +92,7 @@ public class TableAuthController {
     public Message teamTableAdd(@RequestBody MLSQLAuthTable mlsqlAuthTable){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(mlsqlAuthTable.getTeamName());
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         String teamTables = tableAuthService.addTableForTeam(mlsqlAuthTable, mlsqlGroup.getId());
         return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"team add table auth").addData("data", teamTables);
@@ -107,7 +108,7 @@ public class TableAuthController {
                                     @RequestParam(value = "tableId", required = true) int tableId){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         String res = tableAuthService.removeTable(mlsqlGroup, tableId);
         return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove table").addData("data", res);
@@ -127,14 +128,14 @@ public class TableAuthController {
                                  @RequestParam(value = "operateTypes", required = true) String operateTypes){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", roleName);
         map.put("groupId", mlsqlGroup.getId());
         MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
         if(mlsqlGroupRole == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
         }
         String res = tableAuthService.addTableForRole(mlsqlGroupRole.getId(), tableIds, operateTypes);
         return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"add role table operator auth").addData("data", res);
@@ -152,14 +153,14 @@ public class TableAuthController {
                                 @RequestParam(value = "tableId", required = true) int tableId){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", roleName);
         map.put("groupId", mlsqlGroup.getId());
         MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
         if(mlsqlGroupRole == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
+            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
         }
         String res = tableAuthService.removeRoleTable(mlsqlGroupRole.getId(), tableId);
         return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove role table auth").addData("data", res);

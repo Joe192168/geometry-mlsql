@@ -2,6 +2,7 @@ package com.geominfo.mlsql.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geominfo.mlsql.domain.vo.JwtAccount;
+import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultHeader;
 import io.jsonwebtoken.impl.DefaultJwsHeader;
@@ -31,7 +32,7 @@ public class JsonWebTokenUtil {
 
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     public static final String SECRET_KEY = "ed7daeb157cd9b31e53896ad3c771a26";
-    public static final long refreshPeriodTime = 36000L;//失效时间，单位毫秒
+    public static final long refreshPeriodTime = 36000L;//36000L;//失效时间，单位毫秒
     private static final SecretKey JWT_KEY;// 使用JWT密匙生成的加密key
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static  CompressionCodecResolver codecResolver = new DefaultCompressionCodecResolver();
@@ -57,7 +58,7 @@ public class JsonWebTokenUtil {
      * @param algorithm 加密算法
      * @Return java.lang.String
      */
-    public static String issueJWT(String id,String subject, String issuer, Long period, String roles, String permissions) {
+    public static String issueJWT(String id, String subject, String issuer, Long period, String roles, String permissions) {
         // 当前时间戳
         Long currentTimeMillis = System.currentTimeMillis();
         JwtBuilder jwtBuilder = Jwts.builder();

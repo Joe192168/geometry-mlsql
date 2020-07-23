@@ -5,6 +5,7 @@ import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.mapper.AuthMapper;
 import com.geominfo.mlsql.service.auth.TableAuthService;
+import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,7 +140,7 @@ public class TableAuthServiceImpl implements TableAuthService {
         mlsqlGroupTable.setGroupId(mlsql_group_id);
         mlsqlGroupTable.setTableId(mlsqlAuthTable.getId());
         authMapper.insertMlsqlGroupTable(mlsqlGroupTable);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
     /**
       * description: 
@@ -154,7 +155,7 @@ public class TableAuthServiceImpl implements TableAuthService {
     public String removeTable(MlsqlGroup mlsqlGroup, int tableId) {
         authMapper.deleteMlsqlTable(tableId);
         authMapper.deleteMlsqlGroupTable(tableId);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
     /**
       * description: 
@@ -178,7 +179,7 @@ public class TableAuthServiceImpl implements TableAuthService {
                 }
             }
         }
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
     /**
       * description: 
@@ -195,7 +196,7 @@ public class TableAuthServiceImpl implements TableAuthService {
         mlsqlGroupRoleAuth.setGroupRoleId(groupRoleId);
         mlsqlGroupRoleAuth.setTableId(tableId);
         authMapper.deleteGroupRoleAuth(mlsqlGroupRoleAuth);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
     /**
       * description: 

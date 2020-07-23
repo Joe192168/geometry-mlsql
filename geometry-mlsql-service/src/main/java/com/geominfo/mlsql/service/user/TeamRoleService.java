@@ -181,4 +181,22 @@ public interface TeamRoleService {
      * return:List<String>
      */
     List<String> backends(MlsqlGroup mlsqlGroup);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/22
+      * param:
+      * return: 
+     */
+    
+    String getRolesByUserName(String userName);
+    /**
+      * description: 
+      * author: anan
+      * date: 2020/7/23
+      * param: 
+      * return: 
+     */
+    
+    String getRolesAll();
 }

@@ -7,6 +7,7 @@ import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.mapper.ScriptFileMapper;
 import com.geominfo.mlsql.mapper.UserMapper;
 import com.geominfo.mlsql.service.scriptfile.ScriptFileService;
+import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
             mlsqlScriptFile.setIsExpanded(1);
         }
         scriptFileMapper.updateScriptFile(mlsqlScriptFile);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
         scriptUserRw.setFileId(mlsqlScriptFile.getId());
         scriptUserRw.setUserId(userId);
         scriptFileMapper.insertScriptUserRW(scriptUserRw);
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
@@ -73,14 +74,14 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
                 markDelete(mlsqlScriptFile.getScriptUserRws(), mlsqlUser);
             }
         }
-        return ReturnCode.SUCCESS;
+        return InterfaceReturnInformation.SUCCESS;
     }
 
     @Override
     public String findScriptFileByPath(MlsqlUser mlsqlUser, String paths) {
         String[] pathArray = paths.split("\\.", paths.split("\\.").length-1);
         int parentId = -1;
-        String content = ReturnCode.SCRIPT_FILE_NO_EXISTS;
+        String content = InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS;
         boolean flag = false;
         for(int i =0 ;i<pathArray.length;i++){
             Map<String, Object> map = new HashMap<>();

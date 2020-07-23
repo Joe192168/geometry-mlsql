@@ -1,5 +1,6 @@
 package com.geominfo.mlsql.service.user;
 
+import com.geominfo.mlsql.domain.vo.Account;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 
 import java.util.List;
@@ -62,4 +63,5 @@ public interface UserService {
       * return:
      */
     int updateUser(MlsqlUser mlsqlUser);
+    public Account loadAccount(String appId);
 }

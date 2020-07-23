@@ -11,12 +11,12 @@
             mlsqlTable.source_type AS sourceType,
             roleAuth.operate_type AS operateType
         FROM mlsql_user user
-        JOIN mlsql_role_member roleMember ON user.id=roleMember.mlsql_user_id
-        JOIN mlsql_group_role roleGroup ON roleMember.mlsql_group_role_id=roleGroup.id
-        JOIN mlsql_group mlsqlGroup ON mlsqlGroup.id=roleGroup.mlsql_group_id
-        JOIN mlsql_group_role_auth roleAuth ON roleMember.mlsql_group_role_id=roleAuth.mlsql_group_role_id
-        JOIN mlsql_table mlsqlTable ON roleAuth.mlsql_table_id=mlsqlTable.id
-        JOIN mlsql_group_table tableGroup ON roleAuth.mlsql_table_id=tableGroup.mlsql_table_id AND  roleGroup.mlsql_group_id=tableGroup.mlsql_group_id
+            JOIN mlsql_role_member roleMember ON user.id=roleMember.mlsql_user_id
+            JOIN mlsql_group_role roleGroup ON roleMember.mlsql_group_role_id=roleGroup.id
+            JOIN mlsql_group mlsqlGroup ON mlsqlGroup.id=roleGroup.mlsql_group_id
+            JOIN mlsql_group_role_auth roleAuth ON roleMember.mlsql_group_role_id=roleAuth.mlsql_group_role_id
+            JOIN mlsql_table mlsqlTable ON roleAuth.mlsql_table_id=mlsqlTable.id
+            JOIN mlsql_group_table tableGroup ON roleAuth.mlsql_table_id=tableGroup.mlsql_table_id AND  roleGroup.mlsql_group_id=tableGroup.mlsql_group_id
         WHERE user.name=#{name}
     </select>
     <select id="getTeamTable" parameterType="java.lang.Integer" resultType="com.geominfo.mlsql.domain.vo.MLSQLAuthTable">
@@ -27,7 +27,7 @@
             ,tables.source_type AS sourceType
             ,tables.id
         FROM mlsql_table tables
-        JOIN mlsql_group_table groups ON tables.id=groups.mlsql_table_id
+            JOIN mlsql_group_table groups ON tables.id=groups.mlsql_table_id
         WHERE mlsql_group_id=#{mlsql_group_id}
     </select>
     <insert id="insertMlsqlTable" parameterType="com.geominfo.mlsql.domain.vo.MLSQLAuthTable" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
@@ -83,9 +83,9 @@
             ,groups.name AS teamName
             ,group_concat(concat(roleAuth.operate_type)) AS operateType
         FROM mlsql_group_role groupRole
-        JOIN mlsql_group groups ON groupRole.mlsql_group_id=groups.id
-        JOIN mlsql_group_role_auth roleAuth ON groupRole.id=roleAuth.mlsql_group_role_id
-        JOIN mlsql_table tables ON roleAuth.mlsql_table_id=tables.id
+            JOIN mlsql_group groups ON groupRole.mlsql_group_id=groups.id
+            JOIN mlsql_group_role_auth roleAuth ON groupRole.id=roleAuth.mlsql_group_role_id
+            JOIN mlsql_table tables ON roleAuth.mlsql_table_id=tables.id
         WHERE groupRole.name=#{roleName} AND groups.name=#{teamName}
         GROUP BY tables.id,tables.name,tables.db,tables.table_type,
                   tables.source_type,groupRole.name,groups.name

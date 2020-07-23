@@ -1,10 +1,12 @@
 package com.geominfo.mlsql.controller.user;
 
+import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.*;
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.user.TeamRoleService;
 import com.geominfo.mlsql.service.user.UserService;
+import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import com.geominfo.mlsql.utils.MD5Scala;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,7 +31,7 @@ import java.util.*;
 @RequestMapping("/api_v1")
 @Api(value="用户组角色维护类",tags={"用户组角色维护接口"})
 @Log4j2
-public class TeamRoleController {
+public class TeamRoleController extends BaseController{
     @Autowired
     private TeamRoleService teamRoleService;
 
@@ -42,13 +44,12 @@ public class TeamRoleController {
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
     })
-    public Message createTeam(@RequestParam(value = "teamName", required = true) String teamName,
-                               @RequestParam(value = "userName", required = true) String userName){
-        MlsqlUser mlsqlUser = userService.getUserByName(userName); //replace token
+    public Message createTeam(@RequestParam(value = "teamName", required = true) String teamName){
+        MlsqlUser mlsqlUser = userService.getUserByName(userName);
         String res = teamRoleService.createTeam(mlsqlUser, teamName);
-        return res.equals(ReturnCode.SUCCESS) == true
-                ? new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"add new team").addData("data",res)
-                : new Message().error(ReturnCode.RETURN_ERROR_STATUS,res);
+        return res.equals(InterfaceReturnInformation.SUCCESS) == true
+                ? success(ReturnCode.RETURN_SUCCESS_STATUS,"add new team").addData("data",res)
+                : error(ReturnCode.RETURN_ERROR_STATUS,res);
 
     }
 
@@ -60,57 +61,43 @@ public class TeamRoleController {
     public Message checkTeamIsExists(@RequestParam(value = "teamName", required = true) String teamName){
         boolean res = teamRoleService.checkTeamNameValid(teamName);
         return res == true
-                ? new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"teamName no exists").addData("data",res)
-                : new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"teamName is exists").addData("data",res);
+                ? success(ReturnCode.RETURN_SUCCESS_STATUS,"teamName no exists").addData("data",res)
+                : success(ReturnCode.RETURN_SUCCESS_STATUS,"teamName is exists").addData("data",res);
     }
 
     @RequestMapping("/team")
     @ApiOperation(value = "获取用户所属组", httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
-    })
-    public Message team(@RequestParam(value = "userName", required = true) String userName){
+    public Message team(){
 
-        MlsqlUser user = userService.getUserByName(userName); //replace token
+        MlsqlUser user = userService.getUserByName(userName);
         List<String> groups = teamRoleService.teams(user, MlsqlGroupUser.owner);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get owner sucess").addData("data",groups);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get owner sucess").addData("data",groups);
     }
 
     @RequestMapping("/team/teamsIn")
     @ApiOperation(value = "获取用户组", httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
-    })
-    public Message teamsIn(@RequestParam(value = "userName", required = true) String userName){
+    public Message teamsIn(){
 
-        MlsqlUser user = userService.getUserByName(userName); //后续要代替token中的user
+        MlsqlUser user = userService.getUserByName(userName);
         List<String> groups = teamRoleService.teams(user, MlsqlGroupUser.confirmed);
         groups.addAll(teamRoleService.teams(user, MlsqlGroupUser.owner));
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get teams sucess").addData("data",groups);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get teams sucess").addData("data",groups);
     }
 
     @RequestMapping("/team/joined")
     @ApiOperation(value = "获取被邀请已加入组", httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
-    })
-    public Message joinedTeam(@RequestParam(value = "userName", required = true) String userName){
-
-        MlsqlUser user = userService.getUserByName(userName); //后续要代替token中的user
+    public Message joinedTeam(){
+        MlsqlUser user = userService.getUserByName(userName);
         List<String> groups = teamRoleService.teams(user, MlsqlGroupUser.confirmed);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get confirmed teams sucess").addData("data",groups);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get confirmed teams sucess").addData("data",groups);
     }
     
     @RequestMapping("/team/invited")
     @ApiOperation(value = "获取被邀请还未确认组名", httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
-    })
-    public Message invitedTeam(@RequestParam(value = "userName", required = true) String userName){
-
-        MlsqlUser user = userService.getUserByName(userName); //后续要代替token中的user
+    public Message invitedTeam(){
+        MlsqlUser user = userService.getUserByName(userName);
         List<String> groups = teamRoleService.teams(user, MlsqlGroupUser.invited);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get invited user team").addData("data",groups);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get invited user team").addData("data",groups);
     }
 
     @RequestMapping("/team/member/add")
@@ -123,9 +110,9 @@ public class TeamRoleController {
                                   @RequestParam(value = "userNames", required = true) String userNames){
 
         String res =  teamRoleService.addMember(teamName, Arrays.asList(userNames.split(",")));
-        return res.equals(ReturnCode.SUCCESS) == true
-                ? new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"user add team").addData("data",res)
-                : new Message().error(ReturnCode.RETURN_ERROR_STATUS,res);
+        return res.equals(InterfaceReturnInformation.SUCCESS) == true
+                ? success(ReturnCode.RETURN_SUCCESS_STATUS,"user add team").addData("data",res)
+                : error(ReturnCode.RETURN_ERROR_STATUS,res);
     }
 
     @RequestMapping("/team/role/add")
@@ -138,24 +125,22 @@ public class TeamRoleController {
                                 @RequestParam(value = "roleNames", required = true) String roleNames){
 
         String res = teamRoleService.addRoles(teamName, Arrays.asList(roleNames.split(",")));
-        return res.equals(ReturnCode.SUCCESS) == true
-                ? new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"team add role").addData("data",res)
-                : new Message().error(ReturnCode.RETURN_ERROR_STATUS,res);
+        return res.equals(InterfaceReturnInformation.SUCCESS) == true
+                ? success(ReturnCode.RETURN_SUCCESS_STATUS,"team add role").addData("data",res)
+                : error(ReturnCode.RETURN_ERROR_STATUS,res);
     }
 
     @RequestMapping("/team/member/accept")
     @ApiOperation(value = "用户被邀请同意操作", httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
+            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
     })
-    public Message accpetTeamMemberAdd(@RequestParam(value = "teamName", required = true) String teamName,
-                                        @RequestParam(value = "userName", required = true) String userName){
-        MlsqlUser user = userService.getUserByName(userName);//replace token
+    public Message accpetTeamMemberAdd(@RequestParam(value = "teamName", required = true) String teamName){
+        MlsqlUser user = userService.getUserByName(userName);
         String res = teamRoleService.updateMemberStatus(user, teamName, MlsqlGroupUser.confirmed);
-        return res.equals(ReturnCode.SUCCESS) == true
-                ? new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"update member accept status").addData("data",res)
-                : new Message().error(ReturnCode.RETURN_ERROR_STATUS,res);
+        return res.equals(InterfaceReturnInformation.SUCCESS) == true
+                ? success(ReturnCode.RETURN_SUCCESS_STATUS,"update member accept status").addData("data",res)
+                : error(ReturnCode.RETURN_ERROR_STATUS,res);
     }
 
     @RequestMapping("/team/member/remove")
@@ -167,22 +152,20 @@ public class TeamRoleController {
     public Message teamMemberRemove(@RequestParam(value = "teamName", required = true) String teamName,
                                      @RequestParam(value = "userName", required = true) String userName){
         String res = teamRoleService.removeMember(teamName, userName);
-        return res.equals(ReturnCode.SUCCESS) == true
-                ? new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"delete team member").addData("data",res)
-                : new Message().error(ReturnCode.RETURN_ERROR_STATUS,res);
+        return res.equals(InterfaceReturnInformation.SUCCESS) == true
+                ? success(ReturnCode.RETURN_SUCCESS_STATUS,"delete team member").addData("data",res)
+                : error(ReturnCode.RETURN_ERROR_STATUS,res);
     }
 
     @RequestMapping("/team/member/refuse")
     @ApiOperation(value = "用户被邀请拒绝操作", httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "用户名", name = "userName", dataType = "String", paramType = "query", required = true)
+            @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
     })
-    public Message refuseTeamMemberAdd(@RequestParam(value = "teamName", required = true) String teamName,
-                                        @RequestParam(value = "userName", required = true) String userName){
-        MlsqlUser user = userService.getUserByName(userName);//replace token
+    public Message refuseTeamMemberAdd(@RequestParam(value = "teamName", required = true) String teamName){
+        MlsqlUser user = userService.getUserByName(userName);
         String res = teamRoleService.updateMemberStatus(user, teamName, MlsqlGroupUser.refused);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"update member refuse status").addData("data",res);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"update member refuse status").addData("data",res);
     }
 
     @RequestMapping("/team/members")
@@ -194,10 +177,10 @@ public class TeamRoleController {
 
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         List<Map<String, Object>> groupUsers = teamRoleService.getGroupUserList(mlsqlGroup);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get group member").addData("data",groupUsers);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get group member").addData("data",groupUsers);
     }
 
     @RequestMapping("/team/roles")
@@ -208,10 +191,10 @@ public class TeamRoleController {
     public Message teamRoles(@RequestParam(value = "teamName", required = true) String teamName){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         List<String> roleList = teamRoleService.getGroupRoleList(mlsqlGroup.getId());
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get roles").addData("data",roleList);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get roles").addData("data",roleList);
     }
 
     @RequestMapping("/team/role/remove")
@@ -224,13 +207,13 @@ public class TeamRoleController {
                                    @RequestParam(value = "roleName", required = true) String roleName){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         MlsqlGroupRole mlsqlGroupRole = new MlsqlGroupRole();
         mlsqlGroupRole.setGroupId(mlsqlGroup.getId());
         mlsqlGroupRole.setName(roleName);
         int res = teamRoleService.deleteGroupRole(mlsqlGroupRole); //只删除角色，没有删除角色成员
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove role").addData("data",res);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove role").addData("data",res);
     }
 
     @RequestMapping("/role/member/add")
@@ -248,7 +231,7 @@ public class TeamRoleController {
                String res = teamRoleService.addMemberForRole(teamName, roleName, userName);
            }
        }
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"add role team member");
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"add role team member");
     }
 
     @RequestMapping("/role/members")
@@ -261,19 +244,19 @@ public class TeamRoleController {
                                    @RequestParam(value = "teamName", required = true) String teamName){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", roleName);
         map.put("groupId", mlsqlGroup.getId());
         MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
         if(mlsqlGroupRole == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_ROLE_NOT_EXISTS).addData("data", map);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", map);
         }
         map = new HashMap<String, Object>();
         map.put("groupRoleId", mlsqlGroupRole.getId());
         List<Map<String,Object>> mapResult = teamRoleService.roleMembers(map);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get role member").addData("data", mapResult);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get role member").addData("data", mapResult);
     }
 
     @RequestMapping("/role/member/remove")
@@ -288,21 +271,21 @@ public class TeamRoleController {
                                      @RequestParam(value = "userName", required = true) String userName){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", roleName);
         map.put("groupId", mlsqlGroup.getId());
         MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
         if(mlsqlGroupRole == null){
-            return new Message().error(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_ROLE_NOT_EXISTS).addData("data", map);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", map);
         }
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         MlsqlRoleMember mlsqlRoleMember = new MlsqlRoleMember();
         mlsqlRoleMember.setUserId(mlsqlUser.getId());
         mlsqlRoleMember.setGroupRoleId(mlsqlGroupRole.getId());
         teamRoleService.deleteRoleMember(mlsqlRoleMember);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove role team member").addData("data", mlsqlRoleMember);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove role team member").addData("data", mlsqlRoleMember);
     }
 
     @RequestMapping("/backends")
@@ -313,10 +296,10 @@ public class TeamRoleController {
     public Message backends(@RequestParam(value = "teamName", required = true) String teamName){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, ReturnCode.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return success(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         List<String> mlsqlBackendProxyList = teamRoleService.backends(mlsqlGroup);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get team backends list").addData("data", mlsqlBackendProxyList);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get team backends list").addData("data", mlsqlBackendProxyList);
     }
 
 

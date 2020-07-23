@@ -1,7 +1,6 @@
 package com.geominfo.mlsql.globalconstant;
 
 import com.geominfo.mlsql.domain.vo.TableTypeMeta;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -21,4 +20,8 @@ public class GlobalConstant {
     public static final int DEFAULT_INT_VALUE = 1;
     public static final String LOGIN_NAME = "appId";
     public static final String APP_NAME = "MLSQL_CONSOLE";
+    /**
+     * 默认系统标识
+     */
+    public static final String BIXT_ROOT = "10005";
 }
