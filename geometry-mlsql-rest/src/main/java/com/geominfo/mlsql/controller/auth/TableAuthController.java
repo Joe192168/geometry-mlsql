@@ -2,6 +2,7 @@ package com.geominfo.mlsql.controller.auth;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.*;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.auth.TableAuthService;
@@ -31,7 +32,7 @@ import java.util.Map;
 @RequestMapping(value = "/api_v1")
 @Api(value="用户表访问权限类",tags={"用户表访问权限接口"})
 @Log4j2
-public class TableAuthController {
+public class TableAuthController extends BaseController{
     @Autowired
     private TableAuthService tableAuthService;
 
@@ -81,10 +82,10 @@ public class TableAuthController {
     public Message teamTables(@RequestParam(value = "teamName", required = true) String teamName){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         List<Map<String, Object>> teamTables = tableAuthService.fetchTables(mlsqlGroup);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get team table list").addData("data", teamTables);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get team table list").addData("data", teamTables);
     }
 
     @RequestMapping("/team/table/add")
@@ -92,10 +93,10 @@ public class TableAuthController {
     public Message teamTableAdd(@RequestBody MLSQLAuthTable mlsqlAuthTable){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(mlsqlAuthTable.getTeamName());
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         String teamTables = tableAuthService.addTableForTeam(mlsqlAuthTable, mlsqlGroup.getId());
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"team add table auth").addData("data", teamTables);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"team add table auth").addData("data", teamTables);
     }
 
     @RequestMapping("/team/table/remove")
@@ -108,10 +109,10 @@ public class TableAuthController {
                                     @RequestParam(value = "tableId", required = true) int tableId){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         String res = tableAuthService.removeTable(mlsqlGroup, tableId);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove table").addData("data", res);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove table").addData("data", res);
     }
 
     @RequestMapping("/role/table/add")
@@ -128,17 +129,17 @@ public class TableAuthController {
                                  @RequestParam(value = "operateTypes", required = true) String operateTypes){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", roleName);
         map.put("groupId", mlsqlGroup.getId());
         MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
         if(mlsqlGroupRole == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
         }
         String res = tableAuthService.addTableForRole(mlsqlGroupRole.getId(), tableIds, operateTypes);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"add role table operator auth").addData("data", res);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"add role table operator auth").addData("data", res);
     }
 
     @RequestMapping("/role/table/remove")
@@ -153,17 +154,17 @@ public class TableAuthController {
                                 @RequestParam(value = "tableId", required = true) int tableId){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName);
         if(mlsqlGroup == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
+            return success(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_NOT_EXISTS).addData("data", mlsqlGroup);
         }
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", roleName);
         map.put("groupId", mlsqlGroup.getId());
         MlsqlGroupRole mlsqlGroupRole = teamRoleService.getGroupRole(map);
         if(mlsqlGroupRole == null){
-            return new Message().ok(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
+            return error(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.TEAM_ROLE_NOT_EXISTS).addData("data", mlsqlGroupRole);
         }
         String res = tableAuthService.removeRoleTable(mlsqlGroupRole.getId(), tableId);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"remove role table auth").addData("data", res);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove role table auth").addData("data", res);
     }
 
     @RequestMapping("/role/tables")
@@ -178,7 +179,7 @@ public class TableAuthController {
         map.put("roleName", roleName);
         map.put("teamName", teamName);
         List<Map<String, Object>> authTableDetail = tableAuthService.getAuthTableDetail(map);
-        return new Message().ok(ReturnCode.RETURN_SUCCESS_STATUS,"get table auth detail").addData("data", authTableDetail);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get table auth detail").addData("data", authTableDetail);
     }
 
 }

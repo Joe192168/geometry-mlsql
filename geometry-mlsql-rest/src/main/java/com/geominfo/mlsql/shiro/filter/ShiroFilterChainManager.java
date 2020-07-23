@@ -66,7 +66,15 @@ public class ShiroFilterChainManager {
     public Map<String,String> initGetFilterChain() {
         Map<String,String> filterChain = new LinkedHashMap<>();
         // -------------anon 默认过滤器忽略的URL
-        List<String> defalutAnon = Arrays.asList("/css/**","/js/**", "/swagger**", "/api_v1/user/register");
+        List<String> defalutAnon = Arrays.asList(
+                "/css/**",
+                "/js/**",
+                "/swagger-ui.html",
+                "/swagger-resources/**",
+                "/v2/api-docs",
+                "/webjars/springfox-swagger-ui/**",
+                "/api_v1/user/register"
+        );
         defalutAnon.forEach(ignored -> filterChain.put(ignored,"anon"));
         // -------------auth 默认需要认证过滤器的URL PasswordFilter
         List<String> defalutAuth = Arrays.asList("/api_v1/user/login");
