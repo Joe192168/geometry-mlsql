@@ -1,13 +1,16 @@
 package com.geominfo.mlsql.service.cluster.impl;
 
 
-import com.geominfo.mlsql.constants.Constants;
+
+import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.utils.NetWorkProxy;
 import com.geominfo.mlsql.utils.NetWorkUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * @program: springboot_console_test
@@ -29,47 +32,47 @@ public class ClusterUrlServiceImpl implements ClusterUrlService {
 
     @Override
     public ResponseEntity<String> synRunScript(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.RUN_SCRIPT , params) ;
+        return netWorkUtil.synPost(GlobalConstant.RUN_SCRIPT , params) ;
     }
 
     @Override
-    public ResponseEntity<String> aynRunScript(MultiValueMap<String, String> params) {
-        return netWorkUtil.aynPost(Constants.RUN_SCRIPT , params) ;
+    public ResponseEntity<String> aynRunScript(MultiValueMap<String, String> params) throws ExecutionException, InterruptedException {
+        return netWorkUtil.aynPost(GlobalConstant.RUN_SCRIPT , params) ;
     }
 
     @Override
     public ResponseEntity<String> runSQL(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.RUN_SQL , params) ;
+        return netWorkUtil.synPost(GlobalConstant.RUN_SQL , params) ;
     }
 
     @Override
     public ResponseEntity<String> backendList(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.BACKEND_LIST , params) ;
+        return netWorkUtil.synPost(GlobalConstant.BACKEND_LIST , params) ;
     }
 
     @Override
     public ResponseEntity<String> backendAdd(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.BACKEND_ADD , params) ;
+        return netWorkUtil.synPost(GlobalConstant.BACKEND_ADD , params) ;
     }
 
     @Override
     public ResponseEntity<String> backendRemove(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.BACKEND_REMOVE , params) ;
+        return netWorkUtil.synPost(GlobalConstant.BACKEND_REMOVE , params) ;
     }
 
     @Override
     public ResponseEntity<String> backendTagsUpdate(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.BACKEND_TAGS_UPDATE , params) ;
+        return netWorkUtil.synPost(GlobalConstant.BACKEND_TAGS_UPDATE , params) ;
     }
 
     @Override
     public ResponseEntity<String> backendNameCheck(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.BACKEND_NAME_CHECK , params) ;
+        return netWorkUtil.synPost(GlobalConstant.BACKEND_NAME_CHECK , params) ;
     }
 
     @Override
     public ResponseEntity<String> backendListNames(MultiValueMap<String, String> params) {
-        return netWorkUtil.synPost(Constants.BACKEND_LIST_NAMES , params) ;
+        return netWorkUtil.synPost(GlobalConstant.BACKEND_LIST_NAMES , params) ;
     }
 
 

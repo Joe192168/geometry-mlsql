@@ -1,8 +1,7 @@
 package com.geominfo.mlsql.utils;
 
 
-import com.geominfo.mlsql.constants.Constants;
-import org.springframework.stereotype.Component;
+
 import org.springframework.util.DigestUtils;
 
 import java.util.UUID;
@@ -14,36 +13,36 @@ import java.util.UUID;
  * @create: 2020-07-09 11:57
  * @version: 1.0.0
  */
-@Component
+
 public class CommandUtil {
 
 
     private static ParamsUtil paramsUtil = new ParamsUtil();
 
     public static String mlsqlClusterUrl(){
-        return paramsUtil.getParam(Constants.MLSQL_CLUSTER_URL , Constants.MLSQL_CLUSTER_DEFAULT_URL) ;
+        return paramsUtil.getParam("mlsql_cluster_url" , "192.168.20.209:9003") ;
     }
 
     public static String myUrl(){
-        return paramsUtil.getParam(Constants.MLSQL_MY_URL , Constants.MLSQL_MY_DEFAULT_URL) ;
+        return paramsUtil.getParam("my_url" ,"jdbc:mysql://192.168.2.239:3306/mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false") ;
     }
 
     public static String userHome(){
-        return paramsUtil.getParam(Constants.MLSQL_USER_HOME , Constants.MLSQL_USER_DEFAULT_HOME) ;
+        return paramsUtil.getParam("user_home" , "/home/mlsql") ;
     }
 
     public static String singleUserUploadBytes(){
-        return paramsUtil.getParam(Constants.SINGLE_USER_UPLOAD_BYTES ,
-                Constants.SINGLE_USER_UPLOAD_DEFAULT_BYTES+"") ;
+        return paramsUtil.getParam("single_user_upload_bytes" ,
+                1024l * 1024 * 125 + "") ;
     }
 
-    public static String enableAuthCenter(){
-        return paramsUtil.getParam(Constants.ENABLE_AUTH_CENTER , Constants.FALSE) ;
+    public static boolean enableAuthCenter(){
+        return Boolean.parseBoolean(paramsUtil.getParam("enable_auth_center", "false")) ;
     }
 
     public static String auth_secret()
     {
-        return paramsUtil.getParam(Constants.AUTH_SECRET , UUID.randomUUID().toString()) ;
+        return paramsUtil.getParam("auth_secret" , UUID.randomUUID().toString()) ;
     }
 
     public static String md5(String text)

@@ -1,7 +1,8 @@
 package com.geominfo.mlsql.utils;
 
 
-import com.geominfo.mlsql.constants.Constants;
+
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.http.HttpEntity;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
@@ -44,11 +44,6 @@ public class NetWorkUtil {
       * @return: 请求结果
      */
     public ResponseEntity<String> synPost(String url , MultiValueMap<String, String> postParameters){
-        if(CollectionUtils.isEmpty(postParameters))
-        {
-            log.info("请求参数不能为空!");
-            return null ;
-        }
         log.info("synPost url = "+ url);
         return synNetWorkUtil(url ,postParameters) ;
     }
@@ -67,7 +62,7 @@ public class NetWorkUtil {
 
     private ResponseEntity<String> synNetWorkUtil(String url  , MultiValueMap<String, String> postParameters) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(Constants.ACCEPT, Constants.APPLICATION_JSON);
+        headers.add("Accept", "application/json");
         HttpEntity<MultiValueMap<String, String>> requestEntity =
                 new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
         ResponseEntity<String> responseEntityPost = restTemplate.postForEntity(url,
@@ -87,21 +82,15 @@ public class NetWorkUtil {
       *
       * @return:
      */
-    public ResponseEntity<String> aynPost(String url ,MultiValueMap<String, String> postParameters)
-    {
-        if(CollectionUtils.isEmpty(postParameters))
-        {
-            log.info("请求参数不能为空!");
-            return  new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> aynPost(String url ,MultiValueMap<String, String> postParameters) throws ExecutionException, InterruptedException {
 
-       if( !postParameters.containsKey(Constants.CALLBACK))
+       if( !postParameters.containsKey("callback"))
        {
            log.info("必须填写回调接口!");
            return  new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
        }
 
-        postParameters.add(Constants.ASYNC, Constants.TRUE);
+        postParameters.add("async", "true");
        return aynNetWorkUtil(url ,postParameters) ;
 
     }
@@ -118,31 +107,23 @@ public class NetWorkUtil {
       *
       * @return: void
      */
-    private ResponseEntity<String> aynNetWorkUtil(String url , MultiValueMap<String, String> postParameters) {
+    private ResponseEntity<String> aynNetWorkUtil(String url , MultiValueMap<String, String> postParameters) throws ExecutionException, InterruptedException {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(Constants.ACCEPT, Constants.APPLICATION_JSON);
+        headers.add("Accept", "application/json");
         HttpEntity<MultiValueMap<String, String>> requestEntity =
                 new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
         ListenableFuture<ResponseEntity<String>> entity = asyncRestTemplate().postForEntity(url,
                 requestEntity, String.class);
-
-        try {
             return entity.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
 
-        return new ResponseEntity(HttpStatus.OK) ;
     }
 
 
     private AsyncRestTemplate asyncRestTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(Constants.ONE_HUNDRED);
-        factory.setReadTimeout(Constants.TOW_HUNDRED);
+        factory.setConnectTimeout(100);
+        factory.setReadTimeout(200);
         factory.setTaskExecutor(new SimpleAsyncTaskExecutor());
         return new AsyncRestTemplate(factory);
     }

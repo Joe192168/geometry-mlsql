@@ -1,17 +1,18 @@
 package com.geominfo.mlsql.service.progress.impl;
 
-import com.geominfo.mlsql.constants.Constants;
+
+import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.service.progress.ExecutedProgressService;
-import com.geominfo.mlsql.utils.NetWorkProxy;
-import com.geominfo.mlsql.utils.NetWorkUtil;
+
 import com.sun.istack.internal.NotNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
+
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -41,14 +42,14 @@ public class ExecutedProgressServiceImpl implements ExecutedProgressService {
       * @return:
      */
     @Override
-    public void getProgress(@NotNull String jobName , @NotNull String callBackUrl ) {
+    public void getProgress(@NotNull String jobName , @NotNull String callBackUrl ) throws ExecutionException, InterruptedException {
 
-        String script = Constants.SHOW_JOBS + jobName.trim() +  Constants.SEMICOLON;
+        String script = GlobalConstant.SHOW_JOBS + jobName.trim() +  GlobalConstant.SEMICOLON;
         MultiValueMap<String, String> curpostParameters = new LinkedMultiValueMap<String, String>();
-        curpostParameters.add(Constants.SQL ,script);
-        curpostParameters.add( Constants.CALLBACK, callBackUrl.trim());
+        curpostParameters.add(GlobalConstant.SQL ,script);
+        curpostParameters.add( GlobalConstant.CALLBACK, callBackUrl.trim());
         clusterUrlService.aynRunScript(curpostParameters) ;
-//        netWorkUtil.aynPost(Constants.RUN_SCRIPT ,curpostParameters);
+//        netWorkUtil.aynPost(GlobalConstant.RUN_SCRIPT ,curpostParameters);
     }
 
 

@@ -2,7 +2,7 @@ package com.geominfo.mlsql.service.file.impl;
 
 
 
-import com.geominfo.mlsql.constants.Constants;
+import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +30,8 @@ public class FileServerDaemonServiceImpl {
 
     public void init(){
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor() ;
-        AtomicLong upLoadTime = new AtomicLong(Constants.ZERO) ;
-        if(upLoadTime.getAndIncrement() == Constants.ZERO)
+        AtomicLong upLoadTime = new AtomicLong(GlobalConstant.ZERO) ;
+        if(upLoadTime.getAndIncrement() == GlobalConstant.ZERO)
             run(executor) ;
     }
 
@@ -41,9 +41,9 @@ public class FileServerDaemonServiceImpl {
             @Override
             public void run() {
 
-                File file = new File(Constants.DEFAULT_TEMP_PATH) ;
+                File file = new File(GlobalConstant.DEFAULT_TEMP_PATH) ;
                 Arrays.stream(file.listFiles()).forEach(f -> {
-                    if(System.currentTimeMillis() - f.lastModified() > Constants.FILE_MAX_BYTES)
+                    if(System.currentTimeMillis() - f.lastModified() > GlobalConstant.FILE_MAX_BYTES)
                     {
                         try {
                             FileUtils.deleteDirectory(f);
@@ -54,7 +54,7 @@ public class FileServerDaemonServiceImpl {
                     }
                 }) ;
             }
-        } ,Constants.SIXTY , Constants.SIXTY , TimeUnit.SECONDS) ;
+        } ,GlobalConstant.SIXTY , GlobalConstant.SIXTY , TimeUnit.SECONDS) ;
     }
 
 

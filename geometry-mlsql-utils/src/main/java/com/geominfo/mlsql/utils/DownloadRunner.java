@@ -1,7 +1,6 @@
 package com.geominfo.mlsql.utils;
 
 
-import com.geominfo.mlsql.constants.Constants;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -15,15 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @program: geometry-mlsql
- * @description: 文件下载工具类
- * @author: BJZ
- * @create: 2020-07-09 14:43
- * @version: 1.0.0
+ * Created by allwefantasy on 11/7/2017.
  */
 public class DownloadRunner {
 
-   static Logger  logger = LoggerFactory.getLogger(DownloadRunner.class);
+    static Logger logger = LoggerFactory.getLogger(DownloadRunner.class);
 
     private static final String HEADER_KEY = "Content-Disposition";
     private static final String HEADER_VALUE = "attachment; filename=";
@@ -36,7 +31,7 @@ public class DownloadRunner {
                 files.add(p);
             } else if (p.isDirectory()) {
                 File[] fileStatusArr = p.listFiles();
-                if (fileStatusArr != null && fileStatusArr.length > Constants.ZERO) {
+                if (fileStatusArr != null && fileStatusArr.length > 0) {
                     for (File file : fileStatusArr) {
                         iteratorFiles(file.getPath(), files);
                     }
@@ -48,65 +43,58 @@ public class DownloadRunner {
 
     public static int getTarFileByTarFile(HttpServletResponse response, String pathStr) throws UnsupportedEncodingException {
 
-        String[] fileChunk = pathStr.split(Constants.HTTP_SEPARATED);
-        response.setContentType(Constants.APPLICATION_OCTET_STREAM);
+        String[] fileChunk = pathStr.split("/");
+        response.setContentType("application/octet-stream");
         //response.setHeader("Transfer-Encoding", "chunked");
-        response.setHeader(HEADER_KEY, HEADER_VALUE +
-                Constants.THE_BACKSLASH + URLEncoder.encode(fileChunk[fileChunk.length - Constants.ONE],
-                Constants.ENCODE) + Constants.THE_BACKSLASH);
+        response.setHeader(HEADER_KEY, HEADER_VALUE + "\"" + URLEncoder.encode(fileChunk[fileChunk.length - 1], "utf-8") + "\"");
 
         try {
             org.apache.commons.io.IOUtils.copyLarge(new FileInputStream(new File(pathStr)), response.getOutputStream());
         } catch (Exception e) {
             e.printStackTrace();
-            return Constants.FIVE_HUNDRED;
+            return 500;
 
         }
-        return Constants.TOW_HUNDRED;
+        return 200;
     }
 
     public static int getTarFileByPath(HttpServletResponse response, String pathStr) throws UnsupportedEncodingException {
 
-        String[] fileChunk = pathStr.split(Constants.HTTP_SEPARATED);
-        response.setContentType(Constants.APPLICATION_OCTET_STREAM);
+        String[] fileChunk = pathStr.split("/");
+        response.setContentType("application/octet-stream");
         //response.setHeader("Transfer-Encoding", "chunked");
-        response.setHeader(HEADER_KEY, HEADER_VALUE + Constants.THE_BACKSLASH +
-                URLEncoder.encode(fileChunk[fileChunk.length - Constants.ONE] + Constants.TAR,
-                        Constants.ENCODE) + Constants.THE_BACKSLASH);
+        response.setHeader(HEADER_KEY, HEADER_VALUE + "\"" + URLEncoder.encode(fileChunk[fileChunk.length - 1] + ".tar", "utf-8") + "\"");
 
 
         try {
             OutputStream outputStream = response.getOutputStream();
+
             ArchiveOutputStream tarOutputStream = new TarArchiveOutputStream(outputStream);
+
             List<File> files = new ArrayList<File>();
+
             iteratorFiles(pathStr, files);
 
-            if (files.size() > Constants.ZERO) {
+            if (files.size() > 0) {
                 InputStream inputStream = null;
                 int len = files.size();
-                int i = Constants.ONE;
+                int i = 1;
                 for (File cur : files) {
-                    logger.info(Constants.LEFT_BRACKETS + i++
-                            + Constants.HTTP_SEPARATED + len + Constants.RIGHT_BRACKETS +
-                            Constants.READ_FILE + cur.getPath() +
-                            Constants.ENTRY_NAME + fileChunk[fileChunk.length - Constants.ONE] + cur.getPath()
-                            .substring(pathStr.length()));
-
+                    logger.info("[" + i++ + "/" + len + "]" + ",读取文件" + cur.getPath() + " entryName:" + fileChunk[fileChunk.length - 1] + cur.getPath().substring(pathStr.length()));
                     inputStream = new FileInputStream(cur);
-                    ArchiveEntry entry = tarOutputStream.createArchiveEntry(cur,
-                            fileChunk[fileChunk.length - Constants.ONE] + cur.getPath().substring(pathStr.length()));
+                    ArchiveEntry entry = tarOutputStream.createArchiveEntry(cur, fileChunk[fileChunk.length - 1] + cur.getPath().substring(pathStr.length()));
                     tarOutputStream.putArchiveEntry(entry);
                     org.apache.commons.io.IOUtils.copyLarge(inputStream, tarOutputStream);
                     tarOutputStream.closeArchiveEntry();
                 }
                 tarOutputStream.flush();
                 tarOutputStream.close();
-                return Constants.TOW_HUNDRED;
-            } else return Constants.FOUR_HUNDRED;
+                return 200;
+            } else return 400;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Constants.FIVE_HUNDRED;
+            return 500;
 
         }
     }

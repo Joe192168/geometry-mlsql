@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
+import java.util.concurrent.ExecutionException;
+
 
 /**
  * @program: springboot_console_test
@@ -18,7 +20,7 @@ public interface ClusterUrlService {
 
     ResponseEntity<String> runScript( String sql) ;
     ResponseEntity<String> synRunScript(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> aynRunScript(MultiValueMap<String, String> params) ;
+    ResponseEntity<String> aynRunScript(MultiValueMap<String, String> params) throws ExecutionException, InterruptedException;
     ResponseEntity<String> runSQL(MultiValueMap<String, String> params) ;
     ResponseEntity<String> backendList(MultiValueMap<String, String> params) ;
     ResponseEntity<String> backendAdd(MultiValueMap<String, String> params) ;

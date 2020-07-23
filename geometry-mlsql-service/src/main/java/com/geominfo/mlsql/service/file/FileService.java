@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @program: geometry-mlsql
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 @Service
 public interface FileService<T> {
 
-    T formUpload(HttpServletRequest request) ;
+    T formUpload(HttpServletRequest request) throws ExecutionException, InterruptedException;
     T download(Object o, HttpServletResponse response) ;
-    T publicDownload(Object o , HttpServletResponse response) ;
+    T publicDownload(Object o , HttpServletResponse response) throws ExecutionException, InterruptedException;
 }

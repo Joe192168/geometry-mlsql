@@ -1,6 +1,7 @@
 package com.geominfo.mlsql.utils;
 
-import com.geominfo.mlsql.constants.Constants;
+
+
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -20,12 +21,12 @@ public class NetWorkProxy implements MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        if (objects.length > Constants.ZERO) {
-            String url = (String) objects[Constants.ZERO];
-            if (!url.startsWith(Constants.HTTP_HEAD_ONE)) {
-                objects[Constants.ZERO] = Constants.HTTP_HEAD_TOW + CommandUtil.mlsqlClusterUrl() + url + Constants.HTTP_SEPARATED;
+        if (objects.length > 0) {
+            String url = (String) objects[0];
+            if (!url.startsWith("http:")) {
+                objects[0] = "http://" + CommandUtil.mlsqlClusterUrl() + url + "/";
             } else {
-                objects[Constants.ZERO] = CommandUtil.mlsqlClusterUrl() + url + Constants.HTTP_SEPARATED;
+                objects[0] = CommandUtil.mlsqlClusterUrl() + url +  "/";
             }
         }
         Object result = methodProxy.invokeSuper(o, objects);

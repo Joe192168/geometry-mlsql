@@ -15,4 +15,5 @@ import javax.servlet.http.HttpServletRequest;
 public interface ClusterProxyService {
 
     <T> T clusterManager(Object o) ;
+    <T> T runScript(Object o) ;
 }

@@ -1,7 +1,8 @@
 package com.geominfo.mlsql.utils;
 
 
-import com.geominfo.mlsql.constants.Constants;
+
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,13 +27,13 @@ public class PathFunUtil {
     {
         this.rootPath = rootPath ;
         endPath = new ArrayList<>() ;
-        endPath.add(stripSuffix(rootPath , Constants.HTTP_SEPARATED)) ;
+        endPath.add(stripSuffix(rootPath , "/")) ;
     }
 
 
     public  PathFunUtil add(String path)
     {
-        String curStr = stripSuffix(stripSuffix(path ,Constants.HTTP_SEPARATED) ,Constants.HTTP_SEPARATED) ;
+        String curStr = stripSuffix(stripSuffix(path ,"/") ,"/") ;
         if(!curStr.isEmpty()){
             endPath.add(curStr) ;
         }
@@ -51,10 +52,10 @@ public class PathFunUtil {
     {
         StringBuilder stringBuilder = new StringBuilder() ;
         int len = endPath.size();
-        for(int i = Constants.ZERO ; i < len ; i++){
+        for(int i = 0 ; i < len ; i++){
             stringBuilder.append(endPath.get(i)) ;
-            if( i != len - Constants.ONE ){
-                stringBuilder .append(Constants.HTTP_SEPARATED) ;
+            if( i != len - 1 ){
+                stringBuilder .append("/") ;
             }
         }
         return stringBuilder.toString() ;
@@ -73,7 +74,7 @@ public class PathFunUtil {
     public  String stripSuffix(String target ,String suffix)
     {
         if(target.endsWith(suffix))
-            return target.substring(Constants.ZERO , target.length() - suffix.length()) ;
+            return target.substring(0 , target.length() - suffix.length()) ;
         else
             return target ;
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.BackendProxyMapper">
+    <select id="getBackendProxyByName"  parameterType="java.lang.String" resultType="com.geominfo.mlsql.domain.vo.MlsqlBackendProxy">
+        SELECT *
+        FROM mlsql_backend_proxy
+        WHERE name=#{backendName}
+    </select>
+
+    <insert id="intsertBackendProxy" parameterType="com.geominfo.mlsql.domain.vo.MlsqlBackendProxy">
+        INSERT INTO mlsql_backend_proxy(groupId)
+        VALUES(#{groupId,jdbcType=INTEGER})
+    </insert>
+
+
+    <delete id="deleteBackendProxy" parameterType="com.geominfo.mlsql.domain.vo.MlsqlBackendProxy">
+        DELETE FROM mlsql_backend_proxy
+        WHERE backend_name=#{backendName} AND mlsql_group_id=#{groupId}
+    </delete>
+
+</mapper>

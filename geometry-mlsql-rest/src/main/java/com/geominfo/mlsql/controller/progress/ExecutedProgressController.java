@@ -1,6 +1,7 @@
 package com.geominfo.mlsql.controller.progress;
 
 import com.alibaba.fastjson.JSONArray;
+import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlProgressInfo;
 import com.geominfo.mlsql.service.progress.ExecutedProgressService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @program: geometry-mlsql
@@ -31,7 +33,7 @@ import java.util.List;
 @RequestMapping("/progress")
 @Api(value="脚本执行监听进度口类",tags={"脚本执行监听进度口类"})
 @Log4j2
-public class ExecutedProgressController {
+public class ExecutedProgressController  extends BaseController{
 
     @Autowired
     private Message message ;
@@ -90,7 +92,7 @@ public class ExecutedProgressController {
                     dataType = "String", paramType = "query", required = true)
     })
     public Message getprogress(@RequestParam(value = "jobName", required = true)@NotNull String jobName
-            , @RequestParam(value = "callBackUrl", required = true)@NotNull String callBackUrl) {
+            , @RequestParam(value = "callBackUrl", required = true)@NotNull String callBackUrl) throws ExecutionException, InterruptedException {
 
         executedProgressService.getProgress(jobName, callBackUrl);
         return message.ok(200, "get progress success").addData("data", "success");

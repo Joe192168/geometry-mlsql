@@ -1,6 +1,8 @@
 package com.geominfo.mlsql.service.progress;
 
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * @program: geometry-mlsql
  * @description: 脚本执行进度资源获取服务接口
@@ -10,6 +12,6 @@ package com.geominfo.mlsql.service.progress;
  */
 public interface ExecutedProgressService {
 
-    void getProgress(String jobName, String callBackUrl);
+    void getProgress(String jobName, String callBackUrl) throws ExecutionException, InterruptedException;
 
 }
