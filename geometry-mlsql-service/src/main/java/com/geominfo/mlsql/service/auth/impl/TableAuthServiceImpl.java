@@ -49,6 +49,7 @@ public class TableAuthServiceImpl implements TableAuthService {
         if (forbidden(mlsqlTable, home)) return false;
         if (withoutAuthSituation(mlsqlTable, home)) return true;
         String operateType = mlsqlTable.getOperateType().get("name");
+        key = key +"_"+operateType;
         if(authTables.get(key) != null && authTables.get(key).equals(operateType)){
             return true;
         }

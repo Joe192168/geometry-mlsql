@@ -22,6 +22,7 @@ public abstract class BaseController {
     protected String userName;
     protected Map<String, String> requestParams;
     protected Map<String, String> headers;
+    protected String tokenId;
 
     /**
       * description: get message from request
@@ -38,6 +39,7 @@ public abstract class BaseController {
             String jwt = WebUtils.toHttp(request).getHeader("authorization");
             JwtAccount jwtAccount = JsonWebTokenUtil.parseJwt(jwt);
             this.userName = jwtAccount.getAppId();
+            this.tokenId = jwtAccount.getTokenId();
         }
     }
     /**

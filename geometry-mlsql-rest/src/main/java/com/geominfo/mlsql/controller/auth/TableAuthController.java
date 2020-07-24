@@ -41,22 +41,25 @@ public class TableAuthController extends BaseController{
 
     @RequestMapping("/verify/tables")
     @ApiOperation(value = "验证表是否授权接口", httpMethod = "GET")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "MLSQLTable表json格式信息", name = "tables", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "owner", name = "owner", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "home", name = "home", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "auth_secret", name = "auth_secret", dataType = "String", paramType = "query", required = true)
-    })
-    public List<Boolean> getVerifyAuthTable(@ApiParam(value="tables", required = true) String tables,
-                                       @ApiParam(value="owner", required = true) String owner,
-                                       @ApiParam(value="home", required = true) String home,
-                                       @ApiParam(value="auth_secret", required = false) String auth_secret){
+    public String getVerifyAuthTable(@RequestParam Map params){
+
+        String tables =  params.containsKey("tables")?(String) params.get("tables"):"";
+        String owner =  params.containsKey("owner")?(String) params.get("owner"):"";
+        String home =  params.containsKey("home")?(String) params.get("home"):"";
+        String auth_secret =  params.containsKey("auth_secret")?(String) params.get("auth_secret"):"";
+
+        if(auth_secret.equals("") || auth_secret.equals(tokenId) == false){
+            return ReturnCode.FORBIDDEN_STATUS.toString();
+        }
+        if(tables.equals("") || owner.equals("")){
+            return ReturnCode.RETURN_ERROR_STATUS.toString();
+        }
         List<MLSQLAuthTable> authTablesInit = tableAuthService.fetchAuth(owner);
         Map<String, String> authTables = new HashMap<String, String>();
         List<Boolean> verifyAuth = new ArrayList<Boolean>();
         for(MLSQLAuthTable table : authTablesInit){
-           String key =  table.getDb() + "_" + table.getTableName() + "_" + table.getTableType() + "_" + table.getSourceType();
            String operateType = table.getOperateType();
+           String key =  table.getDb() + "_" + table.getTableName() + "_" + table.getTableType() + "_" + table.getSourceType() + "_" +operateType;
            authTables.put(key, operateType);
         }
 
@@ -71,7 +74,7 @@ public class TableAuthController extends BaseController{
             boolean verify = tableAuthService.checkAuth(key, mlsqlTable, home, authTables);
             verifyAuth.add(verify);
         }
-        return verifyAuth;
+        return JSONObject.toJSONString(verifyAuth);
     }
 
     @RequestMapping("/team/tables")
