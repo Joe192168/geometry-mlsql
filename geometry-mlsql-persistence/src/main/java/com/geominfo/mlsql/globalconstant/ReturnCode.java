@@ -5,9 +5,10 @@ package com.geominfo.mlsql.globalconstant;
  * @description: ReturnCode
  * @author: anan
  * @create: 2020-07-14 09:46
- * @version: 1.0.0
+ * @version: 1.0.0 forbidden
  */
 public class ReturnCode {
     public static Integer RETURN_SUCCESS_STATUS = 200;
     public static Integer RETURN_ERROR_STATUS = 400;
+    public static Integer FORBIDDEN_STATUS = 403;
 }
