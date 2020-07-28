@@ -31,7 +31,7 @@ import java.util.Map;
  * @version: 1.0.0
  */
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+//@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ShiroFilterChainManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShiroFilterChainManager.class);
@@ -77,20 +77,20 @@ public class ShiroFilterChainManager {
         );
         defalutAnon.forEach(ignored -> filterChain.put(ignored,"anon"));
         // -------------auth 默认需要认证过滤器的URL PasswordFilter
-        List<String> defalutAuth = Arrays.asList("/api_v1/user/login");
-        defalutAuth.forEach(auth -> filterChain.put(auth,"auth"));
-        // -------------dynamic 动态URL 角色验证
-        if (shiroFilterRulesProvider != null) {
-            List<RolePermRule> rolePermRules = this.shiroFilterRulesProvider.loadRolePermRules();
-            if (null != rolePermRules) {
-                rolePermRules.forEach(rule -> {
-                    StringBuilder Chain = rule.toFilterChain();
-                    if (null != Chain) {
-                        filterChain.putIfAbsent(rule.getUrl(),Chain.toString());
-                    }
-                });
-            }
-        }
+//        List<String> defalutAuth = Arrays.asList("/api_v1/user/login");
+//        defalutAuth.forEach(auth -> filterChain.put(auth,"auth"));
+//        // -------------dynamic 动态URL 角色验证
+//        if (shiroFilterRulesProvider != null) {
+//            List<RolePermRule> rolePermRules = this.shiroFilterRulesProvider.loadRolePermRules();
+//            if (null != rolePermRules) {
+//                rolePermRules.forEach(rule -> {
+//                    StringBuilder Chain = rule.toFilterChain();
+//                    if (null != Chain) {
+//                        filterChain.putIfAbsent(rule.getUrl(),Chain.toString());
+//                    }
+//                });
+//            }
+//        }
         return filterChain;
     }
     // 动态重新加载过滤链规则

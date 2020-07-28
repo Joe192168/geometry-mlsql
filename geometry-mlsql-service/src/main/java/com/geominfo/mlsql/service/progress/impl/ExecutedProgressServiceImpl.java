@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -45,7 +47,7 @@ public class ExecutedProgressServiceImpl implements ExecutedProgressService {
     public void getProgress(@NotNull String jobName , @NotNull String callBackUrl ) throws ExecutionException, InterruptedException {
 
         String script = GlobalConstant.SHOW_JOBS + jobName.trim() +  GlobalConstant.SEMICOLON;
-        MultiValueMap<String, String> curpostParameters = new LinkedMultiValueMap<String, String>();
+        LinkedMultiValueMap<String, String>  curpostParameters = new LinkedMultiValueMap<>();
         curpostParameters.add(GlobalConstant.SQL ,script);
         curpostParameters.add( GlobalConstant.CALLBACK, callBackUrl.trim());
         clusterUrlService.aynRunScript(curpostParameters) ;

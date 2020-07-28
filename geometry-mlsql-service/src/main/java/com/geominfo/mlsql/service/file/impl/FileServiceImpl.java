@@ -159,7 +159,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
     private T runUpload(String finalDir, int type) throws ExecutionException, InterruptedException {
 
         //  TreeMap<String ,String> newParams = new TreeMap<>() ;
-        MultiValueMap<String, String> newParams = new LinkedMultiValueMap<String, String>();
+        LinkedMultiValueMap<String, String> newParams = new LinkedMultiValueMap<String, String>();
 
         switch (type) {
             case GlobalConstant.ZERO:
@@ -169,18 +169,18 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
             case GlobalConstant.ONE:
                 newParams.add(GlobalConstant.SQL, GlobalConstant.RUN_COMMAND_UPLOADFILETOSERVIEREXT +
-                        finalDir + GlobalConstant.TOKEN_NAME_AND_TOKENVALUE + "accessToken"); //说明：这里的accessToken 需要用到用户权限模块，这里暂时写死
+                        finalDir + GlobalConstant.TOKEN_NAME_AND_TOKENVALUE + newParams.getFirst("accessToken"));
                 break;
 
             default:
                 break;
         }
 
-        newParams.add(GlobalConstant.OWNER, "userName"); //用户名等用户权限模块开发，直接动态获取，这里先暂时写死
+        newParams.add(GlobalConstant.OWNER, newParams.getFirst("owner"));
         newParams.add(GlobalConstant.JOB_NAME, UUID.randomUUID().toString());
         newParams.add(GlobalConstant.SESSION_PERUSER, GlobalConstant.TRUE);
         newParams.add(GlobalConstant.SHOW_STACK, GlobalConstant.SHOW_STACK);
-        newParams.add(GlobalConstant.TAGS, GlobalConstant.TAGS); //这里也是需要用到用户权限模块，暂时写死
+//        newParams.add(GlobalConstant.TAGS, GlobalConstant.TAGS); //这里也是需要用到用户权限模块，暂时写死
 
         String myUrl = CommandUtil.myUrl().isEmpty() ? CommandUtil.mlsqlClusterUrl() : CommandUtil.myUrl();
 

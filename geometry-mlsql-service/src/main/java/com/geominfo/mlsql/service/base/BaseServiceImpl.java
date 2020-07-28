@@ -1,12 +1,11 @@
 package com.geominfo.mlsql.service.base;
 
-
-
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @program: springboot_console_test
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BaseServiceImpl {
 
-    protected MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<String, String>();
+//    protected Map<String, Object> paramsMap = new HashMap<>();
 
     protected String[] params(String key ,HttpServletRequest request) {
         return request.getParameterMap().get(key);
@@ -31,7 +30,6 @@ public class BaseServiceImpl {
     {
         return request.getParameterMap().containsKey(key) ;
     }
-
 
 
 

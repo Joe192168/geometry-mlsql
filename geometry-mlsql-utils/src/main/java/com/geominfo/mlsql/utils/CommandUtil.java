@@ -16,10 +16,9 @@ import java.util.UUID;
 
 public class CommandUtil {
 
-
     private static ParamsUtil paramsUtil = new ParamsUtil();
-
     public static String mlsqlClusterUrl(){
+
         return paramsUtil.getParam("mlsql_cluster_url" , "192.168.20.209:9003") ;
     }
 

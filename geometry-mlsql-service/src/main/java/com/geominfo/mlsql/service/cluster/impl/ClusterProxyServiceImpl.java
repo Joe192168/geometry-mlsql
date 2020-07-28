@@ -1,7 +1,6 @@
 package com.geominfo.mlsql.service.cluster.impl;
 
 
-
 import com.geominfo.mlsql.domain.vo.MlsqlBackendProxy;
 
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
@@ -16,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 
 /**
@@ -33,7 +30,6 @@ import java.util.UUID;
 public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterProxyService {
     Logger logger = LoggerFactory.getLogger(ClusterProxyServiceImpl.class);
 
-
     @Autowired
     private ClusterUrlService clusterUrlService;
 
@@ -41,25 +37,21 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
     private BackendProxyService backendProxyService;
 
     @Override
-    public <T> T clusterManager(Object o) {
+    public <T> T clusterManager(LinkedMultiValueMap<String, String> paramsMap) {
 
         ResponseEntity<String> result = null;
 
+        if(paramsMap.getFirst("action").equals("/backend/name/check"))
+        {
+            paramsMap.remove("teamName") ;
+        }
+
         String myUrl = CommandUtil.myUrl().isEmpty() ? CommandUtil.mlsqlClusterUrl() : CommandUtil.myUrl();
-        paramsMap.add(GlobalConstant.CONTEXT_DEFAULT_INCLUDE_URL, myUrl + GlobalConstant.SCRIPT_FILE_INCLUDE);
-        paramsMap.remove(GlobalConstant.TEAM_NAME);
+        paramsMap.add("context.__default__include_fetch_url__", myUrl + GlobalConstant.SCRIPT_FILE_INCLUDE);
 
-//        String[] actions = params(GlobalConstant.ACTION, request);
-//
-//        if(actions.length == GlobalConstant.ZERO )
-//            return (T)"参数异常";
-//
-//        String action = actions[GlobalConstant.ZERO] ;
 
-        MultiValueMap<String, String> params = (MultiValueMap<String, String>) o;
-        String action = params.getFirst(GlobalConstant.ACTION);
-        String teamName = params.getFirst("teamName");
-        String name = params.getFirst("name");
+        String action = paramsMap.getFirst("action");
+        String name = paramsMap.getFirst("name");
 
 
         switch (action) {
@@ -70,13 +62,15 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
                 result = clusterUrlService.backendAdd(paramsMap);
                 if (result.getStatusCode().value() == GlobalConstant.TOW_HUNDRED) {
                     //同时在后台添加用户
+                    String teamName = paramsMap.getFirst("teamName");
                     backendProxyService.intsertBackendProxy(teamName, name);
                     logger.info("backendAdd request status  ");
                 }
                 break;
             case GlobalConstant.BACKEND_REMOVE:
                 //同时删除数据库里面内容
-                backendProxyService.deleteBackendProxy((MlsqlBackendProxy) backendProxyService.getBackendProxyByName(name));
+                backendProxyService.deleteBackendProxy((MlsqlBackendProxy)
+                        backendProxyService.getBackendProxyByName(name));
 
                 result = clusterUrlService.backendRemove(paramsMap);
                 break;
@@ -84,7 +78,7 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
                 result = clusterUrlService.backendTagsUpdate(paramsMap);
                 break;
 
-            case GlobalConstant.BACKEND_NAME_CHECK:
+            case "/backend/name/check":
                 result = clusterUrlService.backendNameCheck(paramsMap);
                 break;
 
@@ -101,19 +95,7 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
 
 
     @Override
-    public <T> T runScript(Object o) {
-
-        paramsMap = (MultiValueMap<String, String>) o; //这里后期需要优化，直接获取参数
-
-        //这些参数，应该封装在底层基础类里。这里暂时写死
-        paramsMap.add("jobName", UUID.randomUUID().toString());
-        paramsMap.add("skipAuth", GlobalConstant.FALSE);
-        paramsMap.add("background", GlobalConstant.FALSE);
-        paramsMap.add("tags", "{\"normal\":\"b4833b75-9b0a-487d-bf59-f38e4c151479_admin\"}");
-        paramsMap.add("sessionPerUser", "true");
-        paramsMap.add("show_stack", "true");
-        paramsMap.add("owner", "banjianzu@gmail.com");
-        paramsMap.add("timeout", "-1");
+    public <T> T runScript(LinkedMultiValueMap<String, String> paramsMap) {
 
 
         String myUrl;
@@ -123,32 +105,37 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
             myUrl = CommandUtil.myUrl();
         }
 
-        String sql = paramsMap.getFirst(GlobalConstant.SQL);
+        if (!paramsMap.containsKey("context.__default__include_fetch_url__"))
+            paramsMap.add("context.__default__include_fetch_url__",
+                    myUrl + GlobalConstant.SCRIPT_FILE_INCLUDE);
 
-        HashMap<String, String> tagsMap = new HashMap<>();
-        //这里暂时写死，到时候，，直接从用户模块直接动态获取
-        tagsMap.put("normal", "b4833b75-9b0a-487d-bf59-f38e4c151479_admin");
+        if (!paramsMap.containsKey("context.__default__console_url__"))
+            paramsMap.add("context.__default__console_url__", myUrl);
 
-        String tags;
-        if (sql.contains(GlobalConstant.SCHEDULER)) {
-            tags = tagsMap.get(GlobalConstant.SCHEDULER_TAG_TYPE);
-        } else {
-            tags = tagsMap.get(GlobalConstant.NORMAL_TAG_TYPE);
+        if (!paramsMap.containsKey("context.__default__fileserver_url__"))
+            paramsMap.add("context.__default__fileserver_url__", myUrl + GlobalConstant.API_FILE_DOWNLAOD);
+
+        if (!paramsMap.containsKey("context.__default__fileserver_upload_url__"))
+            paramsMap.add("context.__default__fileserver_upload_url__",
+                    myUrl + GlobalConstant.API_FILE_UPLAOD);
+
+        if (paramsMap.containsKey("skipAuth") && paramsMap.getFirst("skipAuth").equals("false")) {
+
+            if (!paramsMap.containsKey("context.__auth_client__"))
+                paramsMap.add("context.__auth_client__", GlobalConstant.STREAMING_DSL_AUTH_META_CLIENT);
+
+            if (!paramsMap.containsKey("context.__auth_server_url__"))
+                paramsMap.add("context.__auth_server_url__", myUrl + GlobalConstant.TABLE_AUTH);
 
         }
 
-        paramsMap.add(GlobalConstant.CONTEXT_DEFAULT_INCLUDE_URL, myUrl + GlobalConstant.SCRIPT_FILE_INCLUDE);
-        paramsMap.add(GlobalConstant.DEFAULT_CONSOLE_URL, myUrl);
-        paramsMap.add(GlobalConstant.CONTEXT_DEFAULT_FILESERVER_URL, myUrl + GlobalConstant.API_FILE_DOWNLAOD);
-        paramsMap.add(GlobalConstant.CONTEXT_DEFAULT_FILESERVER_UPLOAD_URL, myUrl + GlobalConstant.API_FILE_UPLAOD);
-        paramsMap.add(GlobalConstant.CONTEXT_AUTH_CLIENT, GlobalConstant.STREAMING_DSL_AUTH_META_CLIENT);
-        paramsMap.add(GlobalConstant.CONTEXT_AUTH_SERVER_URL, myUrl + GlobalConstant.TABLE_AUTH);
-        paramsMap.add(GlobalConstant.CONTEXT_AUTH_SECRET, CommandUtil.auth_secret());
-        paramsMap.add(GlobalConstant.TAGS, tags);
-        //这里userName 暂时写死，到时候，动态获取
-        paramsMap.add(GlobalConstant.DEFAULTPATHPREFIX, CommandUtil.userHome() + GlobalConstant.HTTP_SEPARATED + "userName");
-        paramsMap.add(GlobalConstant.SKIPAUTH, String.valueOf(!CommandUtil.enableAuthCenter()));
-        paramsMap.add(GlobalConstant.SKIPGRAMMARVALIDATE, GlobalConstant.FALSE);
+        if (!paramsMap.containsKey("context.__auth_secret__"))
+            paramsMap.add("context.__auth_secret__", CommandUtil.auth_secret());
+
+        if (!paramsMap.containsKey("defaultPathPrefix"))
+            paramsMap.add("defaultPathPrefix", CommandUtil.userHome() +
+                    GlobalConstant.HTTP_SEPARATED + paramsMap.getFirst("owner"));
+
 
         return (T) clusterUrlService.synRunScript(paramsMap);
 

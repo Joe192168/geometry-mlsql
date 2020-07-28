@@ -18,5 +18,5 @@ public interface FileService<T> {
 
     T formUpload(HttpServletRequest request) throws ExecutionException, InterruptedException;
     T download(Object o, HttpServletResponse response) ;
-    T publicDownload(Object o , HttpServletResponse response) throws ExecutionException, InterruptedException;
+    T publicDownload(Object o, HttpServletResponse response) throws ExecutionException, InterruptedException;
 }

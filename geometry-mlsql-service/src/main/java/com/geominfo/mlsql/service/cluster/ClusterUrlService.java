@@ -3,7 +3,8 @@ package com.geominfo.mlsql.service.cluster;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
+import org.springframework.util.LinkedMultiValueMap;
+
 
 import java.util.concurrent.ExecutionException;
 
@@ -18,15 +19,15 @@ import java.util.concurrent.ExecutionException;
 @Service
 public interface ClusterUrlService {
 
-    ResponseEntity<String> runScript( String sql) ;
-    ResponseEntity<String> synRunScript(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> aynRunScript(MultiValueMap<String, String> params) throws ExecutionException, InterruptedException;
-    ResponseEntity<String> runSQL(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> backendList(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> backendAdd(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> backendRemove(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> backendTagsUpdate(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> backendNameCheck(MultiValueMap<String, String> params) ;
-    ResponseEntity<String> backendListNames(MultiValueMap<String, String> params) ;
+    ResponseEntity<String> runScript(String sql) ;
+    ResponseEntity<String> synRunScript(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> aynRunScript(LinkedMultiValueMap<String, String> params) throws ExecutionException, InterruptedException;
+    ResponseEntity<String> runSQL(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> backendList(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> backendAdd(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> backendRemove(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> backendTagsUpdate(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> backendNameCheck(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> backendListNames(LinkedMultiValueMap<String, String> params) ;
 
 }

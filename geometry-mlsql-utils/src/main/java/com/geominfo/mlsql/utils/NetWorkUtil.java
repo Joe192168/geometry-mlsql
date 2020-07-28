@@ -1,16 +1,18 @@
 package com.geominfo.mlsql.utils;
 
 
-
-
 import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
@@ -30,95 +32,79 @@ import java.util.concurrent.ExecutionException;
 public class NetWorkUtil {
 
 
-   private RestTemplate restTemplate = new RestTemplate() ;
+    private RestTemplate restTemplate = new RestTemplate();
+
+    Logger logger = LoggerFactory.getLogger(NetWorkUtil.class);
 
     /**
-      * @description:  同步请求
-      *
-      * @author: BJZ
-      *
-      * @date: 2020/6/11 0011
-      *
-      * @param: 请求参数
-      *
-      * @return: 请求结果
+     * @description: GET同步请求
+     * @author: BJZ
+     * @date: 2020/6/11 0011
+     * @return: 请求结果
      */
-    public ResponseEntity<String> synPost(String url , MultiValueMap<String, String> postParameters){
-        log.info("synPost url = "+ url);
-        return synNetWorkUtil(url ,postParameters) ;
+    public <T> T synGet(String url) {
+        return (T) restTemplate.getForEntity(url, String.class);
     }
 
     /**
-      * @description: 同步请求
-      *
-      * @author: BJZ
-      *
-      * @date: 2020/6/11 0011
-      *
-      * @param: 请求参数
-      *
-      * @return: ResponseEntity<String>
+     * @description: POST同步请求
+     * @author: BJZ
+     * @date: 2020/6/11 0011
+     * @param: 请求参数
+     * @return: 请求结果
      */
+    public <T> T synPost(String url, LinkedMultiValueMap<String, String> postParameters) {
+        log.info("synPost url = " + url);
+        return synNetWorkUtil(url, postParameters);
+    }
 
-    private ResponseEntity<String> synNetWorkUtil(String url  , MultiValueMap<String, String> postParameters) {
+    private <T> T synNetWorkUtil(String url, LinkedMultiValueMap<String, String> postParameters) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", "application/json");
         HttpEntity<MultiValueMap<String, String>> requestEntity =
                 new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
-        ResponseEntity<String> responseEntityPost = restTemplate.postForEntity(url,
+        ResponseEntity<String> responseEntityPost  = restTemplate.postForEntity(url,
                 requestEntity, String.class);
-        return responseEntityPost ;
+//        String result = responseEntityPost.getBody();
+//        logger.info("同步请求返回数据 = " + result);
+
+        return (T) responseEntityPost;
     }
 
 
     /**
-      * @description:  异步请求 (必须填写回调接口，这是engine框架接口要求的）
-      *
-      * @author: BJZ
-      *
-      * @date: 2020/6/11 0011
-      *
-      * @param: 参数
-      *
-      * @return:
+     * @description: POST异步请求 (必须填写回调接口，这是engine框架接口要求的）
+     * @author: BJZ
+     * @date: 2020/6/11 0011
+     * @param: 参数
+     * @return:
      */
-    public ResponseEntity<String> aynPost(String url ,MultiValueMap<String, String> postParameters) throws ExecutionException, InterruptedException {
+    public <T> T aynPost(String url, LinkedMultiValueMap<String, String> postParameters) throws ExecutionException, InterruptedException {
 
-       if( !postParameters.containsKey("callback"))
-       {
-           log.info("必须填写回调接口!");
-           return  new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-       }
+        if (!postParameters.containsKey("callback")) {
+            log.info("必须填写回调接口!");
+            return (T) "必须填写回调接口!";
+        }
 
+        if (postParameters.containsKey("callback")) {
+            if (postParameters.get("callback").size() == 0)
+                return (T) "回调接口空";
+        }
         postParameters.add("async", "true");
-       return aynNetWorkUtil(url ,postParameters) ;
+        return aynNetWorkUtil(url, postParameters);
 
     }
 
-
-    /**
-      * @description: 异步请求
-      *
-      * @author: BJZ
-      *
-      * @date: 2020/6/11 0011
-      *
-      * @param: 参数
-      *
-      * @return: void
-     */
-    private ResponseEntity<String> aynNetWorkUtil(String url , MultiValueMap<String, String> postParameters) throws ExecutionException, InterruptedException {
-
+    private <T> T aynNetWorkUtil(String url, LinkedMultiValueMap<String, String> postParameters) throws ExecutionException, InterruptedException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", "application/json");
         HttpEntity<MultiValueMap<String, String>> requestEntity =
                 new HttpEntity<MultiValueMap<String, String>>(postParameters, headers);
-        ListenableFuture<ResponseEntity<String>> entity = asyncRestTemplate().postForEntity(url,
+        ListenableFuture<ResponseEntity<String>> entity  = asyncRestTemplate().postForEntity(url,
                 requestEntity, String.class);
-            return entity.get();
+        return (T) entity.get();
 
     }
-
 
     private AsyncRestTemplate asyncRestTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
