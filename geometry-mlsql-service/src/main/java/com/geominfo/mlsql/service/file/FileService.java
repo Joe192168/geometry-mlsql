@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 public interface FileService<T> {
 
-    T formUpload(HttpServletRequest request) throws ExecutionException, InterruptedException;
-    T download(Object o, HttpServletResponse response) ;
-    T publicDownload(Object o, HttpServletResponse response) throws ExecutionException, InterruptedException;
+    T formUpload(HttpServletRequest request ,String owner) throws  Exception;
+    T download(Object o, HttpServletResponse response ,String owner) ;
+    T publicDownload(Object o, HttpServletResponse response ,String owner) throws ExecutionException, InterruptedException;
 }

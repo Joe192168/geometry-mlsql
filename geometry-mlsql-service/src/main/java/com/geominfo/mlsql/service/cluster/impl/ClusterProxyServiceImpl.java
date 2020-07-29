@@ -17,6 +17,12 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ObjectUtils;
+import scala.collection.immutable.List;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
 
 
 /**
@@ -38,43 +44,45 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
 
     @Override
     public <T> T clusterManager(LinkedMultiValueMap<String, String> paramsMap) {
-
+        remove(paramsMap);
         ResponseEntity<String> result = null;
 
-        if(paramsMap.getFirst("action").equals("/backend/name/check"))
-        {
-            paramsMap.remove("teamName") ;
-        }
+//        if(paramsMap.getFirst("action").equals("/backend/name/check"))
+//        {
+//            paramsMap.remove("teamName") ;
+//        }
 
         String myUrl = CommandUtil.myUrl().isEmpty() ? CommandUtil.mlsqlClusterUrl() : CommandUtil.myUrl();
         paramsMap.add("context.__default__include_fetch_url__", myUrl + GlobalConstant.SCRIPT_FILE_INCLUDE);
 
-
         String action = paramsMap.getFirst("action");
-        String name = paramsMap.getFirst("name");
-
 
         switch (action) {
-            case GlobalConstant.BACKEND_LIST:
+
+            case "/backend/list":
                 result = clusterUrlService.backendList(paramsMap);
                 break;
-            case GlobalConstant.BACKEND_ADD:
+
+            case "/backend/add":
                 result = clusterUrlService.backendAdd(paramsMap);
                 if (result.getStatusCode().value() == GlobalConstant.TOW_HUNDRED) {
                     //同时在后台添加用户
                     String teamName = paramsMap.getFirst("teamName");
+                    String name = paramsMap.getFirst("name");
                     backendProxyService.intsertBackendProxy(teamName, name);
                     logger.info("backendAdd request status  ");
                 }
                 break;
-            case GlobalConstant.BACKEND_REMOVE:
+
+            case "/backend/remove":
                 //同时删除数据库里面内容
+                String name = paramsMap.getFirst("name");
                 backendProxyService.deleteBackendProxy((MlsqlBackendProxy)
                         backendProxyService.getBackendProxyByName(name));
-
                 result = clusterUrlService.backendRemove(paramsMap);
                 break;
-            case GlobalConstant.BACKEND_TAGS_UPDATE:
+
+            case "/backend/tags/update":
                 result = clusterUrlService.backendTagsUpdate(paramsMap);
                 break;
 
@@ -82,11 +90,12 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
                 result = clusterUrlService.backendNameCheck(paramsMap);
                 break;
 
-            case GlobalConstant.BACKEND_LIST_NAMES:
+            case "/backend/list/names":
                 result = clusterUrlService.backendListNames(paramsMap);
                 break;
 
             default:
+                logger.info("没有执行的东西!");
                 break;
         }
 
@@ -97,6 +106,7 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
     @Override
     public <T> T runScript(LinkedMultiValueMap<String, String> paramsMap) {
 
+        remove(paramsMap);
 
         String myUrl;
         if (CommandUtil.myUrl().isEmpty()) {
@@ -139,6 +149,22 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
 
         return (T) clusterUrlService.synRunScript(paramsMap);
 
+    }
+
+    private LinkedMultiValueMap<String, String> remove(LinkedMultiValueMap<String, String> paramsMap) {
+        ArrayList<String> list = new ArrayList<>();
+        for (Map.Entry entry : paramsMap.entrySet()) {
+            String value = paramsMap.getFirst(entry.getKey().toString());
+            if (value == null)
+                list.add(entry.getKey().toString());
+
+        }
+
+        for (String key : list) {
+            paramsMap.remove(key);
+        }
+
+        return paramsMap;
     }
 
 

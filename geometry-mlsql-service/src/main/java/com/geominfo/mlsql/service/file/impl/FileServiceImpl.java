@@ -7,6 +7,7 @@ import com.geominfo.mlsql.service.base.BaseServiceImpl;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.service.file.FileService;
 import com.geominfo.mlsql.utils.*;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -53,25 +54,19 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
     @Autowired
     private PathFunUtil funUtil;
-    //HttpServletRequest request
+
 
     @Override
-    public T formUpload(HttpServletRequest request) throws ExecutionException, InterruptedException {
+    public T formUpload(HttpServletRequest request ,String owner) throws Exception {
         fileServerDaemonService.init();
+
 
         ServletFileUpload sfu = new ServletFileUpload(new DiskFileItemFactory());
 
-        sfu.setHeaderEncoding(GlobalConstant.ENCODE);
-        List<FileItem> fileItems = new ArrayList<>();
-        try {
-            fileItems = sfu.parseRequest(request);
+        sfu.setHeaderEncoding("UTF-8");
+        List<FileItem> fileItems =  sfu.parseRequest(request);
 
-        } catch (FileUploadException e) {
-            e.printStackTrace();
-        }
-
-
-        File homeDir = new File(GlobalConstant.DEFAULT_TEMP_PATH + CommandUtil.md5("userNmae"));//这里需要用户权限模块
+        File homeDir = new File("/tmp/upload/" + CommandUtil.md5("userNmae"));//这里需要用户权限模块
         String finalDir = "";
 
         if (homeDir.exists()) {
@@ -84,45 +79,36 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
         for (FileItem f : fileItems) {
             if (!f.isFormField()) {
-                String prefix = GlobalConstant.DEFAULT_TEMP_PATH + CommandUtil.md5("userName"); //这里需要用户权限模块
+                String prefix = "/tmp/upload/" + CommandUtil.md5("userName"); //这里需要用户权限模块
                 String itemPath = f.getName();
-                String[] chunks = itemPath.split(GlobalConstant.HTTP_SEPARATED);
+                String[] chunks = itemPath.split("/");
                 for (String curUrl : chunks)
-                    if (curUrl.trim().equals(GlobalConstant.POINT) || curUrl.trim().equals(GlobalConstant.POINT2))
-                        return  (T)String.format(GlobalConstant.CORRECT_PATH);
+                    if (curUrl.trim().equals(".") || curUrl.trim().equals(".."))
+                        return  (T)String.format("file path is not correct");
 
 
-                if (chunks.length > GlobalConstant.ZERO) {
-                    try {
-                        FileUtils.deleteDirectory(new File(prefix + GlobalConstant.HTTP_SEPARATED
-                                + chunks[GlobalConstant.ZERO]));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (chunks.length > 0) {
+                        FileUtils.deleteDirectory(new File(prefix + "/"
+                                + chunks[0]));
                 } else {
-                    try {
-                        FileUtils.deleteDirectory(new File(prefix + GlobalConstant.HTTP_SEPARATED
+                        FileUtils.deleteDirectory(new File(prefix + "/"
                                 + itemPath));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         }
 
         for (FileItem item : fileItems) {
 
-            try {
                 InputStream fileContent = item.getInputStream();
                 String tempFilePath =
-                        new PathFunUtil(GlobalConstant.DEFAULT_TEMP_PATH + CommandUtil.md5("userName")) //这里需要用户权限模块
+                        new PathFunUtil("/tmp/upload/" + CommandUtil.md5(owner))
                                 .add(item.getName()).toPath();
 
-                String[] temp = tempFilePath.split(GlobalConstant.HTTP_SEPARATED);
+                String[] temp = tempFilePath.split("/");
                 List<String> tempsList = new ArrayList<>();
                 int tempLen = temp.length;
-                for (int i = GlobalConstant.ZERO; i < tempLen; i++) {
-                    if (i != tempLen - GlobalConstant.ONE)
+                for (int i = 0; i < tempLen; i++) {
+                    if (i != tempLen - 1)
                         tempsList.add(temp[i]);
                 }
                 File dir = new File(funUtil.mkString(tempsList));
@@ -133,7 +119,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
                 File targetPath = new File(tempFilePath);
 
                 int pathLen = funUtil.stripSuffix(funUtil.stripPrefix(tempFilePath.substring(homeDir.getPath().length()),
-                        GlobalConstant.HTTP_SEPARATED), GlobalConstant.HTTP_SEPARATED).split(GlobalConstant.HTTP_SEPARATED).length;
+                        "/"), "/").split("/").length;
                 if (pathLen > GlobalConstant.TOW) {
                     finalDir = dir.getPath().substring(homeDir.getPath().length());
                 } else {
@@ -142,56 +128,51 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
                 logger.info(String.format("upload to %s ", targetPath.getPath()));
 
-                FileUtil.copyInputStreamToFile(fileContent, targetPath);
-                fileContent.close();
+//                FileUtil.copyInputStreamToFile(fileContent, targetPath);
+//                fileContent.close();
 
-            } catch (IOException e) {
-                logger.info("upload fail ", e);
-                e.printStackTrace();
-                return (T)String.format("upload fail,check master log %s", e.getMessage());
-            }
+
 
         }
 
-        return runUpload(finalDir, GlobalConstant.ZERO);
+        return runUpload(finalDir, 0 ,owner);
     }
 
-    private T runUpload(String finalDir, int type) throws ExecutionException, InterruptedException {
+    private T runUpload(String finalDir, int type ,String owner) throws ExecutionException, InterruptedException {
 
-        //  TreeMap<String ,String> newParams = new TreeMap<>() ;
         LinkedMultiValueMap<String, String> newParams = new LinkedMultiValueMap<String, String>();
 
         switch (type) {
-            case GlobalConstant.ZERO:
-                newParams.add(GlobalConstant.SQL, GlobalConstant.RUN_COMMAND_DOWNLAODEXT +
-                        finalDir + GlobalConstant.AND_TO_TMP_UPLAOD);
+            case 0:
+                newParams.add("sql", "run command as DownloadExt.`` where from=" +
+                        "\""+finalDir  +"\"" + " and to=" +"\"" +"/tmp/upload"+"\""+";");
                 break;
 
-            case GlobalConstant.ONE:
-                newParams.add(GlobalConstant.SQL, GlobalConstant.RUN_COMMAND_UPLOADFILETOSERVIEREXT +
-                        finalDir + GlobalConstant.TOKEN_NAME_AND_TOKENVALUE + newParams.getFirst("accessToken"));
+            case 1:
+                newParams.add("sql", "run command as UploadFileToServerExt.`" +
+                        finalDir + "` where tokenName='access-token' and tokenValue="+ newParams.getFirst("accessToken"));
                 break;
 
             default:
                 break;
         }
 
-        newParams.add(GlobalConstant.OWNER, newParams.getFirst("owner"));
-        newParams.add(GlobalConstant.JOB_NAME, UUID.randomUUID().toString());
-        newParams.add(GlobalConstant.SESSION_PERUSER, GlobalConstant.TRUE);
-        newParams.add(GlobalConstant.SHOW_STACK, GlobalConstant.SHOW_STACK);
-//        newParams.add(GlobalConstant.TAGS, GlobalConstant.TAGS); //这里也是需要用到用户权限模块，暂时写死
-
+        newParams.add("owner", owner);
+        newParams.add("jobName", UUID.randomUUID().toString());
+        newParams.add("sessionPerUser", "true");
+        newParams.add("show_stack", "false");
+////        newParams.add(GlobalConstant.TAGS, GlobalConstant.TAGS); //这里也是需要用到用户权限模块，暂时写死
+//
         String myUrl = CommandUtil.myUrl().isEmpty() ? CommandUtil.mlsqlClusterUrl() : CommandUtil.myUrl();
+//
+        newParams.add("context.__default__include_fetch_url__", myUrl + "/api_v1/script_file/include");
+        newParams.add("context.__default__fileserver_url__", myUrl + "/api_v1/file/download");
+        newParams.add("context.__default__fileserver_upload_url__", myUrl + "/api_v1/file/upload");
+        newParams.add("context.__auth_secret__", CommandUtil.auth_secret());
+        newParams.add("defaultPathPrefix", CommandUtil.userHome() + "/" + owner);
 
-        newParams.add(GlobalConstant.CONTEXT_DEFAULT_INCLUDE_URL, myUrl + GlobalConstant.SCRIPT_FILE_INCLUDE);
-        newParams.add(GlobalConstant.CONTEXT_DEFAULT_FILESERVER_URL, myUrl + GlobalConstant.API_FILE_DOWNLAOD);
-        newParams.add(GlobalConstant.CONTEXT_DEFAULT_FILESERVER_UPLOAD_URL, myUrl + GlobalConstant.API_FILE_UPLAOD);
-        newParams.add(GlobalConstant.CONTEXT_AUTH_SECRET, CommandUtil.auth_secret());
-        newParams.add(GlobalConstant.DEFAULTPATHPREFIX, CommandUtil.userHome() + "/userName"); //这里用户名也是需要等到用户谦虚模块开发完成，动态获取
+        newParams.add("callback", "localhost:8088/file/api_v1/file/upload/callback");
 
-        newParams.add(GlobalConstant.CALLBACK, GlobalConstant.AYN_POST_UPLOADCALLBACK_URL);
-        // newParams.add(GlobalConstant.CONTEXT_DEFAULT_URL ,CommandUtil.auth_secret()) ;
 
       return  (T)clusterUrlService.aynRunScript(newParams) ;
 //        netWorkUtil.aynPost(GlobalConstant.RUN_SCRIPT, newParams);
@@ -201,7 +182,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
 
     @Override
-    public T download(Object o, HttpServletResponse response) {
+    public T download(Object o, HttpServletResponse response ,String owner) {
 
 //        if (!hasParam(GlobalConstant.AUTH_SECRET, request) ||
 //                !param(GlobalConstant.AUTH_SECRET, request).equals(CommandUtil.auth_secret()))
@@ -239,7 +220,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
 
     @Override
-    public T publicDownload(Object o , HttpServletResponse response) throws ExecutionException, InterruptedException {
+    public T publicDownload(Object o , HttpServletResponse response,String owner) throws ExecutionException, InterruptedException {
 
 
 //        if (!hasParam(GlobalConstant.FILE_NAME, request))
@@ -247,7 +228,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
         String fileName = (String)o ;
 
-        runUpload(fileName, GlobalConstant.ONE);
+        runUpload(fileName, GlobalConstant.ONE ,owner);
 
         List<String> newFiles = Arrays.asList(fileName
                 .split(GlobalConstant.HTTP_SEPARATED)).stream().filter(f -> !f.isEmpty()).collect(Collectors.toList());

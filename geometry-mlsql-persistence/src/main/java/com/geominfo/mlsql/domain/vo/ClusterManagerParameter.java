@@ -14,8 +14,10 @@ import java.io.Serializable;
 @Data
 public class ClusterManagerParameter implements Serializable {
 
-    private String action ;
-    private String teamName ;
-    private String name ;
+    private String action ; //所有接口都必须传的参数
+    private String teamName ;  // /backend/add 接口需要传的参数
+    private String name ; //  /backend/name/check 接口需要传的参数
+    private String tag; //  /backend/list 接口需要传的参数
+    private String names; //  /backend/list/names 接口需要传的参数
 
 }

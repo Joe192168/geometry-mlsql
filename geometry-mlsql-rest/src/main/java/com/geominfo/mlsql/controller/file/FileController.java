@@ -50,10 +50,10 @@ public class FileController extends BaseController{
     @ApiImplicitParams({
             @ApiImplicitParam(value = "文件", name = "file", required = true)
     })
-    public Message uploadfile(HttpServletRequest request, HttpServletResponse response) throws IOException, FileUploadException, ExecutionException, InterruptedException {
+    public Message uploadfile(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        String result = (String) fileService.formUpload(request);
-        return message.ok(result);
+        String result = (String) fileService.formUpload(request ,userName);
+        return success(200 ,result) ;
     }
 
     @RequestMapping("/api_v1/file/download")
@@ -65,7 +65,7 @@ public class FileController extends BaseController{
         HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 
         fileName = null ;
-        String result = (String) fileService.download(fileName, response);
+        String result = (String) fileService.download(fileName, response,userName);
         return message.ok(result);
     }
 
@@ -76,10 +76,10 @@ public class FileController extends BaseController{
             @ApiImplicitParam(value = "文件名", name = "fileName", dataType = "String", paramType = "query", required = true)
     })
     public Message publicDownload(@ApiParam(value = "fileName", required = true) String fileName)
-            throws UnsupportedEncodingException, ExecutionException, InterruptedException {
+            throws Exception{
         HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 
-        String result = (String) fileService.publicDownload(fileName, response);
+        String result = (String) fileService.publicDownload(fileName, response,userName);
         return message.ok(result);
     }
 

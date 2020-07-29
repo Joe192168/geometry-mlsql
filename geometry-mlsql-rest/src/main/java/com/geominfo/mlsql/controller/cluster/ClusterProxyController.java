@@ -49,9 +49,11 @@ public class ClusterProxyController extends BaseController {
     @RequestMapping("/api_v1/cluster")
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "执行动作", name = "action", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "名称", name = "name", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "组名称", name = "teamName", dataType = "String", paramType = "query", required = false)
+            @ApiImplicitParam(value = "执行动作所有接口都要传的参数", name = "action", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "/backend/name/check接口需要传的参数", name = "name", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(value = "/backend/add 接口需要传的参数", name = "teamName", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(value = "/backend/list 接口需要传的参数", name = "tag", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(value = "/backend/list/names 接口需要传的参数", name = "names", dataType = "String", paramType = "query", required = false)
     })
     public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) throws Exception {
 

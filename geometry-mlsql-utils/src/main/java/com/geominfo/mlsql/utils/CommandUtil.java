@@ -23,7 +23,8 @@ public class CommandUtil {
     }
 
     public static String myUrl(){
-        return paramsUtil.getParam("my_url" ,"jdbc:mysql://192.168.2.239:3306/mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false") ;
+        return paramsUtil.getParam("my_url" ,
+                "jdbc:mysql://192.168.2.239:3306/dev_mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false") ;
     }
 
     public static String userHome(){
