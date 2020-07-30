@@ -19,5 +19,9 @@ public class ClusterManagerParameter implements Serializable {
     private String name ; //  /backend/name/check 接口需要传的参数
     private String tag; //  /backend/list 接口需要传的参数
     private String names; //  /backend/list/names 接口需要传的参数
+    private String url; // /backend/add 接口需要传的参数
+    private String id;  // /backend/tags/update 接口需要传的参数
+    private String merge;  // /backend/tags/update 接口需要传的参数
+
 
 }

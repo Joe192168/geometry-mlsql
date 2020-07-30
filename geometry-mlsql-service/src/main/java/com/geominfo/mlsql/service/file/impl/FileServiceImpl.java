@@ -60,7 +60,6 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
     public T formUpload(HttpServletRequest request ,String owner) throws Exception {
         fileServerDaemonService.init();
 
-
         ServletFileUpload sfu = new ServletFileUpload(new DiskFileItemFactory());
 
         sfu.setHeaderEncoding("UTF-8");
@@ -120,7 +119,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
 
                 int pathLen = funUtil.stripSuffix(funUtil.stripPrefix(tempFilePath.substring(homeDir.getPath().length()),
                         "/"), "/").split("/").length;
-                if (pathLen > GlobalConstant.TOW) {
+                if (pathLen > 2) {
                     finalDir = dir.getPath().substring(homeDir.getPath().length());
                 } else {
                     finalDir = tempFilePath.substring(homeDir.getPath().length());

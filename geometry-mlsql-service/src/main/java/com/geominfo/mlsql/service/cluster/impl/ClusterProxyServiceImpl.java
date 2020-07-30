@@ -12,16 +12,15 @@ import com.geominfo.mlsql.utils.CommandUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.ObjectUtils;
-import scala.collection.immutable.List;
+
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+
 import java.util.Map;
 
 
@@ -67,9 +66,9 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
                 result = clusterUrlService.backendAdd(paramsMap);
                 if (result.getStatusCode().value() == GlobalConstant.TOW_HUNDRED) {
                     //同时在后台添加用户
-                    String teamName = paramsMap.getFirst("teamName");
+//                    String teamName = paramsMap.getFirst("teamName");
                     String name = paramsMap.getFirst("name");
-                    backendProxyService.intsertBackendProxy(teamName, name);
+                    backendProxyService.intsertBackendProxy(name);
                     logger.info("backendAdd request status  ");
                 }
                 break;
@@ -96,6 +95,7 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
 
             default:
                 logger.info("没有执行的东西!");
+                result = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
                 break;
         }
 
@@ -157,7 +157,6 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
             String value = paramsMap.getFirst(entry.getKey().toString());
             if (value == null)
                 list.add(entry.getKey().toString());
-
         }
 
         for (String key : list) {

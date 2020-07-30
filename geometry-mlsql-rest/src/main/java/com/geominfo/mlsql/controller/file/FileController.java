@@ -1,15 +1,12 @@
 package com.geominfo.mlsql.controller.file;
 
-
-
-
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.file.FileService;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.fileupload.FileUploadException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +17,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
 import java.io.UnsupportedEncodingException;
-import java.util.concurrent.ExecutionException;
+
 
 /**
  * @program: geometry-mlsql
@@ -51,7 +48,6 @@ public class FileController extends BaseController{
             @ApiImplicitParam(value = "文件", name = "file", required = true)
     })
     public Message uploadfile(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         String result = (String) fileService.formUpload(request ,userName);
         return success(200 ,result) ;
     }
@@ -82,7 +78,6 @@ public class FileController extends BaseController{
         String result = (String) fileService.publicDownload(fileName, response,userName);
         return message.ok(result);
     }
-
 
     @RequestMapping("/api_v1/file/upload/callback")
     @ApiOperation(value = "文件上传回调接口", httpMethod = "GET")

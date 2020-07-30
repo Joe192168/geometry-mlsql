@@ -2,6 +2,9 @@ package com.geominfo.mlsql.utils;
 
 
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
 import java.util.UUID;
@@ -13,18 +16,36 @@ import java.util.UUID;
  * @create: 2020-07-09 11:57
  * @version: 1.0.0
  */
-
 public class CommandUtil {
 
+//    @Value("${engine.url}")
+//    private static String engileUrl;
+//
+//    @Value("${cluster.url}")
+//    private static String clusterUrl;
+//
+//    @Value("${my_url.url}")
+//    private static String my_url;
+
+
+
     private static ParamsUtil paramsUtil = new ParamsUtil();
+
+//    public static boolean
+
+    public static String mlsqlEngineUrl(){
+
+        return paramsUtil.getParam("mlsql_engine_url" , "192.168.20.209:9003") ;
+    }
+
     public static String mlsqlClusterUrl(){
 
-        return paramsUtil.getParam("mlsql_cluster_url" , "192.168.20.209:9003") ;
+        return paramsUtil.getParam("mlsql_cluster_url" , "192.168.20.209:8080") ;
     }
 
     public static String myUrl(){
         return paramsUtil.getParam("my_url" ,
-                "jdbc:mysql://192.168.2.239:3306/dev_mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false") ;
+                "dbc:mysql://192.168.2.239:3306/dev_mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false") ;
     }
 
     public static String userHome(){
@@ -47,7 +68,11 @@ public class CommandUtil {
 
     public static String md5(String text)
     {
-       return  DigestUtils.md5DigestAsHex(text.getBytes());
+       return  MD5Util.md5(text);
     }
+
+
+    public static final boolean mlsqlUrlType = true ;
+
 
 }

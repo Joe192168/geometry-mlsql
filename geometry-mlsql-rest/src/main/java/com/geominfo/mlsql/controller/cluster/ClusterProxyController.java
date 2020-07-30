@@ -38,12 +38,6 @@ public class ClusterProxyController extends BaseController {
     Logger logger = LoggerFactory.getLogger(ClusterProxyController.class);
 
     @Autowired
-    private Message message;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
     private ClusterProxyService clusterProxyService;
 
     @RequestMapping("/api_v1/cluster")
@@ -53,17 +47,18 @@ public class ClusterProxyController extends BaseController {
             @ApiImplicitParam(value = "/backend/name/check接口需要传的参数", name = "name", dataType = "String", paramType = "query", required = false),
             @ApiImplicitParam(value = "/backend/add 接口需要传的参数", name = "teamName", dataType = "String", paramType = "query", required = false),
             @ApiImplicitParam(value = "/backend/list 接口需要传的参数", name = "tag", dataType = "String", paramType = "query", required = false),
-            @ApiImplicitParam(value = "/backend/list/names 接口需要传的参数", name = "names", dataType = "String", paramType = "query", required = false)
+            @ApiImplicitParam(value = "/backend/list/names 接口需要传的参数", name = "names", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(value = "/backend/add 接口需要传的参数", name = "url", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(value = "/backend/tags/update 接口需要传的参数", name = "id", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(value = "/backend/tags/update 接口需要传的参数", name = "merge", dataType = "String", paramType = "query", required = false)
+
+
     })
     public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) throws Exception {
 
         LinkedMultiValueMap<String, String> params = ParamsUtil.objectToMap(clusterManagerParameter);
-
         ResponseEntity<String> result = clusterProxyService.clusterManager(params);
-
-        String results = result.getBody() ;
-
-        return result.getStatusCode().value() == GlobalConstant.TOW_HUNDRED ?
+        return result.getStatusCode().value() == 200 ?
                         success(200, "success").addData("data", result.getBody()) :
                         error(400, "error").addData("data", result.getBody());
 
@@ -89,15 +84,12 @@ public class ClusterProxyController extends BaseController {
     public Message runScript(@RequestBody MLSQLRunScriptParameter mlsqlRunScriptParameter) throws Exception {
 
         LinkedMultiValueMap<String, String> params = ParamsUtil.objectToMap(mlsqlRunScriptParameter);
-
         if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
-
         if (!params.containsKey("owner")) params.add("owner", userName);
-
         ResponseEntity<String> result = clusterProxyService.runScript(params);
         logger.info("执行脚本返回结果result = " + result.getBody());
 
-        return result.getStatusCode().value() == GlobalConstant.TOW_HUNDRED ?
+        return result.getStatusCode().value() == 200 ?
                 success(200, "success").addData("data", result.getBody()) :
                 error(400, "error").addData("data", result.getBody());
 

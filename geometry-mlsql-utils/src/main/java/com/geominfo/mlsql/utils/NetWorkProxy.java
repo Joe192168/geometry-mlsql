@@ -24,10 +24,12 @@ public class NetWorkProxy implements MethodInterceptor {
         if (objects.length > 0) {
             String url = (String) objects[0];
             if (!url.startsWith("http:")) {
-                objects[0] = "http://" + CommandUtil.mlsqlClusterUrl() + url + "/";
-            } else {
-                objects[0] = CommandUtil.mlsqlClusterUrl() + url +  "/";
+                objects[0] = "http://" + (CommandUtil.mlsqlUrlType ?
+                        CommandUtil.mlsqlEngineUrl() : CommandUtil.mlsqlClusterUrl()) + url + "/";
             }
+//            else {
+//                objects[0] = CommandUtil.mlsqlClusterUrl() + url +  "/";
+//            }
         }
         Object result = methodProxy.invokeSuper(o, objects);
         return result;

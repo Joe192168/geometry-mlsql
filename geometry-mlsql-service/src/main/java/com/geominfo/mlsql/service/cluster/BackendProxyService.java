@@ -15,7 +15,7 @@ public interface BackendProxyService<T, S> {
 
     T getBackendProxyByName(S s);
 
-    int intsertBackendProxy(String teamName, String backendName);
+    int intsertBackendProxy(String backendName);
 
     int deleteBackendProxy(MlsqlBackendProxy mlsqlBackendProxy) ;
 }

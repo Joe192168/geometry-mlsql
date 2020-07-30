@@ -33,7 +33,7 @@ public class BackendProxyServiceImpl extends BaseServiceImpl implements BackendP
 
 
     @Override
-    public int intsertBackendProxy(String teamName, String backendName) {
+    public int intsertBackendProxy(String backendName) {
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(backendName) ;
         MlsqlBackendProxy mlsqlBackendProxy = new MlsqlBackendProxy();
         mlsqlBackendProxy.setGroupId(mlsqlGroup.getId());

@@ -8,8 +8,8 @@
     </select>
 
     <insert id="intsertBackendProxy" parameterType="com.geominfo.mlsql.domain.vo.MlsqlBackendProxy">
-        INSERT INTO mlsql_backend_proxy(groupId)
-        VALUES(#{groupId,jdbcType=INTEGER})
+        INSERT INTO mlsql_backend_proxy(mlsql_group_id,backend_name)
+        VALUES(#{groupId,jdbcType=INTEGER} ,#{backendName ,jdbcType=VARCHAR})
     </insert>
 
 
