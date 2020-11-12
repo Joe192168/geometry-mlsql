@@ -2,6 +2,8 @@ package com.geominfo.mlsql.utils;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,6 +138,18 @@ public class CommonUtil {
             string.append((char) data);
         }
         return string.toString();
+    }
+
+
+    /**
+     *
+     * @param dateTimes 毫秒时间值
+     * @return yyyy-MM-dd HH:mm:SS时间类型字符串
+     */
+    public static String dateTime(Long dateTimes){
+        Date date = new Date();
+        date.setTime(dateTimes);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:SS").format(date);
     }
 
 }

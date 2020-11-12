@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.MlsqlJobMapper">
+    <select id="getMlsqlJobList" resultType="com.geominfo.mlsql.domain.vo.MlsqlJob">
+        SELECT
+            id,`name`,content,status,reason,created_at AS createdAt,
+            finish_at AS finishAt,response
+        FROM mlsql_job
+        WHERE mlsql_user_id = #{userId}
+        ORDER BY IF(ISNULL(createdAt),1,0),createdAt DESC
+        LIMIT 0,100
+    </select>
+
+    <select id="getMlsqlJob" resultType="com.geominfo.mlsql.domain.vo.MlsqlJob">
+        SELECT
+            id,`name`,content,status,reason,created_at AS createdAt,
+            finish_at AS finishAt,response
+        FROM mlsql_job
+        WHERE mlsql_user_id = #{userId} AND `name` = #{jobName}
+        LIMIT 0,1
+    </select>
+    
+    <update id="updateMlsqlJobStatus">
+        UPDATE mlsql_job
+        SET status = #{status}, finish_at = #{finishAt}
+        WHERE `name` = #{jobName} AND mlsql_user_id = #{userId}
+    </update>
+
+    <update id="updateStatusAndResponse">
+        UPDATE mlsql_job
+        SET status = #{status}, response = #{response}, finish_at = #{finishAt}
+        WHERE `name` = #{jobName}
+    </update>
+
+    <update id="updateStatusAndReason">
+        UPDATE mlsql_job
+        SET status = #{status}, reason = #{reason}, finish_at = #{finishAt}
+        WHERE `name` = #{jobName}
+    </update>
+</mapper>

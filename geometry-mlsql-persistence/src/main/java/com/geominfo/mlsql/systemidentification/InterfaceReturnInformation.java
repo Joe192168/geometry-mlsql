@@ -22,6 +22,8 @@ public class InterfaceReturnInformation {
 
     public static String SUCCESS = "success";
 
+    public static String FAILED = "failed";
+
     public static String SCRIPT_FILE_NO_EXISTS = "file not exists";
 
     public static final String LOGIN_SUCCESS = "登录成功!";
