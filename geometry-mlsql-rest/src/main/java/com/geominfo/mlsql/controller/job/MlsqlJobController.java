@@ -67,7 +67,6 @@ public class MlsqlJobController extends BaseController {
                 //创建map
                 Map<String, Object> map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.SUCCESS,
                         System.currentTimeMillis(), " ", params.get("res"));
-
                 String msg = mlsqlJobService.updateMlsqlJob(map);
                 return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "update success") :
                         error(ReturnCode.RETURN_ERROR_STATUS, "update failed");
@@ -94,9 +93,9 @@ public class MlsqlJobController extends BaseController {
 
     @RequestMapping(value = "/getJob", method = {RequestMethod.POST, RequestMethod.GET})
     @ApiOperation(value = "查询单个任务信息", httpMethod = "POST", notes = "该方法同时支持POST,GET两种请求方式")
-    @ApiImplicitParams(
+    @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = true, paramType = "query", dataType = "String")
-    )
+    })
     public Message getJob(
             @RequestParam(value = "jobName", required = true) String jobName) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
@@ -111,9 +110,9 @@ public class MlsqlJobController extends BaseController {
 
     @RequestMapping(value = "/kill", method = {RequestMethod.POST, RequestMethod.GET})
     @ApiOperation(value = "杀死进程后修改状态", httpMethod = "POST", notes = "该方法同时支持POST,GET两种请求方式")
-    @ApiImplicitParams(
+    @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = true, paramType = "query", dataType = "String")
-    )
+    })
     public Message killJob(@RequestParam(value = "jobName", required = true) String jobName) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         //创建map
