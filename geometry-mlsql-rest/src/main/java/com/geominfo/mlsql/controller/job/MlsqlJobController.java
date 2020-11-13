@@ -63,21 +63,23 @@ public class MlsqlJobController extends BaseController {
             return message.error("requirement failed: __auth_secret__ is not right");
         } else {
             String jobName = JSONObject.parseObject(params.get("jobInfo")).getString("jobName");
+            Map<String, Object> map;
+            String msg = "";
             if (params.get("stat").equals("succeeded")) {
                 //创建map
-                Map<String, Object> map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.SUCCESS,
+                map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.SUCCESS,
                         System.currentTimeMillis(), " ", params.get("res"));
-                String msg = mlsqlJobService.updateMlsqlJob(map);
-                return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "update success") :
-                        error(ReturnCode.RETURN_ERROR_STATUS, "update failed");
+                msg = mlsqlJobService.updateMlsqlJob(map);
+
             } else {
                 //创建map
-                Map<String, Object> map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.FAIL,
+                map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.FAIL,
                         System.currentTimeMillis(), params.get("msg"), " ");
-                String msg = mlsqlJobService.updateMlsqlJob(map);
-                return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "update failure success") :
-                        error(ReturnCode.RETURN_ERROR_STATUS, "update failure failed");
+                msg = mlsqlJobService.updateMlsqlJob(map);
+
             }
+            return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "update failure success") :
+                    error(ReturnCode.RETURN_ERROR_STATUS, "update failure failed");
         }
     }
 
