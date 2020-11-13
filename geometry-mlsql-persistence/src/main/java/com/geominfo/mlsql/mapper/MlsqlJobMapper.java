@@ -1,11 +1,13 @@
 package com.geominfo.mlsql.mapper;
 
 import com.geominfo.mlsql.domain.vo.MlsqlJob;
+import com.geominfo.mlsql.domain.vo.MlsqlJobRender;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: geometry-mlsql
@@ -25,7 +27,7 @@ public interface MlsqlJobMapper {
      * param: 用户id
      * return: list集合
      */
-    List<MlsqlJob> getMlsqlJobList(Integer userId);
+    List<MlsqlJobRender> getMlsqlJobList(Integer userId);
 
 
     /**
@@ -45,8 +47,8 @@ public interface MlsqlJobMapper {
      * param: userId, jobName, status, finishAt
      * return: MlsqlJob
      */
-    int updateMlsqlJobStatus(@Param("userId") Integer userId, @Param("jobName") String jobName,
-                             @Param("status") Integer status, @Param("finishAt") Long finsishAt);
+    /*int updateMlsqlJobStatus(@Param("userId") Integer userId, @Param("jobName") String jobName,
+                             @Param("status") Integer status, @Param("finishAt") Long finsishAt);*/
 
     /**
      * description: 执行成功需要修改信息
@@ -55,8 +57,8 @@ public interface MlsqlJobMapper {
      * param: response, jobName, status, finishAt
      * return: int
      */
-    int updateStatusAndResponse(@Param("jobName") String jobName, @Param("status") Integer status,
-                                @Param("response") String response, @Param("finishAt") Long finishAt);
+    /*int updateStatusAndResponse(@Param("jobName") String jobName, @Param("status") Integer status,
+                                @Param("response") String response, @Param("finishAt") Long finishAt);*/
 
 
     /**
@@ -66,10 +68,18 @@ public interface MlsqlJobMapper {
      * param: reason, jobName, status, finishAt
      * return: int
      */
-    int updateStatusAndReason(@Param("jobName") String jobName, @Param("status") Integer status,
-                              @Param("reason") String reason, @Param("finishAt") Long finishAt);
+    /*int updateStatusAndReason(@Param("jobName") String jobName, @Param("status") Integer status,
+                              @Param("reason") String reason, @Param("finishAt") Long finishAt);*/
 
 
+    /**
+     * description: 修改任务信息
+     * author: ryan
+     * date: 2020/11/12
+     * param: map
+     * return: int
+     */
+    int updateMlsqlJob(Map<String, Object> map);
 
 
 

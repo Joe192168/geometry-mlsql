@@ -4,6 +4,7 @@ import com.geominfo.mlsql.domain.vo.MlsqlJob;
 import com.geominfo.mlsql.domain.vo.MlsqlJobRender;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: geometry-mlsql
@@ -21,7 +22,7 @@ public interface MlsqlJobService {
      * param: 用户id
      * return: list集合
      */
-    List<MlsqlJob> getMlsqlJobList(Integer userId);
+    List<MlsqlJobRender> getMlsqlJobList(Integer userId);
 
 
     /**
@@ -35,46 +36,24 @@ public interface MlsqlJobService {
 
 
     /**
-     * description: 渲染输出
+     * description: 修改任务信息
      * author: ryan
-     * date: 2020/11/11
+     * date: 2020/11/13
      * param: mlsqlJob
-     * return: MlsqlJobRender
+     * return: String
      */
-    MlsqlJobRender mlsqlJobReaner(MlsqlJob mlsqlJob);
+    String updateMlsqlJob(Map<String, Object> map);
 
 
     /**
-     * description: 杀死进程
+     * description: 创建map
      * author: ryan
-     * date: 2020/11/11
-     * param: userId, mlsqlJob
-     * return: int
+     * date: 2020/11/13
+     * param: mlsqlJob
+     * return: Map
      */
-    String updateMlsqlJobStatus(Integer userId, MlsqlJob mlsqlJob);
-
-
-    /**
-     * description: 执行成功需要修改信息
-     * author: ryan
-     * date: 2020/11/12
-     * param: response, jobName, status, finishAt
-     * return: int
-     */
-    String updateStatusAndResponse(MlsqlJob mlsqlJob);
-    /*int updateStatusAndResponse(String jobName, Integer status,
-                                String response, Long finishAt);*/
-
-    /**
-     * description: 执行失败需要修改信息
-     * author: ryan
-     * date: 2020/11/12
-     * param: reason, jobName, status, finishAt
-     * return: int
-     */
-    String updateStatusAndReason(MlsqlJob mlsqlJob);
-    /*int updateStatusAndReason(String jobName,Integer status,
-                              String reason, Long finishAt);*/
+    Map<String, Object> createMap(Integer userId, String jobName, Integer status,
+                                  Long finshAt, String reason, String response);
 
 
 }

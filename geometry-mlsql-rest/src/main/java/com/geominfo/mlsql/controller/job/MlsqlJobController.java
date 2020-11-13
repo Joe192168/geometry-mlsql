@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,33 +50,32 @@ public class MlsqlJobController extends BaseController {
 
 
     @RequestMapping(value = "/callback", method = RequestMethod.POST)
-    @ApiOperation(value = "异步执行",httpMethod = "POST", notes = "post请求")
+    @ApiOperation(value = "异步执行", httpMethod = "POST", notes = "post请求")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "__auth_secret", value = "命令", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "params", value = "engine执行成功或者失败信息", required = true, paramType = "query", dataType = "Map")
     })
     public Message jobCallBack(
-                               @RequestParam(value = "", required = true) Map<String, String> params) {
+            @RequestParam(value = "", required = true) Map<String, String> params) {
         String aaa = "";
          /*CommandUtil.auth_secret()*/
         if (!params.get("__auth_secret__").equals("mlsql")) {
             return message.error("requirement failed: __auth_secret__ is not right");
         } else {
             String jobName = JSONObject.parseObject(params.get("jobInfo")).getString("jobName");
-            MlsqlJob mlsqlJob = new MlsqlJob();
-            mlsqlJob.setName(jobName);
             if (params.get("stat").equals("succeeded")) {
-                mlsqlJob.setStatus(MlsqlJobServiceImpl.SUCCESS);
-                mlsqlJob.setResponse(params.get("res"));
-                mlsqlJob.setFinishAt(System.currentTimeMillis());
-                String msg = mlsqlJobService.updateStatusAndResponse(mlsqlJob);
+                //创建map
+                Map<String, Object> map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.SUCCESS,
+                        System.currentTimeMillis(), " ", params.get("res"));
+
+                String msg = mlsqlJobService.updateMlsqlJob(map);
                 return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "update success") :
                         error(ReturnCode.RETURN_ERROR_STATUS, "update failed");
             } else {
-                mlsqlJob.setStatus(MlsqlJobServiceImpl.FAIL);
-                mlsqlJob.setResponse(params.get("msg"));
-                mlsqlJob.setFinishAt(System.currentTimeMillis());
-                String msg = mlsqlJobService.updateStatusAndReason(mlsqlJob);
+                //创建map
+                Map<String, Object> map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.FAIL,
+                        System.currentTimeMillis(), params.get("msg"), " ");
+                String msg = mlsqlJobService.updateMlsqlJob(map);
                 return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "update failure success") :
                         error(ReturnCode.RETURN_ERROR_STATUS, "update failure failed");
             }
@@ -89,16 +87,8 @@ public class MlsqlJobController extends BaseController {
     @ApiOperation(value = "获取用户最近前100条历史任务信息列表", httpMethod = "POST", notes = "该方法同时支持POST,GET两种请求方式")
     public Message jobList() {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
-        //查询历史任务信息
-        List<MlsqlJob> mlsqlJobList = mlsqlJobService.getMlsqlJobList(mlsqlUser.getId());
-        //存储转换后信息
-        List<MlsqlJobRender> mlsqlJobReaners = new ArrayList<MlsqlJobRender>();
-        //转换
-        for (MlsqlJob mlsqlJob : mlsqlJobList) {
-            MlsqlJobRender mlsqlJobReaner = mlsqlJobService.mlsqlJobReaner(mlsqlJob);
-            mlsqlJobReaners.add(mlsqlJobReaner);
-        }
-        return message.addData("data", mlsqlJobReaners);
+        List<MlsqlJobRender> mlsqlJobList = mlsqlJobService.getMlsqlJobList(1);
+        return message.addData("data", mlsqlJobList);
     }
 
 
@@ -126,11 +116,10 @@ public class MlsqlJobController extends BaseController {
     )
     public Message killJob(@RequestParam(value = "jobName", required = true) String jobName) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
-        MlsqlJob mlsqlJob = new MlsqlJob();
-        mlsqlJob.setName(jobName);
-        mlsqlJob.setStatus(MlsqlJobServiceImpl.KILLED);
-        mlsqlJob.setFinishAt(System.currentTimeMillis());
-        String msg = mlsqlJobService.updateMlsqlJobStatus(mlsqlUser.getId(), mlsqlJob);
+        //创建map
+        Map<String, Object> map = mlsqlJobService.createMap(1, jobName, MlsqlJobServiceImpl.KILLED,
+                System.currentTimeMillis(), " ", " ");
+        String msg = mlsqlJobService.updateMlsqlJob(map);
         return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "kill success") :
                 error(ReturnCode.RETURN_ERROR_STATUS, "kill failed");
     }

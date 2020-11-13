@@ -3,6 +3,7 @@ package com.geominfo.mlsql.domain.vo;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -15,7 +16,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@ApiModel(value = "MlsqlJob")
+@NoArgsConstructor
+@ApiModel(value = "MlsqlJob转换类")
 public class MlsqlJobRender {
     private Integer id;
     private String name;
