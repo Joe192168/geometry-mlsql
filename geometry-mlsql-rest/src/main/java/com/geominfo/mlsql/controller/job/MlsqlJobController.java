@@ -88,7 +88,7 @@ public class MlsqlJobController extends BaseController {
     @ApiOperation(value = "获取用户最近前100条历史任务信息列表", httpMethod = "POST", notes = "该方法同时支持POST,GET两种请求方式")
     public Message jobList() {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
-        List<MlsqlJobRender> mlsqlJobList = mlsqlJobService.getMlsqlJobList(1);
+        List<MlsqlJobRender> mlsqlJobList = mlsqlJobService.getMlsqlJobList(mlsqlUser.getId());
         return message.addData("data", mlsqlJobList);
     }
 
@@ -118,7 +118,7 @@ public class MlsqlJobController extends BaseController {
     public Message killJob(@RequestParam(value = "jobName", required = true) String jobName) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         //创建map
-        Map<String, Object> map = mlsqlJobService.createMap(1, jobName, MlsqlJobServiceImpl.KILLED,
+        Map<String, Object> map = mlsqlJobService.createMap(mlsqlUser.getId(), jobName, MlsqlJobServiceImpl.KILLED,
                 System.currentTimeMillis(), " ", " ");
         String msg = mlsqlJobService.updateMlsqlJob(map);
         return msg.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS, "kill success") :
