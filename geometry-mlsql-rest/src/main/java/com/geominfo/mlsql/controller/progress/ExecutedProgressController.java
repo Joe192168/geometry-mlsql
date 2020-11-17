@@ -91,8 +91,8 @@ public class ExecutedProgressController  extends BaseController{
             @ApiImplicitParam(value = "callBackUrl", name = "callBackUrl",
                     dataType = "String", paramType = "query", required = true)
     })
-    public Message getprogress(@RequestParam(value = "jobName", required = true)@NotNull String jobName
-            , @RequestParam(value = "callBackUrl", required = true)@NotNull String callBackUrl) throws ExecutionException, InterruptedException {
+    public Message getprogress(@RequestParam(value = "jobName", required = true) String jobName
+            , @RequestParam(value = "callBackUrl", required = true) String callBackUrl) throws ExecutionException, InterruptedException {
 
         executedProgressService.getProgress(jobName, callBackUrl);
         return message.ok(200, "get progress success").addData("data", "success");

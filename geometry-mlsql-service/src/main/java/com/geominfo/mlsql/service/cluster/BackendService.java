@@ -11,11 +11,11 @@ import java.util.List;
  * @create: 2020-07-20 15:40
  * @version: 1.0.0
  */
-public interface BackendProxyService<T, S> {
+public interface BackendService<T, S> {
 
     T getBackendProxyByName(S s);
 
-    int intsertBackendProxy(String backendName);
+    int intsertBackendProxy(String teamName,String backendName);
 
     int deleteBackendProxy(MlsqlBackendProxy mlsqlBackendProxy) ;
 }

@@ -1,10 +1,5 @@
 package com.geominfo.mlsql.utils;
 
-
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
 import java.util.UUID;
@@ -45,7 +40,7 @@ public class CommandUtil {
 
     public static String myUrl(){
         return paramsUtil.getParam("my_url" ,
-                "dbc:mysql://192.168.2.239:3306/dev_mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false") ;
+                "jdbc:mysql://192.168.2.239:3306/dev_mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false") ;
     }
 
     public static String userHome(){
@@ -68,7 +63,7 @@ public class CommandUtil {
 
     public static String md5(String text)
     {
-       return  MD5Util.md5(text);
+       return  DigestUtils.md5DigestAsHex(text.getBytes());
     }
 
 

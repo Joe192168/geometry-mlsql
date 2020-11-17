@@ -4,6 +4,7 @@ import lombok.Data;
 import springfox.documentation.service.Tags;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * @program: geometry-mlsql
@@ -15,18 +16,18 @@ import java.io.Serializable;
 @Data
 public class MLSQLRunScriptParameter implements Serializable {
 
-    private String sql ;
-    private String jobName ;
-    private String jobType ;
+    private String sql = "select 1 as a,'jack' as b as bbc;" ;
+    private String jobName = UUID.randomUUID().toString();
+    private String jobType ="script" ;
     private String callback ;
-    private String skipAuth;
-    private String skipInclude;
-    private String silence;
-    private String sessionPerUser;
+    private String skipAuth = "true";
+    private String skipInclude ;
+    private String silence ="false";
+    private String sessionPerUser ="false";
     private String sessionPerRequest;
-    private String async;
-    private String skipGrammarValidate;
-    private String timeout;
-    private String executeMode ;
+    private String async ="false";
+    private String skipGrammarValidate ="true";
+    private String timeout ="-1";
+    private String executeMode ="query";
     private String tags ;
 }

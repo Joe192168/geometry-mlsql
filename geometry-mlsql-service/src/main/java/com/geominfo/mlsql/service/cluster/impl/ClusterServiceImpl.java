@@ -5,8 +5,8 @@ import com.geominfo.mlsql.domain.vo.MlsqlBackendProxy;
 
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.base.BaseServiceImpl;
-import com.geominfo.mlsql.service.cluster.BackendProxyService;
-import com.geominfo.mlsql.service.cluster.ClusterProxyService;
+import com.geominfo.mlsql.service.cluster.BackendService;
+import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.utils.CommandUtil;
 import org.slf4j.Logger;
@@ -32,14 +32,14 @@ import java.util.Map;
  * @version: 1.0.0
  */
 @Service
-public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterProxyService {
-    Logger logger = LoggerFactory.getLogger(ClusterProxyServiceImpl.class);
+public class ClusterServiceImpl extends BaseServiceImpl implements ClusterService {
+    Logger logger = LoggerFactory.getLogger(ClusterServiceImpl.class);
 
     @Autowired
     private ClusterUrlService clusterUrlService;
 
     @Autowired
-    private BackendProxyService backendProxyService;
+    private BackendService backendProxyService;
 
     @Override
     public <T> T clusterManager(LinkedMultiValueMap<String, String> paramsMap) {
@@ -66,9 +66,9 @@ public class ClusterProxyServiceImpl extends BaseServiceImpl implements ClusterP
                 result = clusterUrlService.backendAdd(paramsMap);
                 if (result.getStatusCode().value() == GlobalConstant.TOW_HUNDRED) {
                     //同时在后台添加用户
-//                    String teamName = paramsMap.getFirst("teamName");
-                    String name = paramsMap.getFirst("name");
-                    backendProxyService.intsertBackendProxy(name);
+                    String teamName = paramsMap.getFirst("teamName");
+                    String backendName = paramsMap.getFirst("name");
+                    backendProxyService.intsertBackendProxy(teamName, backendName);
                     logger.info("backendAdd request status  ");
                 }
                 break;

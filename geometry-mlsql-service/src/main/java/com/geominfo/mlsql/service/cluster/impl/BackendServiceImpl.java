@@ -4,7 +4,7 @@ import com.geominfo.mlsql.domain.vo.MlsqlBackendProxy;
 import com.geominfo.mlsql.domain.vo.MlsqlGroup;
 import com.geominfo.mlsql.mapper.BackendProxyMapper;
 import com.geominfo.mlsql.service.base.BaseServiceImpl;
-import com.geominfo.mlsql.service.cluster.BackendProxyService;
+import com.geominfo.mlsql.service.cluster.BackendService;
 import com.geominfo.mlsql.service.user.TeamRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @version: 1.0.0
  */
 @Service
-public class BackendProxyServiceImpl extends BaseServiceImpl implements BackendProxyService {
+public class BackendServiceImpl extends BaseServiceImpl implements BackendService {
 
     @Autowired
     private BackendProxyMapper backendProxyMapper;
@@ -33,8 +33,8 @@ public class BackendProxyServiceImpl extends BaseServiceImpl implements BackendP
 
 
     @Override
-    public int intsertBackendProxy(String backendName) {
-        MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(backendName) ;
+    public int intsertBackendProxy(String teamName ,String backendName) {
+        MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(teamName) ;
         MlsqlBackendProxy mlsqlBackendProxy = new MlsqlBackendProxy();
         mlsqlBackendProxy.setGroupId(mlsqlGroup.getId());
         mlsqlBackendProxy.setBackendName(backendName );

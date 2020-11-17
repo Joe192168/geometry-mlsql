@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version: 1.0.0
  */
 @Service
-public interface ClusterProxyService {
+public interface ClusterService {
 
     <T> T clusterManager(LinkedMultiValueMap<String, String> params  ) ;
     <T> T runScript(LinkedMultiValueMap<String, String> params) ;

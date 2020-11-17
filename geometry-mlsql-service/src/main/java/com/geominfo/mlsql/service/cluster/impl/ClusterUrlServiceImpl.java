@@ -6,6 +6,9 @@ import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.utils.NetWorkProxy;
 import com.geominfo.mlsql.utils.NetWorkUtil;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,6 +27,7 @@ public class ClusterUrlServiceImpl implements ClusterUrlService {
 
 
     private NetWorkUtil netWorkUtil = NetWorkProxy.getNetWorkProxy() ;
+
 
     @Override
     public ResponseEntity<String> runScript(String sql) {

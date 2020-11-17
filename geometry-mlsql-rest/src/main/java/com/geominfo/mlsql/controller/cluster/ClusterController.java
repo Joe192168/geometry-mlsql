@@ -5,8 +5,7 @@ import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.ClusterManagerParameter;
 import com.geominfo.mlsql.domain.vo.MLSQLRunScriptParameter;
 import com.geominfo.mlsql.domain.vo.Message;
-import com.geominfo.mlsql.globalconstant.GlobalConstant;
-import com.geominfo.mlsql.service.cluster.ClusterProxyService;
+import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +18,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 
 /**
@@ -33,12 +31,12 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping(value = "/cluster")
 @Api(value = "集群后台配置接口", tags = {"集群后台配置接口"})
 @Log4j2
-public class ClusterProxyController extends BaseController {
+public class ClusterController extends BaseController {
 
-    Logger logger = LoggerFactory.getLogger(ClusterProxyController.class);
+    Logger logger = LoggerFactory.getLogger(ClusterController.class);
 
     @Autowired
-    private ClusterProxyService clusterProxyService;
+    private ClusterService clusterService;
 
     @RequestMapping("/api_v1/cluster")
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
@@ -52,17 +50,17 @@ public class ClusterProxyController extends BaseController {
             @ApiImplicitParam(value = "/backend/tags/update 接口需要传的参数", name = "id", dataType = "String", paramType = "query", required = false),
             @ApiImplicitParam(value = "/backend/tags/update 接口需要传的参数", name = "merge", dataType = "String", paramType = "query", required = false)
 
-
     })
     public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) throws Exception {
 
         LinkedMultiValueMap<String, String> params = ParamsUtil.objectToMap(clusterManagerParameter);
-        ResponseEntity<String> result = clusterProxyService.clusterManager(params);
+        ResponseEntity<String> result = clusterService.clusterManager(params);
         return result.getStatusCode().value() == 200 ?
                         success(200, "success").addData("data", result.getBody()) :
                         error(400, "error").addData("data", result.getBody());
 
     }
+
 
 
     @RequestMapping("/api_v1/run/script")
@@ -86,7 +84,7 @@ public class ClusterProxyController extends BaseController {
         LinkedMultiValueMap<String, String> params = ParamsUtil.objectToMap(mlsqlRunScriptParameter);
         if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
         if (!params.containsKey("owner")) params.add("owner", userName);
-        ResponseEntity<String> result = clusterProxyService.runScript(params);
+        ResponseEntity<String> result = clusterService.runScript(params);
         logger.info("执行脚本返回结果result = " + result.getBody());
 
         return result.getStatusCode().value() == 200 ?

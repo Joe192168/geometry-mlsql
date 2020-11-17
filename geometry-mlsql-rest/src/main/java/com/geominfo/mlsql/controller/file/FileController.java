@@ -48,8 +48,8 @@ public class FileController extends BaseController{
             @ApiImplicitParam(value = "文件", name = "file", required = true)
     })
     public Message uploadfile(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String result = (String) fileService.formUpload(request ,userName);
-        return success(200 ,result) ;
+        Object result =  fileService.formUpload(request ,userName);
+        return success(200 ,result.toString()) ;
     }
 
     @RequestMapping("/api_v1/file/download")
@@ -75,7 +75,7 @@ public class FileController extends BaseController{
             throws Exception{
         HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 
-        String result = (String) fileService.publicDownload(fileName, response,userName);
+        Object result = fileService.publicDownload(fileName, response,userName);
         return message.ok(result);
     }
 

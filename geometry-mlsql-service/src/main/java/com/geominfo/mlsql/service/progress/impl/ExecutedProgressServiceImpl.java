@@ -5,15 +5,12 @@ import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.service.progress.ExecutedProgressService;
 
-import com.sun.istack.internal.NotNull;
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -44,7 +41,7 @@ public class ExecutedProgressServiceImpl implements ExecutedProgressService {
       * @return:
      */
     @Override
-    public void getProgress(@NotNull String jobName , @NotNull String callBackUrl ) throws ExecutionException, InterruptedException {
+    public void getProgress( String jobName , String callBackUrl ) throws ExecutionException, InterruptedException {
 
         String script = GlobalConstant.SHOW_JOBS + jobName.trim() +  GlobalConstant.SEMICOLON;
         LinkedMultiValueMap<String, String>  curpostParameters = new LinkedMultiValueMap<>();

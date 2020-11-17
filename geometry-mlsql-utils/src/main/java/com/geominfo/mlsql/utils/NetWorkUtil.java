@@ -34,7 +34,7 @@ public class NetWorkUtil {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    Logger logger = LoggerFactory.getLogger(NetWorkUtil.class);
+//    Logger logger = LoggerFactory.getLogger(NetWorkUtil.class);
 
     /**
      * @description: GET同步请求
