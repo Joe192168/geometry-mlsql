@@ -11,6 +11,7 @@ import java.util.UUID;
  * @create: 2020-07-09 11:57
  * @version: 1.0.0
  */
+
 public class CommandUtil {
 
 //    @Value("${engine.url}")
@@ -26,7 +27,6 @@ public class CommandUtil {
 
     private static ParamsUtil paramsUtil = new ParamsUtil();
 
-//    public static boolean
 
     public static String mlsqlEngineUrl(){
 
