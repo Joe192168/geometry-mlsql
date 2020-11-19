@@ -1,8 +1,8 @@
-package com.geominfo.mlsql.service.analysisWork.impl;
+package com.geominfo.mlsql.service.analysiswork.impl;
 
 import com.geominfo.mlsql.domain.vo.MlsqlWorkshopTable;
 import com.geominfo.mlsql.mapper.WorkshopTableMapper;
-import com.geominfo.mlsql.service.analysisWork.MlsqlWorkshopTableService;
+import com.geominfo.mlsql.service.analysiswork.MlsqlWorkshopTableService;
 import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

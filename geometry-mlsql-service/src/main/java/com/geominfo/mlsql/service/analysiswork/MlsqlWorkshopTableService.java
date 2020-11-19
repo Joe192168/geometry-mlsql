@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.service.analysisWork;
+package com.geominfo.mlsql.service.analysiswork;
 
 import com.geominfo.mlsql.domain.vo.MlsqlWorkshopTable;
 import org.apache.ibatis.annotations.Param;
