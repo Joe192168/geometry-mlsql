@@ -78,10 +78,11 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
     }
 
     @Override
-    public String findScriptFileByPath(MlsqlUser mlsqlUser, String paths) {
+    public MlsqlScriptFile findScriptFileByPath(MlsqlUser mlsqlUser, String paths) {
         String[] pathArray = paths.split("\\.", paths.split("\\.").length-1);
         int parentId = -1;
-        String content = InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS;
+        //String content = InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS;
+        MlsqlScriptFile mlsqlScriptFile = null;
         boolean flag = false;
         for(int i =0 ;i<pathArray.length;i++){
             Map<String, Object> map = new HashMap<>();
@@ -97,7 +98,8 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
                 if(i<=pathArray.length){
                     if(file.getName().equals(pathArray[i]) && i==pathArray.length-1){
                         flag = true;
-                        content = (String)file.getContent();
+                        //content = (String)file.getContent();
+                        mlsqlScriptFile = file;
                         break;
                     }
                 }
@@ -106,7 +108,7 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
                 break;
             }
         }
-        return content;
+        return mlsqlScriptFile;
     }
 
     @Override

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.AppMapper">
+    <select id="getMlsqlApplyList" resultType="com.geominfo.mlsql.domain.vo.MlsqlApply">
+        SELECT id, `name`, content,status
+        mlsql_user_id AS mlsqlUserId,
+        reason, create_at AS createAt,
+        finish_at AS finishAt,
+        response,
+        apply_sql AS applySql
+        from mlsql_apply
+        where `name`= #{name} AND mlsql_user_id = #{userId}
+    </select>
+</mapper>

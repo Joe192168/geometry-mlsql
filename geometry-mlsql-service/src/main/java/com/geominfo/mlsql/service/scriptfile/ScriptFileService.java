@@ -60,7 +60,7 @@ public interface ScriptFileService {
      *  param: path
       * return: String
      */
-    String findScriptFileByPath(MlsqlUser mlsqlUser, String path);
+    MlsqlScriptFile findScriptFileByPath(MlsqlUser mlsqlUser, String path);
 
     /**
       * description: get users file lists

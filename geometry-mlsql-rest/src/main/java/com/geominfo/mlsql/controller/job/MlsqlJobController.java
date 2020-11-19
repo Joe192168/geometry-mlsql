@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +102,10 @@ public class MlsqlJobController extends BaseController {
     public Message getJob(
             @RequestParam(value = "jobName", required = true) String jobName) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
-        MlsqlJob mlsqlJob = mlsqlJobService.getMlsqlJob(mlsqlUser.getId(), jobName);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("userId", 1);
+        map.put("jobName", jobName);
+        MlsqlJob mlsqlJob = mlsqlJobService.getMlsqlJob(map);
         if (mlsqlJob == null) {
             return message.error(404, "The task name does not exist");
         } else {

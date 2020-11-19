@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.MlsqlWorkshopTableMapper">
+    <select id="getMlsqlWorkshopList" resultType="com.geominfo.mlsql.domain.vo.MlsqlWorkshopTable">
+        SELECT
+            id,
+            `table_name` AS tableName,
+            content,
+            mlsql_user_id AS mlsqlUserId,
+            session_id AS sessionId,
+            status,
+            table_schema AS tableSchema,
+            job_name AS jobName
+        from mlsql_workshop_table
+        <where>
+            <if test="sessionId != null and sessionId != ''">
+                AND session_id = #{sessionId}
+            </if>
+            <if test="mlsqlUserId != null and mlsqlUserId != ''">
+                AND mlsql_user_id = #{mlsqlUserId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="mlsqlWorkshopSave" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+        INSERT INTO mlsql_workshop_table (`table_name`,content,mlsql_user_id,session_id,status,table_schema,job_name)
+        VALUES (#{tableName},#{content},#{mlsqlUserId},#{sessionId},#{status},#{tableSchema},#{jobName})
+    </insert>
+
+    <delete id="mlsqlWorkshopDelete">
+        DELETE
+        FROM mlsql_workshop_table
+        WHERE `table_name` = #{tableName}
+    </delete>
+
+    <select id="getMlsqlWorkshop" resultType="com.geominfo.mlsql.domain.vo.MlsqlWorkshopTable">
+        SELECT
+        id,
+        `table_name` AS tableName,
+        content,
+        mlsql_user_id AS mlsqlUserId,
+        session_id AS sessionId,
+        status,
+        table_schema AS tableSchema,
+        job_name AS jobName
+        from mlsql_workshop_table
+        <where>
+            <if test="tableName != null and tableName != ''">
+                AND `table_name` = #{tableName}
+            </if>
+            <if test="tableId != null and tableId != ''">
+                AND id = #{tableId}
+            </if>
+        </where>
+        LIMIT 0,1
+    </select>
+
+    <update id="updateMlsqlWorkshop">
+        UPDATE mlsql_workshop_table
+        set status=#{status}
+        WHERE id = #{tableId}
+    </update>
+
+</mapper>

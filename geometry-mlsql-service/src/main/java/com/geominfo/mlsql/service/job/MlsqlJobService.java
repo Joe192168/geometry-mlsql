@@ -32,7 +32,7 @@ public interface MlsqlJobService {
      * param: userId：用户id， jobName: 任务名称
      * return: MlsqlJob
      */
-    MlsqlJob getMlsqlJob(Integer userId, String jobName);
+    MlsqlJob getMlsqlJob(Map<String,Object> map);
 
 
     /**

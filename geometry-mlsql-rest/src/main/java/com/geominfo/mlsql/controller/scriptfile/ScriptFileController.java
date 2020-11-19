@@ -8,6 +8,7 @@ import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.scriptfile.ScriptFileService;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
+import com.geominfo.mlsql.utils.enums.ViewType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -124,14 +125,41 @@ public class ScriptFileController extends BaseController {
             @ApiImplicitParam(value = "path", name = "path", dataType = "String", paramType = "query", required = true)
     })
     public Message includeScriptFile(@RequestParam(value = "owner", required = true) String owner,
-                                     @RequestParam(value = "path", required = true) String path){
+                                     @RequestParam(value = "path", required = true) String path) {
         MlsqlUser mlsqlUser = userService.getUserByName(owner);
-        if(mlsqlUser == null){
-            return error(ReturnCode.RETURN_ERROR_STATUS,"user:" + owner + "is not exists");
+        if (mlsqlUser == null) {
+            return error(ReturnCode.RETURN_ERROR_STATUS, "user:" + owner + "is not exists");
         }
-        String msg = scripteFileSvervice.findScriptFileByPath(mlsqlUser, path);
-        return msg.equals(InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS) == false?success(ReturnCode.RETURN_SUCCESS_STATUS, "get content by path sucess").addData("data", msg)
-                :error(ReturnCode.RETURN_ERROR_STATUS, "get content by path  faild").addData("data", msg);
+        MlsqlScriptFile mlsqlScriptFile = scripteFileSvervice.findScriptFileByPath(mlsqlUser, path);
+        String msg = mlsqlScriptFile.getContent();
+        if (org.apache.commons.lang.StringUtils.isBlank(msg)) {
+            msg = InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS;
+        }
+        return msg.equals(InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS) == false ? success(ReturnCode.RETURN_SUCCESS_STATUS, "get content by path sucess").addData("data", msg)
+                : error(ReturnCode.RETURN_ERROR_STATUS, "get content by path  faild").addData("data", msg);
+    }
+
+
+    @ApiOperation(value = "获取脚本id", httpMethod = "GET")
+    @ApiImplicitParams({@ApiImplicitParam(value = "owner", name = "owner", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(value = "path", name = "path", dataType = "String", paramType = "query", required = true)
+    })
+    @RequestMapping("/script_file/path/id")
+    public Message pathId(@RequestParam(value = "owner", required = true) String owner,
+                          @RequestParam(value = "path", required = true) String path) {
+        MlsqlUser mlsqlUser = userService.getUserByName(owner);
+        if (mlsqlUser == null) {
+            return error(ReturnCode.RETURN_ERROR_STATUS, "user:" + owner + "is not exists");
+        }
+        MlsqlScriptFile mlsqlScriptFile = scripteFileSvervice.findScriptFileByPath(mlsqlUser, path);
+        Integer result = mlsqlScriptFile.getId();
+        String msg = "";
+        if (result == null || result == 0) {
+            msg = InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS;
+        }
+        return msg.equals(InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS) == false ? success(ReturnCode.RETURN_SUCCESS_STATUS, "get pathId by path sucess")
+                .addData("data", result).addData("type", ViewType.string)
+                : error(ReturnCode.RETURN_ERROR_STATUS, "get pathId by path  faild").addData("data", msg);
     }
 
 }

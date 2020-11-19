@@ -2,7 +2,7 @@ package com.geominfo.mlsql.service.job.impl;
 
 import com.geominfo.mlsql.domain.vo.MlsqlJob;
 import com.geominfo.mlsql.domain.vo.MlsqlJobRender;
-import com.geominfo.mlsql.mapper.MlsqlJobMapper;
+import com.geominfo.mlsql.mapper.JobMapper;
 import com.geominfo.mlsql.service.job.MlsqlJobService;
 import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class MlsqlJobServiceImpl implements MlsqlJobService {
 
     @Autowired
-    MlsqlJobMapper mlsqlJobMapper;
+    JobMapper mlsqlJobMapper;
 
     public static final Integer RUNNING = 1;
     public static final Integer SUCCESS = 2;
@@ -37,8 +37,8 @@ public class MlsqlJobServiceImpl implements MlsqlJobService {
     }
 
     @Override
-    public MlsqlJob getMlsqlJob(Integer userId, String jobName) {
-        return mlsqlJobMapper.getMlsqlJob(userId, jobName);
+    public MlsqlJob getMlsqlJob(Map<String,Object> map) {
+        return mlsqlJobMapper.getMlsqlJob(map);
     }
 
 
