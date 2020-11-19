@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.controller.analysisWork;
+package com.geominfo.mlsql.controller.analysiswork;
 
 
 import com.geominfo.mlsql.controller.base.BaseController;
