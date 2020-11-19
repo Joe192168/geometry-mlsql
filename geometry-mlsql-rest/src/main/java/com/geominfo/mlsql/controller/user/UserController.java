@@ -76,7 +76,7 @@ public class UserController extends BaseController {
                 .addData(SystemCustomIdentification.USER, user);
     }
 
-    @RequestMapping("/allUsers")
+    @RequestMapping(value = "/allUsers", method = RequestMethod.GET)
     @ApiOperation(value = "获取所有用戶", httpMethod = "GET")
     public Message findAll(ServletRequest servletRequest){
         Map<String,Object> map = new HashMap<String,Object>();
@@ -89,7 +89,7 @@ public class UserController extends BaseController {
 
     }
 
-    @RequestMapping("/allUsers/page")
+    @RequestMapping(value = "/allUsers/page", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取用户信息", httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "当前页",name = "pageNum",dataType = "Int",paramType = "query",required = true),
@@ -101,7 +101,7 @@ public class UserController extends BaseController {
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get user success").addData("data",user);
     }
 
-    @RequestMapping("/register")
+    @RequestMapping(value= "/register", method = RequestMethod.POST)
     @ApiOperation(value = "用户注册", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "用户名",name = "userName",dataType = "String",paramType = "query",required = true),
@@ -131,7 +131,7 @@ public class UserController extends BaseController {
         return error(ReturnCode.RETURN_ERROR_STATUS,"msg:" + InterfaceReturnInformation.USER_EXISTS);
     }
 
-    @RequestMapping("/userName")
+    @RequestMapping(value = "/userName", method = RequestMethod.POST)
     @ApiOperation(value = "获取用户", httpMethod = "POST")
     public Message getUserByName(){
         MlsqlUser user = userService.getUserByName(userName);
@@ -158,7 +158,7 @@ public class UserController extends BaseController {
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"update user backendTags sucess").addData("data",user);
     }
 
-    @RequestMapping("/changepassword")
+    @RequestMapping(value = "/changepassword", method = RequestMethod.POST)
     @ApiOperation(value = "修改密码", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "新密码",name = "newPassword",dataType = "String",paramType = "query",required = true),

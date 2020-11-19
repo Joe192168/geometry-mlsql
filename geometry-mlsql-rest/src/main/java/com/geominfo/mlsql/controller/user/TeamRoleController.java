@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +39,7 @@ public class TeamRoleController extends BaseController{
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/team/create")
+    @RequestMapping(value = "/team/create", method = RequestMethod.POST)
     @ApiOperation(value = "新增组及成员", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -53,7 +54,7 @@ public class TeamRoleController extends BaseController{
 
     }
 
-    @RequestMapping("/team/name/check")
+    @RequestMapping(value = "/team/name/check", method = RequestMethod.POST)
     @ApiOperation(value = "检查组是否存在", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
@@ -65,7 +66,7 @@ public class TeamRoleController extends BaseController{
                 : success(ReturnCode.RETURN_SUCCESS_STATUS,"teamName is exists").addData("data",res);
     }
 
-    @RequestMapping("/team")
+    @RequestMapping(value = "/team", method = RequestMethod.POST)
     @ApiOperation(value = "获取用户所属组", httpMethod = "POST")
     public Message team(){
 
@@ -74,7 +75,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get owner sucess").addData("data",groups);
     }
 
-    @RequestMapping("/team/teamsIn")
+    @RequestMapping(value = "/team/teamsIn", method = RequestMethod.POST)
     @ApiOperation(value = "获取用户组", httpMethod = "POST")
     public Message teamsIn(){
 
@@ -84,7 +85,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get teams sucess").addData("data",groups);
     }
 
-    @RequestMapping("/team/joined")
+    @RequestMapping(value = "/team/joined", method = RequestMethod.POST)
     @ApiOperation(value = "获取被邀请已加入组", httpMethod = "POST")
     public Message joinedTeam(){
         MlsqlUser user = userService.getUserByName(userName);
@@ -92,7 +93,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get confirmed teams sucess").addData("data",groups);
     }
     
-    @RequestMapping("/team/invited")
+    @RequestMapping(value = "/team/invited", method = RequestMethod.POST)
     @ApiOperation(value = "获取被邀请还未确认组名", httpMethod = "POST")
     public Message invitedTeam(){
         MlsqlUser user = userService.getUserByName(userName);
@@ -100,7 +101,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get invited user team").addData("data",groups);
     }
 
-    @RequestMapping("/team/member/add")
+    @RequestMapping(value = "/team/member/add", method = RequestMethod.GET)
     @ApiOperation(value = "新增组成员", httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -115,7 +116,7 @@ public class TeamRoleController extends BaseController{
                 : error(ReturnCode.RETURN_ERROR_STATUS,res);
     }
 
-    @RequestMapping("/team/role/add")
+    @RequestMapping(value = "/team/role/add", method = RequestMethod.POST)
     @ApiOperation(value = "新增角色", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -130,7 +131,7 @@ public class TeamRoleController extends BaseController{
                 : error(ReturnCode.RETURN_ERROR_STATUS,res);
     }
 
-    @RequestMapping("/team/member/accept")
+    @RequestMapping(value = "/team/member/accept", method = RequestMethod.POST)
     @ApiOperation(value = "用户被邀请同意操作", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
@@ -157,7 +158,7 @@ public class TeamRoleController extends BaseController{
                 : error(ReturnCode.RETURN_ERROR_STATUS,res);
     }
 
-    @RequestMapping("/team/member/refuse")
+    @RequestMapping(value = "/team/member/refuse", method = RequestMethod.POST)
     @ApiOperation(value = "用户被邀请拒绝操作", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
@@ -168,7 +169,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"update member refuse status").addData("data",res);
     }
 
-    @RequestMapping("/team/members")
+    @RequestMapping(value = "/team/members", method = RequestMethod.POST)
     @ApiOperation(value = "获取组成员", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
@@ -183,7 +184,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get group member").addData("data",groupUsers);
     }
 
-    @RequestMapping("/team/roles")
+    @RequestMapping(value = "/team/roles", method = RequestMethod.POST)
     @ApiOperation(value = "获取角色", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
@@ -197,7 +198,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get roles").addData("data",roleList);
     }
 
-    @RequestMapping("/team/role/remove")
+    @RequestMapping(value = "/team/role/remove", method = RequestMethod.POST)
     @ApiOperation(value = "删除角色", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -216,7 +217,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove role").addData("data",res);
     }
 
-    @RequestMapping("/role/member/add")
+    @RequestMapping(value = "/role/member/add", method = RequestMethod.POST)
     @ApiOperation(value = "添加角色", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "用户名(多个逗号分隔）", name = "userNames", dataType = "String", paramType = "query", required = true),
@@ -234,7 +235,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"add role team member");
     }
 
-    @RequestMapping("/role/members")
+    @RequestMapping(value = "/role/members", method = RequestMethod.POST)
     @ApiOperation(value = "获取角色成员", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "角色名", name = "roleName", dataType = "String", paramType = "query", required = true),
@@ -259,7 +260,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get role member").addData("data", mapResult);
     }
 
-    @RequestMapping("/role/member/remove")
+    @RequestMapping(value = "/role/member/remove", method = RequestMethod.POST)
     @ApiOperation(value = "移除角色成员", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "角色名", name = "roleName", dataType = "String", paramType = "query", required = true),
@@ -288,7 +289,7 @@ public class TeamRoleController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove role team member").addData("data", mlsqlRoleMember);
     }
 
-    @RequestMapping("/backends")
+    @RequestMapping(value = "/backends", method = RequestMethod.POST)
     @ApiOperation(value = "获取组绑定后端名称", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)

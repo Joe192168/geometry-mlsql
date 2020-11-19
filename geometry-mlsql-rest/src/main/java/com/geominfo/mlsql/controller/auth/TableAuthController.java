@@ -11,10 +11,7 @@ import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +36,8 @@ public class TableAuthController extends BaseController{
     @Autowired
     private TeamRoleService teamRoleService;
 
-    @RequestMapping("/verify/tables")
-    @ApiOperation(value = "验证表是否授权接口", httpMethod = "GET")
+    @RequestMapping(value = "/verify/tables", method = RequestMethod.POST)
+    @ApiOperation(value = "验证表是否授权接口", httpMethod = "POST")
     public String getVerifyAuthTable(@RequestParam Map params){
 
         String tables =  params.containsKey("tables")?(String) params.get("tables"):"";
@@ -77,7 +74,7 @@ public class TableAuthController extends BaseController{
         return JSONObject.toJSONString(verifyAuth);
     }
 
-    @RequestMapping("/team/tables")
+    @RequestMapping(value = "/team/tables", method = RequestMethod.POST)
     @ApiOperation(value = "获取组授权表", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true)
@@ -91,7 +88,7 @@ public class TableAuthController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get team table list").addData("data", teamTables);
     }
 
-    @RequestMapping("/team/table/add")
+    @RequestMapping(value = "/team/table/add", method = RequestMethod.POST)
     @ApiOperation(value = "组新增表授权", httpMethod = "POST")
     public Message teamTableAdd(@RequestBody MLSQLAuthTable mlsqlAuthTable){
         MlsqlGroup mlsqlGroup = teamRoleService.getGroupByName(mlsqlAuthTable.getTeamName());
@@ -102,7 +99,7 @@ public class TableAuthController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"team add table auth").addData("data", teamTables);
     }
 
-    @RequestMapping("/team/table/remove")
+    @RequestMapping(value = "/team/table/remove", method = RequestMethod.POST)
     @ApiOperation(value = "删除授权表", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -118,7 +115,7 @@ public class TableAuthController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove table").addData("data", res);
     }
 
-    @RequestMapping("/role/table/add")
+    @RequestMapping(value = "/role/table/add", method = RequestMethod.POST)
     @ApiOperation(value = "角色新增表授权", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -145,7 +142,7 @@ public class TableAuthController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"add role table operator auth").addData("data", res);
     }
 
-    @RequestMapping("/role/table/remove")
+    @RequestMapping(value = "/role/table/remove", method = RequestMethod.POST)
     @ApiOperation(value = "角色移除表授权", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -170,7 +167,7 @@ public class TableAuthController extends BaseController{
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"remove role table auth").addData("data", res);
     }
 
-    @RequestMapping("/role/tables")
+    @RequestMapping(value = "/role/tables", method = RequestMethod.POST)
     @ApiOperation(value = "获取授权表详细信息", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "组名", name = "teamName", dataType = "String", paramType = "query", required = true),
@@ -183,6 +180,27 @@ public class TableAuthController extends BaseController{
         map.put("teamName", teamName);
         List<Map<String, Object>> authTableDetail = tableAuthService.getAuthTableDetail(map);
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get table auth detail").addData("data", authTableDetail);
+    }
+    @RequestMapping(value = "/verify/column", method = RequestMethod.POST)
+    @ApiOperation(value = "验证表是否授权接口", httpMethod = "POST")
+    public String getVerifyAuthColumns(@RequestParam Map params) {
+        String tables = params.containsKey("tables") ? (String) params.get("tables") : "";
+        String owner = params.containsKey("owner") ? (String) params.get("owner") : "";
+        String home = params.containsKey("home") ? (String) params.get("home") : "";
+        String auth_secret = params.containsKey("auth_secret") ? (String) params.get("auth_secret") : "";
+        if(auth_secret.equals("") || auth_secret.equals(tokenId) == false){
+            return ReturnCode.FORBIDDEN_STATUS.toString();
+        }
+        if(tables.equals("") || owner.equals("")){
+            return ReturnCode.RETURN_ERROR_STATUS.toString();
+        }
+        JSONObject tableJson = JSONObject.parseObject(tables);
+        MLSQLTable mlsqlTable = tableJson.toJavaObject(MLSQLTable.class);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("db", mlsqlTable.getDb());
+        map.put("tableName", mlsqlTable.getTable());
+        map.put("userName", owner);
+        return tableAuthService.getWithOutColumns(map);
     }
 
 }
