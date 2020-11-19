@@ -79,8 +79,10 @@ public class AnalysisController extends BaseController {
         map.put("name",name);
         map.put("userId",1);
         List<MlsqlApply> mlsqlApplyList = mlsqlApplyService.getMlsqlApplyList(map);
-        MlsqlApply mlsqlApply = mlsqlApplyList.get(0);
-
+        MlsqlApply mlsqlApply = null;
+        if (mlsqlApplyList.size() > 0){
+            mlsqlApply = mlsqlApplyList.get(0);
+        }
         return mlsqlApply != null ? message.addData("data",mlsqlApply) : message.error(404,"get apply failed");
     }
 
