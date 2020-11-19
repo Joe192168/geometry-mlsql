@@ -86,7 +86,7 @@ public class MlsqlJobController extends BaseController {
 
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST, RequestMethod.GET})
-    @ApiOperation(value = "获取用户最近前100条历史任务信息列表", httpMethod = "POST", notes = "该方法同时支持POST,GET两种请求方式")
+    @ApiOperation(value = "获取用户最近前100条历史任务信息列表", notes = "该方法同时支持POST,GET两种请求方式")
     public Message jobList() {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         List<MlsqlJobRender> mlsqlJobList = mlsqlJobService.getMlsqlJobList(mlsqlUser.getId());
@@ -95,7 +95,7 @@ public class MlsqlJobController extends BaseController {
 
 
     @RequestMapping(value = "/getJob", method = {RequestMethod.POST, RequestMethod.GET})
-    @ApiOperation(value = "查询单个任务信息", httpMethod = "POST", notes = "该方法同时支持POST,GET两种请求方式")
+    @ApiOperation(value = "查询单个任务信息", notes = "该方法同时支持POST,GET两种请求方式")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = true, paramType = "query", dataType = "String")
     })
@@ -115,7 +115,7 @@ public class MlsqlJobController extends BaseController {
 
 
     @RequestMapping(value = "/kill", method = {RequestMethod.POST, RequestMethod.GET})
-    @ApiOperation(value = "杀死进程后修改状态", httpMethod = "POST", notes = "该方法同时支持POST,GET两种请求方式")
+    @ApiOperation(value = "杀死进程后修改状态", notes = "该方法同时支持POST,GET两种请求方式")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = true, paramType = "query", dataType = "String")
     })

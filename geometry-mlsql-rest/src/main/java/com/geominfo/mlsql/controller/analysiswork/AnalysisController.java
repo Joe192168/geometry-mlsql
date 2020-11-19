@@ -56,7 +56,7 @@ public class AnalysisController extends BaseController {
 
 
     @RequestMapping(value = "/tables", method = {RequestMethod.POST, RequestMethod.GET})
-    @ApiOperation(value = "获取工坊列表信息", httpMethod = "POST", notes = "该接口POST,GET两种请求都支持")
+    @ApiOperation(value = "获取工坊列表信息", notes = "该接口POST,GET两种请求都支持")
     @ApiImplicitParam(name = "sessionId", value = "sessionId", required = false, paramType = "query", dataType = "String")
     public Message tables(@RequestParam(value = "sessionId", required = false) String sessionId) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
@@ -88,7 +88,7 @@ public class AnalysisController extends BaseController {
 
 
     @RequestMapping(value = "/table/get")
-    @ApiOperation(value = "获取单个工坊表信息", httpMethod = "POST", notes = "该接口POST,GET两种请求都支持")
+    @ApiOperation(value = "获取单个工坊表信息", notes = "该接口POST,GET两种请求都支持")
     @ApiImplicitParam(name = "tableName", value = "表名", required = true, paramType = "query", dataType = "String")
     public Message tableInfo(@RequestParam(value = "tableName", required = true) String tableName) {
         HashMap<String, Object> map = new HashMap<>();
@@ -118,7 +118,7 @@ public class AnalysisController extends BaseController {
 
 
     @RequestMapping(value = "/table/delete")
-    @ApiOperation(value = "根据表名删除工坊列表信息", httpMethod = "POST", notes = "该接口POST,GET两种请求都支持")
+    @ApiOperation(value = "根据表名删除工坊列表信息", notes = "该接口POST,GET两种请求都支持")
     @ApiImplicitParam(name = "tableName", value = "表名", required = true, paramType = "query", dataType = "String")
     public Message delete(@RequestParam(value = "tableName", required = true) String tableName) {
         String result = mlsqlWorkshopTableService.mlsqlWorkshopDelete(tableName);
