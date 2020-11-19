@@ -71,19 +71,19 @@ public class AnalysisController extends BaseController {
 
 
     @RequestMapping(value = "/apply")
-    @ApiOperation(value = "根据应用名称获取单个应用信息", httpMethod = "GET" )
+    @ApiOperation(value = "根据应用名称获取单个应用信息", httpMethod = "GET")
     @ApiImplicitParam(name = "name", value = "name", required = true, paramType = "query", dataType = "String")
-    public Message apply(@RequestParam(value = "name",required = true) String name){
+    public Message apply(@RequestParam(value = "name", required = true) String name) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         HashMap<String, Object> map = new HashMap<>();
-        map.put("name",name);
-        map.put("userId",1);
+        map.put("name", name);
+        map.put("userId", 1);
         List<MlsqlApply> mlsqlApplyList = mlsqlApplyService.getMlsqlApplyList(map);
         MlsqlApply mlsqlApply = null;
-        if (mlsqlApplyList.size() > 0){
+        if (mlsqlApplyList.size() > 0) {
             mlsqlApply = mlsqlApplyList.get(0);
         }
-        return mlsqlApply != null ? message.addData("data",mlsqlApply) : message.error(404,"get apply failed");
+        return mlsqlApply != null ? message.addData("data", mlsqlApply) : message.error(404, "get apply failed");
     }
 
 
@@ -92,28 +92,28 @@ public class AnalysisController extends BaseController {
     @ApiImplicitParam(name = "tableName", value = "表名", required = true, paramType = "query", dataType = "String")
     public Message tableInfo(@RequestParam(value = "tableName", required = true) String tableName) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("tableName",tableName);
+        map.put("tableName", tableName);
         MlsqlWorkshopTable mlsqlWorkshop = mlsqlWorkshopTableService.getMlsqlWorkshop(map);
-        if (mlsqlWorkshop != null){
-            map.put("jobName",mlsqlWorkshop.getJobName());
+        if (mlsqlWorkshop != null) {
+            map.put("jobName", mlsqlWorkshop.getJobName());
             map.put("status", MlsqlJobServiceImpl.SUCCESS);
             MlsqlJob mlsqlJob = mlsqlJobService.getMlsqlJob(map);
-            if(mlsqlJob != null){
-                map.put("tableId",mlsqlWorkshop.getId());
+            if (mlsqlJob != null) {
+                map.put("tableId", mlsqlWorkshop.getId());
                 map.put("status", MlsqlWorkshopTableServiceImpl.SUCCESS);
                 String res = mlsqlWorkshopTableService.updateMlsqlWorkshop(map);
                 MlsqlWorkshopTable mlsqlWorkshop1 = null;
-                if (res.equals(InterfaceReturnInformation.SUCCESS)){
+                if (res.equals(InterfaceReturnInformation.SUCCESS)) {
                     HashMap<String, Object> idMap = new HashMap<>();
-                    idMap.put("tableId",mlsqlWorkshop.getId());
+                    idMap.put("tableId", mlsqlWorkshop.getId());
                     mlsqlWorkshop1 = mlsqlWorkshopTableService.getMlsqlWorkshop(idMap);
                 }
-                return mlsqlWorkshop1 != null ? message.addData("data",mlsqlWorkshop1) : message.error(500, "get workshop failed");
-            }else {
-                return mlsqlJob != null ? message.addData("data",mlsqlJob) : message.error(500,"get mlsqlJob failed");
+                return mlsqlWorkshop1 != null ? message.addData("data", mlsqlWorkshop1) : message.error(500, "get workshop failed");
+            } else {
+                return mlsqlJob != null ? message.addData("data", mlsqlJob) : message.error(500, "get mlsqlJob failed");
             }
         }
-        return message.error(404,"table " + tableName +  " is not found");
+        return message.error(404, "table " + tableName + " is not found");
     }
 
 
