@@ -211,4 +211,9 @@ public class TableAuthServiceImpl implements TableAuthService {
     public List<Map<String, Object>> getAuthTableDetail(Map<String, Object> map) {
         return authMapper.getAuthTableDetail(map);
     }
+
+    @Override
+    public String getWithOutColumns(Map<String, Object> map) {
+        return authMapper.getWithOutColumns(map);
+    }
 }

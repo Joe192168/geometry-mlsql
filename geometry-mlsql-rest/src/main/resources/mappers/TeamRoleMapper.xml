@@ -6,7 +6,7 @@
         FROM mlsql_group
         WHERE name=#{teamName}
     </select>
-    <insert id="insertGroup" parameterType="java.lang.String">
+    <insert id="insertGroup" parameterType="java.lang.String" >
         INSERT INTO mlsql_group(name)
         VALUES(#{teamName,jdbcType=VARCHAR})
     </insert>
@@ -93,7 +93,14 @@
         SELECT groups.id,groups.name
         FROM mlsql_group_user groupUser
             JOIN mlsql_group groups ON groupUser.mlsql_group_id=groups.id
-        WHERE groupUser.mlsql_user_id=#{userId} AND groupUser.status IN (#{status})
+        <where>
+            <if test="userId != null and userId != ''">
+                AND groupUser.mlsql_user_id=#{userId}
+            </if>
+            <if test="status != null and status != ''">
+                AND groupUser.status IN (#{status})
+            </if>
+        </where>
     </select>
     <select id="getGroupBackendProxy" parameterType="com.geominfo.mlsql.domain.vo.MlsqlBackendProxy" resultType="java.lang.String">
         SELECT backend_name

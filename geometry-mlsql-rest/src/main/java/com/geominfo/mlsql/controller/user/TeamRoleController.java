@@ -7,6 +7,7 @@ import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.user.TeamRoleService;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
+import com.geominfo.mlsql.util.ExtractClassMsgUtil;
 import com.geominfo.mlsql.utils.MD5Scala;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -301,6 +302,34 @@ public class TeamRoleController extends BaseController{
         }
         List<String> mlsqlBackendProxyList = teamRoleService.backends(mlsqlGroup);
         return success(ReturnCode.RETURN_SUCCESS_STATUS,"get team backends list").addData("data", mlsqlBackendProxyList);
+    }
+
+    @RequestMapping(value = "/teamWithSchema", method = RequestMethod.GET)
+    @ApiOperation(value = "获取组列表withSchema", httpMethod = "GET")
+    public Message teamWithSchema(){
+        MlsqlUser user = userService.getUserByName(userName);
+        if(user == null){
+            return success(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.USER_NOT_EXISTS).addData("data", userName);
+        }
+        List<MlsqlGroup> mlsqlBackendProxyList = teamRoleService.getTeam(user.getId(), MlsqlGroupUser.owner);
+        List<String> schema = ExtractClassMsgUtil.extractClassName(MlsqlGroup.class);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get team list")
+                .addData("data", mlsqlBackendProxyList)
+                .addData("schema", schema);
+    }
+
+    @RequestMapping(value = "/team/manager", method = RequestMethod.GET)
+    @ApiOperation(value = "团队管理接口", httpMethod = "GET")
+    public Message teamManager(){
+        MlsqlUser user = userService.getUserByName(userName);
+        if(user == null){
+            return success(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.USER_NOT_EXISTS).addData("data", userName);
+        }
+        List<MlsqlGroup> mlsqlBackendProxyList = teamRoleService.getTeam(user.getId(), MlsqlGroupUser.owner);
+        List<String> schema = ExtractClassMsgUtil.extractClassName(MlsqlGroup.class);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get team list")
+                .addData("data", mlsqlBackendProxyList)
+                .addData("schema", schema);
     }
 
 

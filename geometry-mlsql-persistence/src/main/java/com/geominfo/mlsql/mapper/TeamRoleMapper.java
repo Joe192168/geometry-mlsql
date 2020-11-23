@@ -178,4 +178,5 @@ public interface TeamRoleMapper {
       * return:
      */
     String getRolesAll();
+    List<MlsqlGroup> getTeamWithSchema(int userId);
 }

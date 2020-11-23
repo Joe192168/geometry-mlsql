@@ -90,4 +90,16 @@
         GROUP BY tables.id,tables.name,tables.db,tables.table_type,
                   tables.source_type,groupRole.name,groups.name
     </select>
+    <select id="getWithOutColumns" parameterType="map" resultType="java.lang.String">
+        SELECT
+            roleAuth.columns
+        FROM mlsql_user user
+            JOIN mlsql_role_member roleMember ON user.id=roleMember.mlsql_user_id
+            JOIN mlsql_group_role roleGroup ON roleMember.mlsql_group_role_id=roleGroup.id
+            JOIN mlsql_group mlsqlGroup ON mlsqlGroup.id=roleGroup.mlsql_group_id
+            JOIN  mlsql_column_auth roleAuth ON roleMember.mlsql_group_role_id=roleAuth.mlsql_group_role_id
+            JOIN mlsql_table mlsqlTable ON roleAuth.mlsql_table_id=mlsqlTable.id
+            JOIN mlsql_group_table tableGroup ON roleAuth.mlsql_table_id=tableGroup.mlsql_table_id AND  roleGroup.mlsql_group_id=tableGroup.mlsql_group_id
+        WHERE user.name=#{userName} and mlsqlTable.db=#{db} and mlsqlTable.name=#{tableName}
+    </select>
 </mapper>

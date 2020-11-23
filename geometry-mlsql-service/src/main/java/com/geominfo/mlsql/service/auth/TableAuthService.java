@@ -110,4 +110,12 @@ public interface TableAuthService {
      */
     
     List<Map<String, Object>> getAuthTableDetail(Map<String, Object> map);
+    /**
+      * description:
+      * author: anan
+      * date: 2020/7/28
+      * param:
+      * return:
+     */
+    String getWithOutColumns(Map<String, Object> map);
 }

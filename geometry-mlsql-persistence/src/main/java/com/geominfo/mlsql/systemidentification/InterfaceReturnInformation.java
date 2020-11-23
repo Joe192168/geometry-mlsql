@@ -26,6 +26,12 @@ public class InterfaceReturnInformation {
 
     public static String SCRIPT_FILE_NO_EXISTS = "file not exists";
 
+    public static String ONLY_ADMIN_OPRATOR = "Only admin is allowed to add engine.";
+
+    public static String ENGINE_NAME_USER_REQUEST = "engine name,url are required";
+
+    public static String REGISTER_USER_SUCESS = "register sucess";
+
     public static final String LOGIN_SUCCESS = "登录成功!";
 
     public static final String SAVE_SUCCESS = "保存数据成功!";

@@ -289,4 +289,13 @@ public class TeamRoleServiceImpl implements TeamRoleService {
     public String getRolesAll() {
         return teamRoleMapper.getRolesAll();
     }
+
+    @Override
+    public List<MlsqlGroup> getTeam(int userId,int status){
+        MlsqlGroupUser mlsqlGroupUser = new MlsqlGroupUser();
+        mlsqlGroupUser.setUserId(userId);
+        mlsqlGroupUser.setStatus(status);
+        List<MlsqlGroup> mlsqlGroupList =  teamRoleMapper.getGroups(mlsqlGroupUser);
+        return mlsqlGroupList;
+    }
 }

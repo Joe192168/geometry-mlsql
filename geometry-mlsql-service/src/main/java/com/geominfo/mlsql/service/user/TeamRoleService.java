@@ -199,4 +199,5 @@ public interface TeamRoleService {
      */
     
     String getRolesAll();
+    List<MlsqlGroup> getTeam(int userId, int status);
 }

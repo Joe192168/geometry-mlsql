@@ -109,4 +109,5 @@ public interface AuthMapper {
      */
     
     List<Map<String, Object>> getAuthTableDetail(Map<String, Object> map);
+    String getWithOutColumns(Map<String, Object> map);
 }
