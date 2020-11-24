@@ -60,11 +60,7 @@ public class EngineController extends BaseController {
 
     @RequestMapping(value = "/engine/add", method = RequestMethod.POST)
     @ApiOperation(value = "新增engine", httpMethod = "POST")
-//    public Message addEngine(@RequestParam MlsqlEngine mlsqlEngine){
-    public Message addEngine(){
-        MlsqlEngine mlsqlEngine = new MlsqlEngine();
-        mlsqlEngine.setName("awh_test2");
-        mlsqlEngine.setUrl("10.0.0.151:9003");
+    public Message addEngine(@RequestParam MlsqlEngine mlsqlEngine){
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         if(mlsqlUser.getRole().equals("admin") == false){
             return success(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.ONLY_ADMIN_OPRATOR).addData("data", mlsqlUser.getRole());
@@ -84,17 +80,12 @@ public class EngineController extends BaseController {
         }else{
             engineService.insertEngine(mlsqlEngine);
         }
-        return success(ReturnCode.RETURN_SUCCESS_STATUS, InterfaceReturnInformation.SAVE_SUCCESS).addData("data", "");
+        return success(ReturnCode.RETURN_SUCCESS_STATUS, InterfaceReturnInformation.SAVE_SUCCESS).addData("data", mlsqlEngine);
     }
 
     @RequestMapping(value = "/engine/register", method = RequestMethod.POST)
     @ApiOperation(value = "注册engine", httpMethod = "POST")
-//    public Message registerEngine(@RequestParam MlsqlEngine mlsqlEngine){
-    public Message registerEngine(){
-        MlsqlEngine mlsqlEngine = new MlsqlEngine();
-        mlsqlEngine.setName("awh_test1");
-        mlsqlEngine.setUrl("10.0.0.150:9003");
-        MlsqlUser mlsqlUser = userService.getUserByName(userName);
+    public Message registerEngine(@RequestParam MlsqlEngine mlsqlEngine){
         if(mlsqlEngine.getName() == null
                 || mlsqlEngine.getName().equals("") == true
                 || mlsqlEngine.getUrl() == null
@@ -102,6 +93,7 @@ public class EngineController extends BaseController {
                 ){
             return success(ReturnCode.RETURN_ERROR_STATUS, InterfaceReturnInformation.ENGINE_NAME_USER_REQUEST);
         }
+        MlsqlUser mlsqlUser = userService.getUserByName(userName);
         List<MlsqlEngine> mlsqlEngineByName = engineService.findByName(mlsqlEngine.getName());
         if(mlsqlEngineByName.size()>0){
             mlsqlEngine.setId(mlsqlEngineByName.get(0).getId());
