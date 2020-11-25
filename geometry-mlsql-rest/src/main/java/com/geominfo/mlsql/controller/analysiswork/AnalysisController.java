@@ -85,7 +85,7 @@ public class AnalysisController extends BaseController {
             mlsqlApply = mlsqlApplyList.get(0);
         }
         return mlsqlApply != null ? success(ReturnCode.RETURN_SUCCESS_STATUS,"get success")
-                .addData("data", mlsqlApply) : error(ReturnCode.RETURN_ERROR_STATUS, "get apply failed");
+                .addData("data", mlsqlApply) : error(HttpStatus.SC_NOT_FOUND, "get apply failed");
     }
 
 
@@ -117,7 +117,7 @@ public class AnalysisController extends BaseController {
                         .addData("data", mlsqlJob) : error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "get mlsqlJob failed");
             }
         }
-        return error(ReturnCode.RETURN_ERROR_STATUS, "table " + tableName + " is not found");
+        return error(HttpStatus.SC_NOT_FOUND, "table " + tableName + " is not found");
     }
 
 
