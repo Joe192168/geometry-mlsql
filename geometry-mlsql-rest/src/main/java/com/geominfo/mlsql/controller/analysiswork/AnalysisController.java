@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,8 +40,8 @@ import java.util.List;
 @Log4j2
 public class AnalysisController extends BaseController {
 
-    @Autowired
-    private Message message;
+    /*@Autowired
+    private Message message;*/
 
     @Autowired
     private UserService userService;
@@ -63,31 +64,32 @@ public class AnalysisController extends BaseController {
         List<MlsqlWorkshopTable> mlsqlWorkshopList;
         if (sessionId != null && sessionId.length() != 0) {
             mlsqlWorkshopList = mlsqlWorkshopTableService.getMlsqlWorkshopList(sessionId, null);
-            return message.addData("data", mlsqlWorkshopList);
+            return success(ReturnCode.RETURN_SUCCESS_STATUS,"get success").addData("data", mlsqlWorkshopList);
         }
-        mlsqlWorkshopList = mlsqlWorkshopTableService.getMlsqlWorkshopList("", 1);
-        return message.addData("data", mlsqlWorkshopList);
+        mlsqlWorkshopList = mlsqlWorkshopTableService.getMlsqlWorkshopList("", mlsqlUser.getId());
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get success").addData("data", mlsqlWorkshopList);
     }
 
 
-    @RequestMapping(value = "/apply")
+    @RequestMapping(value = "/apply", method = RequestMethod.GET)
     @ApiOperation(value = "根据应用名称获取单个应用信息", httpMethod = "GET")
     @ApiImplicitParam(name = "name", value = "name", required = true, paramType = "query", dataType = "String")
     public Message apply(@RequestParam(value = "name", required = true) String name) {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         HashMap<String, Object> map = new HashMap<>();
         map.put("name", name);
-        map.put("userId", 1);
+        map.put("userId", mlsqlUser.getId());
         List<MlsqlApply> mlsqlApplyList = mlsqlApplyService.getMlsqlApplyList(map);
         MlsqlApply mlsqlApply = null;
         if (mlsqlApplyList.size() > 0) {
             mlsqlApply = mlsqlApplyList.get(0);
         }
-        return mlsqlApply != null ? message.addData("data", mlsqlApply) : message.error(404, "get apply failed");
+        return mlsqlApply != null ? success(ReturnCode.RETURN_SUCCESS_STATUS,"get success")
+                .addData("data", mlsqlApply) : error(ReturnCode.RETURN_ERROR_STATUS, "get apply failed");
     }
 
 
-    @RequestMapping(value = "/table/get")
+    @RequestMapping(value = "/table/get", method = {RequestMethod.POST, RequestMethod.GET})
     @ApiOperation(value = "获取单个工坊表信息", notes = "该接口POST,GET两种请求都支持")
     @ApiImplicitParam(name = "tableName", value = "表名", required = true, paramType = "query", dataType = "String")
     public Message tableInfo(@RequestParam(value = "tableName", required = true) String tableName) {
@@ -108,26 +110,28 @@ public class AnalysisController extends BaseController {
                     idMap.put("tableId", mlsqlWorkshop.getId());
                     mlsqlWorkshop1 = mlsqlWorkshopTableService.getMlsqlWorkshop(idMap);
                 }
-                return mlsqlWorkshop1 != null ? message.addData("data", mlsqlWorkshop1) : message.error(500, "get workshop failed");
+                return mlsqlWorkshop1 != null ? success(ReturnCode.RETURN_SUCCESS_STATUS,"get workshop success")
+                        .addData("data", mlsqlWorkshop1) : error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "get workshop failed");
             } else {
-                return mlsqlJob != null ? message.addData("data", mlsqlJob) : message.error(500, "get mlsqlJob failed");
+                return mlsqlJob != null ? success(ReturnCode.RETURN_SUCCESS_STATUS,"get mlsqlJob success")
+                        .addData("data", mlsqlJob) : error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "get mlsqlJob failed");
             }
         }
-        return message.error(404, "table " + tableName + " is not found");
+        return error(ReturnCode.RETURN_ERROR_STATUS, "table " + tableName + " is not found");
     }
 
 
-    @RequestMapping(value = "/table/delete")
+    @RequestMapping(value = "/table/delete", method = {RequestMethod.POST, RequestMethod.GET})
     @ApiOperation(value = "根据表名删除工坊列表信息", notes = "该接口POST,GET两种请求都支持")
     @ApiImplicitParam(name = "tableName", value = "表名", required = true, paramType = "query", dataType = "String")
     public Message delete(@RequestParam(value = "tableName", required = true) String tableName) {
         String result = mlsqlWorkshopTableService.mlsqlWorkshopDelete(tableName);
-        return result.equals(InterfaceReturnInformation.SUCCESS) ? message.addData("data", "delete success") :
-                message.addData("data", "delete failed");
+        return result.equals(InterfaceReturnInformation.SUCCESS) ? success(ReturnCode.RETURN_SUCCESS_STATUS,"delete success"):
+                error(ReturnCode.RETURN_ERROR_STATUS,"delete failed");
     }
 
 
-    @RequestMapping(value = "/tables/save")
+    @RequestMapping(value = "/tables/save", method = RequestMethod.POST)
     @ApiOperation(value = "保存工坊信息", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tableName", value = "表名", required = true, paramType = "query", dataType = "String"),
@@ -147,7 +151,7 @@ public class AnalysisController extends BaseController {
         MlsqlWorkshopTable mlsqlWorkshopTable = new MlsqlWorkshopTable();
         mlsqlWorkshopTable.setTableName(tableName);
         mlsqlWorkshopTable.setContent(sql);
-        mlsqlWorkshopTable.setMlsqlUserId(1);
+        mlsqlWorkshopTable.setMlsqlUserId(mlsqlUser.getId());
         mlsqlWorkshopTable.setSessionId(sessionId);
         mlsqlWorkshopTable.setStatus(status);
         mlsqlWorkshopTable.setTableSchema(schema);

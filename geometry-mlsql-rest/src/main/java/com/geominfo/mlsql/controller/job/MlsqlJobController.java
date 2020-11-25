@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,9 +42,6 @@ import java.util.Map;
 public class MlsqlJobController extends BaseController {
 
     @Autowired
-    private Message message;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -61,7 +59,7 @@ public class MlsqlJobController extends BaseController {
         String aaa = "";
          /*CommandUtil.auth_secret()*/
         if (!params.get("__auth_secret__").equals("mlsql")) {
-            return message.error("requirement failed: __auth_secret__ is not right");
+            return error(HttpStatus.SC_INTERNAL_SERVER_ERROR,"requirement failed: __auth_secret__ is not right");
         } else {
             String jobName = JSONObject.parseObject(params.get("jobInfo")).getString("jobName");
             Map<String, Object> map;
@@ -90,7 +88,7 @@ public class MlsqlJobController extends BaseController {
     public Message jobList() {
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         List<MlsqlJobRender> mlsqlJobList = mlsqlJobService.getMlsqlJobList(mlsqlUser.getId());
-        return message.addData("data", mlsqlJobList);
+        return success(ReturnCode.RETURN_SUCCESS_STATUS,"get success").addData("data", mlsqlJobList);
     }
 
 
@@ -107,9 +105,9 @@ public class MlsqlJobController extends BaseController {
         map.put("jobName", jobName);
         MlsqlJob mlsqlJob = mlsqlJobService.getMlsqlJob(map);
         if (mlsqlJob == null) {
-            return message.error(404, "The task name does not exist");
+            return error(ReturnCode.RETURN_ERROR_STATUS, "The task name does not exist");
         } else {
-            return message.addData("data", mlsqlJob);
+            return success(ReturnCode.RETURN_SUCCESS_STATUS,"get success").addData("data", mlsqlJob);
         }
     }
 

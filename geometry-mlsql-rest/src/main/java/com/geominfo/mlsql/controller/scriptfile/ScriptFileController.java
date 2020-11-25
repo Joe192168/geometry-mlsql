@@ -159,7 +159,7 @@ public class ScriptFileController extends BaseController {
         }
         return msg.equals(InterfaceReturnInformation.SCRIPT_FILE_NO_EXISTS) == false ? success(ReturnCode.RETURN_SUCCESS_STATUS, "get pathId by path sucess")
                 .addData("data", result).addData("type", ViewType.string)
-                : error(ReturnCode.RETURN_ERROR_STATUS, "get pathId by path  faild").addData("data", msg);
+                : error(ReturnCode.RETURN_ERROR_STATUS, msg);
     }
 
 }
