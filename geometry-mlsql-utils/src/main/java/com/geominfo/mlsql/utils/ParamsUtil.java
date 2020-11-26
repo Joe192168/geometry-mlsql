@@ -35,7 +35,6 @@ public class ParamsUtil {
         if(paramsMap.containsKey(key)){
             value = paramsMap.get(key);
         }
-
         return (value == null || "".equals(value)) ? defaultValue : value;
     }
 
@@ -56,12 +55,19 @@ public class ParamsUtil {
 
         LinkedMultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>() ;
         for(Map.Entry entry : map.entrySet()){
-            paramsMap.add((String)entry.getKey(),(String)entry.getValue());
+            paramsMap.add((String)entry.getKey().toString(),(String)entry.getValue());
         }
 
         return paramsMap;
+    }
 
+    public static  LinkedMultiValueMap<String, String> MapToLinkedMultiValueMap(Map<String, String> map){
+        LinkedMultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>() ;
+        for(Map.Entry entry : map.entrySet()){
+            paramsMap.add(entry.getKey().toString(),entry.getValue().toString());
+        }
 
+        return paramsMap;
     }
 
 
