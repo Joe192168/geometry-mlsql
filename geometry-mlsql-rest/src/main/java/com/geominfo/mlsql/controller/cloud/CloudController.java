@@ -1,11 +1,9 @@
 package com.geominfo.mlsql.controller.cloud;
 
 import com.geominfo.mlsql.controller.base.BaseController;
-import com.geominfo.mlsql.domain.vo.ClusterManagerParameter;
 import com.geominfo.mlsql.domain.vo.Message;
-import com.geominfo.mlsql.domain.vo.MlsqlEngine;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
-import com.geominfo.mlsql.service.cloud.CloudService;
+import com.geominfo.mlsql.service.proxy.ProxyService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +32,7 @@ import java.util.Map;
 public class CloudController  extends BaseController {
 
     @Autowired
-    private CloudService cloudService;
+    private ProxyService proxyService;
 
     @Value("${cloud.url}")
     private String cloudUrl;
@@ -41,73 +40,77 @@ public class CloudController  extends BaseController {
     @RequestMapping(value = "/proxy/api/create_engine", method = RequestMethod.POST)
     @ApiOperation(value = "新增engine", httpMethod = "POST")
     public Message createEngine(@RequestParam Map<String, String> map){
-        ResponseEntity<String> responseEntity = null;
+        ResponseEntity<Message> responseEntity = null;
+        Message message = null;
         try {
-            LinkedMultiValueMap<String, String> params =  ParamsUtil.MapToLinkedMultiValueMap(map);
-            params.set("url", cloudUrl+"/api/create_engine");
+            LinkedMultiValueMap<String, String> params = ParamsUtil.MapToLinkedMultiValueMap(map);
             params.set("UserName", userName);
-            responseEntity = cloudService.execReqUrlAndResponse(params);
-
-            return success(ReturnCode.RETURN_SUCCESS_STATUS,"operator success")
-                    .addData("data",responseEntity.getStatusCode() + responseEntity.getBody());
-
+            responseEntity = proxyService.postForEntity(cloudUrl+"/api/create_engine", params, Message.class);
+            message = responseEntity.getBody();
+            return  message;
         } catch (Exception e) {
             e.printStackTrace();
 
             return success(ReturnCode.RETURN_ERROR_STATUS,"operator faild")
-                    .addData("data",responseEntity.getStatusCode() + responseEntity.getBody());
+                    .addData("data","");
         }
     }
 
     @RequestMapping(value = "/proxy/api/delete_engine", method = RequestMethod.POST)
     @ApiOperation(value = "删除engine", httpMethod = "POST")
     public Message deleteEngine(@RequestParam Map<String, String> map){
-        ResponseEntity<String> responseEntity = null;
+        ResponseEntity<Message> responseEntity = null;
+        Message message = null;
         try {
-            LinkedMultiValueMap<String, String> params =  ParamsUtil.MapToLinkedMultiValueMap(map);
-            params.set("url", cloudUrl+"/api/delete_engine");
+            LinkedMultiValueMap<String, String> params = ParamsUtil.MapToLinkedMultiValueMap(map);
             params.set("UserName", userName);
-            responseEntity = cloudService.execReqUrlAndResponse(params);
+            responseEntity = proxyService.postForEntity(cloudUrl+"/api/delete_engine", params, Message.class);
+            message = responseEntity.getBody();
+            return  message;
         } catch (Exception e) {
             e.printStackTrace();
+
+            return success(ReturnCode.RETURN_ERROR_STATUS,"operator faild")
+                    .addData("data","");
         }
-        return success(ReturnCode.RETURN_SUCCESS_STATUS,"operator success")
-                .addData("data",responseEntity.getStatusCode() + responseEntity.getBody());
     }
 
     @RequestMapping(value = "/proxy/api/status", method = RequestMethod.GET)
     @ApiOperation(value = "获取engine状态", httpMethod = "GET")
     public Message status(@RequestParam Map<String, String> map){
-        ResponseEntity<String> responseEntity = null;
-        try {
-            LinkedMultiValueMap<String, String> params =  ParamsUtil.MapToLinkedMultiValueMap(map);
-            params.set("url", cloudUrl+"/api/status");
-            params.set("UserName", userName);
-            responseEntity = cloudService.execReqUrlAndResponse(params);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return success(ReturnCode.RETURN_SUCCESS_STATUS,"operator success")
-                .addData("data",responseEntity.getStatusCode() + responseEntity.getBody());
-    }
-
-    @RequestMapping(value = "/proxy/api/list", method = RequestMethod.GET)
-    @ApiOperation(value = "获取engine列表", httpMethod = "GET")
-    public Message list(@RequestParam Map<String, String> map){
-        ResponseEntity<String> responseEntity = null;
+        ResponseEntity<Message> responseEntity = null;
+        Message message = null;
         try {
             LinkedMultiValueMap<String, String> params = ParamsUtil.MapToLinkedMultiValueMap(map);
-            params.set("url", cloudUrl+"/api_v1/engine/list");
             params.set("UserName", userName);
-            responseEntity = cloudService.execReqUrlAndResponse(params);
-            return success(ReturnCode.RETURN_SUCCESS_STATUS,"operator success")
-                    .addData("data",responseEntity.getStatusCode() + responseEntity.getBody());
-
+            responseEntity = proxyService.postForEntity(cloudUrl+"/api/status", params, Message.class);
+            message = responseEntity.getBody();
+            return  message;
         } catch (Exception e) {
             e.printStackTrace();
 
             return success(ReturnCode.RETURN_ERROR_STATUS,"operator faild")
-                    .addData("data",responseEntity.getStatusCode() + responseEntity.getBody());
+                    .addData("data","");
+        }
+    }
+
+    @RequestMapping(value = "/proxy/api/list", method = RequestMethod.GET)
+    @ApiOperation(value = "获取engine列表", httpMethod = "GET")
+    public Message list(){
+        ResponseEntity<Message> responseEntity = null;
+        Map<String, String> map = new HashMap<>();
+        Message message = null;
+        try {
+            LinkedMultiValueMap<String, String> params = ParamsUtil.MapToLinkedMultiValueMap(map);
+            params.set("UserName", userName);
+            responseEntity = proxyService.postForEntity(cloudUrl+"/api_v1/engine/list", params, Message.class);
+            message = responseEntity.getBody();
+            return  message;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return success(ReturnCode.RETURN_ERROR_STATUS,"operator faild")
+                    .addData("data","");
         }
     }
 }
