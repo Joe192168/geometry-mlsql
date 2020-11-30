@@ -9,8 +9,8 @@ engine:
 cluster:
    url: http://10.0.0.152:8080/run/script
 
-cloud:
-   url: http://192.168.0.45:8088
+#cloud:
+#   url: http://192.168.0.45:8088
 
 
 logging:
