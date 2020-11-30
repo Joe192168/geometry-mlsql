@@ -92,14 +92,10 @@ jasypt:
 # 开发环境配置(配置项只包括环境不同项)
 spring:
     profiles: dev
-#    datasource:
-#      url: jdbc:mysql://10.0.0.152:3306/dev_mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-#      username: root
-#      password: ENC(Kp81sGHFKiduY28ZCwSC6A==)
     datasource:
-      url: jdbc:mysql://192.168.0.47:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+      url: jdbc:mysql://10.0.0.152:3306/dev_mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
       username: root
-      password: 123456
+      password: ENC(Kp81sGHFKiduY28ZCwSC6A==)
     redis:
       # 服务器IP地址
       host: 127.0.0.1
