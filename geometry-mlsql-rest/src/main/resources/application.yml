@@ -9,6 +9,8 @@ engine:
 cluster:
    url: http://10.0.0.152:8080/run/script
 
+cloud:
+   url: http://192.168.0.45:8088
 
 
 logging:
@@ -90,10 +92,14 @@ jasypt:
 # 开发环境配置(配置项只包括环境不同项)
 spring:
     profiles: dev
+#    datasource:
+#      url: jdbc:mysql://10.0.0.152:3306/dev_mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+#      username: root
+#      password: ENC(Kp81sGHFKiduY28ZCwSC6A==)
     datasource:
-      url: jdbc:mysql://10.0.0.152:3306/dev_mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+      url: jdbc:mysql://192.168.0.47:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
       username: root
-      password: ENC(Kp81sGHFKiduY28ZCwSC6A==)
+      password: 123456
     redis:
       # 服务器IP地址
       host: 127.0.0.1

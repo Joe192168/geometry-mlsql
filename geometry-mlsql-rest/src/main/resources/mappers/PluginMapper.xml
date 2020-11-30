@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.PluginMapper">
+    <select id="getMlsqlAnalysisPluginList" resultType="com.geominfo.mlsql.domain.vo.MlsqlAnalysisPlugin">
+        SELECT
+        id,
+        `name`,
+        content,
+        mlsql_user_id AS mlsqlUserId
+        FROM mlsql_analysis_plugin
+        <where>
+            <if test="name != null and name != ''">
+                AND `name`=#{name}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateMlsqlAnalysis">
+        UPDATE mlsql_analysis_plugin
+        SET content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <insert id="addMlsqlAnalysis">
+        INSERT INTO mlsql_analysis_plugin (`name`,content,mlsql_user_id)
+        VALUES (#{name},#{content},#{mlsqlUserId})
+    </insert>
+
+</mapper>

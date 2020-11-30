@@ -15,4 +15,24 @@
         from mlsql_apply
         where `name`= #{name} AND mlsql_user_id = #{userId}
     </select>
+
+    <select id="appInfo" resultType="com.geominfo.mlsql.domain.vo.AppKv">
+        SELECT
+        `id`,
+        `name`,
+        `value`
+        FROM app_kv
+    </select>
+
+
+    <update id="updateApp">
+        UPDATE app_kv
+        SET `value` = #{value}
+        WHERE `name` = #{name}
+    </update>
+
+    <insert id="addApp">
+        INSERT INTO app_kv(`name`,`value`)
+        VALUES (#{name},#{value})
+    </insert>
 </mapper>

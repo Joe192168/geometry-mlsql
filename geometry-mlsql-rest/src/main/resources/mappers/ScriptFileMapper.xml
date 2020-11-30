@@ -72,23 +72,26 @@
     </select>
     <select id="getScriptFileListByPathAndUser" parameterType="map" resultType="com.geominfo.mlsql.domain.vo.MlsqlScriptFile">
         SELECT
-            files.id
-            ,files.parent_id AS  parentId
-            ,files.name
-            ,files.is_dir AS isDir
-            ,files.content
-            ,files.icon
-            ,files.label
-            ,files.is_expanded AS isExpanded
+        files.id
+        ,files.parent_id AS  parentId
+        ,files.name
+        ,files.is_dir AS isDir
+        ,files.content
+        ,files.icon
+        ,files.label
+        ,files.is_expanded AS isExpanded
         FROM script_file files
-            JOIN script_user_rw fileUsers on files.id=fileUsers.script_file_id
+        JOIN script_user_rw fileUsers on files.id=fileUsers.script_file_id
         WHERE fileUsers.mlsql_user_id=#{userId}
-              AND is_delete=2
+        AND is_delete=2
+        <if test="id != null and id != ''">
+            AND files.id = #{id}
+        </if>
         <if test="path != null">
             AND files.name=#{path}
         </if>
         <if test="parentId != null">
-              AND  parent_id =#{parentId}
+            AND  parent_id =#{parentId}
         </if>
     </select>
 </mapper>

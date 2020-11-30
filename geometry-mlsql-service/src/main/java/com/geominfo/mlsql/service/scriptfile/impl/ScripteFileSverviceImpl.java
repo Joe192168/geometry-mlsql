@@ -128,4 +128,14 @@ public class ScripteFileSverviceImpl implements ScriptFileService {
             scriptFileMapper.updateScriptUserRW(m);
         });
     }
+
+    @Override
+    public MlsqlScriptFile listScriptFileByUser(Map<String, Object> map) {
+        List<MlsqlScriptFile> scriptFileListByPathAndUser = scriptFileMapper.getScriptFileListByPathAndUser(map);
+        MlsqlScriptFile mlsqlScriptFile = null;
+        if (scriptFileListByPathAndUser.size()>0){
+            mlsqlScriptFile = scriptFileListByPathAndUser.get(0);
+        }
+        return mlsqlScriptFile;
+    }
 }

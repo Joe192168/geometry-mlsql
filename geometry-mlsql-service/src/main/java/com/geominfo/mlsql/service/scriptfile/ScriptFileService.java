@@ -4,6 +4,7 @@ import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: geometry-mlsql
@@ -70,4 +71,14 @@ public interface ScriptFileService {
       * return: List<MlsqlScriptFile>
      */
     List<MlsqlScriptFile> listScriptFileByUser(MlsqlUser mlsqlUser);
+
+
+    /**
+     * description:
+     * author: ryan
+     * date: 2020/11/25
+     * param: map
+     * return: MlsqlScriptFile
+     */
+    MlsqlScriptFile listScriptFileByUser(Map<String,Object> map);
 }
