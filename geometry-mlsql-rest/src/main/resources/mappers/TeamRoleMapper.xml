@@ -50,11 +50,13 @@
         SET status=#{status}
         WHERE mlsql_group_id=#{groupId} AND mlsql_user_id=#{userId}
     </update>
+
     <delete id="deleteGroupUser" parameterType="com.geominfo.mlsql.domain.vo.MlsqlGroupUser">
         DELETE
         FROM mlsql_group_user
         WHERE mlsql_group_id=#{groupId} AND mlsql_user_id=#{userId}
     </delete>
+
     <select id="getGroupRole" parameterType="map" resultType="com.geominfo.mlsql.domain.vo.MlsqlGroupRole">
         SELECT id,name,mlsql_group_id AS groupId
         FROM mlsql_group_role

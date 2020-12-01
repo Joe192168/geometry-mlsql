@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
  */
 @Component
 @Log4j2
-public class NetWorkUtil {
+public class HttpUtil {
 
 
     private RestTemplate restTemplate = new RestTemplate();
@@ -43,6 +43,7 @@ public class NetWorkUtil {
      * @return: 请求结果
      */
     public <T> T synGet(String url) {
+
         return (T) restTemplate.getForEntity(url, String.class);
     }
 

@@ -45,6 +45,7 @@ public interface MlsqlJobService {
     String updateMlsqlJob(Map<String, Object> map);
 
 
+
     /**
      * description: 创建map
      * author: ryan
@@ -54,6 +55,11 @@ public interface MlsqlJobService {
      */
     Map<String, Object> createMap(Integer userId, String jobName, Integer status,
                                   Long finshAt, String reason, String response);
+
+
+    void insertJob(MlsqlJob mlsqlJob) ;
+    String updateMlsqlJobByJonName(Map<String, Object> map);
+
 
 
 }

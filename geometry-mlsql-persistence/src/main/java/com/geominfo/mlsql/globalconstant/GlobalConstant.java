@@ -30,6 +30,7 @@ public class GlobalConstant {
     public static final int ZERO = 0;
     public static final int ONE = 1;
     public static final int TOW = 2;
+    public static final int FOUR = 4;
     public static final int ONE_HUNDRED = 100;
     public static final int TOW_HUNDRED = 200;
     public static final int FOUR_HUNDRED = 400;

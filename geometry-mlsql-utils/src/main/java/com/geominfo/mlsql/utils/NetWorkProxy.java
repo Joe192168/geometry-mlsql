@@ -1,6 +1,6 @@
 package com.geominfo.mlsql.utils;
 
-import com.google.common.cache.CacheBuilder;
+
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -34,11 +34,11 @@ public class NetWorkProxy implements MethodInterceptor {
         return result;
     }
 
-    public static NetWorkUtil getNetWorkProxy() {
+    public static HttpUtil getNetWorkProxy() {
         Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(new NetWorkUtil().getClass());
+        enhancer.setSuperclass(new HttpUtil().getClass());
         enhancer.setCallback(new NetWorkProxy());
-        return (NetWorkUtil) enhancer.create();
+        return (HttpUtil) enhancer.create();
     }
 
 }

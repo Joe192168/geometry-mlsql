@@ -2,6 +2,7 @@ package com.geominfo.mlsql.domain.vo;
 
 import lombok.Data;
 
+
 /**
  * @program: MLSQL CONSOLE后端接口
  * @description: MlsqlJob
@@ -19,5 +20,33 @@ public class MlsqlJob {
     private Long finishAt;
     private String reason;
     private String response;
+    private int mlsqlUserId;
 
+
+
+    public static final  int RUNNING = 1 ;
+    public static final  int SUCCESS = 2 ;
+    public static final  int FAIL = 3 ;
+    public static final  int RKILLED = 4 ;
+
+
+    public MlsqlJob(Integer id,
+                    String name,
+                    String content,
+                    Integer status,
+                    int mlsqlUserId ,
+                    Long createdAt,
+                    Long finishAt,
+                    String reason,
+                    String response) {
+        this.id = id;
+        this.name = name;
+        this.content = content;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.finishAt = finishAt;
+        this.reason = reason;
+        this.response = response;
+        this.mlsqlUserId = mlsqlUserId;
+    }
 }

@@ -2,10 +2,12 @@ package com.geominfo.mlsql.controller.cluster;
 
 
 import com.geominfo.mlsql.controller.base.BaseController;
-import com.geominfo.mlsql.domain.vo.ClusterManagerParameter;
-import com.geominfo.mlsql.domain.vo.MLSQLRunScriptParameter;
-import com.geominfo.mlsql.domain.vo.Message;
+import com.geominfo.mlsql.domain.vo.*;
+import com.geominfo.mlsql.service.cluster.ApplyService;
+import com.geominfo.mlsql.service.cluster.BackendService;
 import com.geominfo.mlsql.service.cluster.ClusterService;
+import com.geominfo.mlsql.service.cluster.DsService;
+import com.geominfo.mlsql.service.job.MlsqlJobService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
@@ -13,11 +15,17 @@ import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -37,6 +45,9 @@ public class ClusterController extends BaseController {
 
     @Autowired
     private ClusterService clusterService;
+
+    @Autowired
+    private ApplyService applyService;
 
     @RequestMapping("/api_v1/cluster")
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
@@ -84,14 +95,39 @@ public class ClusterController extends BaseController {
         LinkedMultiValueMap<String, String> params = ParamsUtil.objectToMap(mlsqlRunScriptParameter);
         if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
         if (!params.containsKey("owner")) params.add("owner", userName);
-        ResponseEntity<String> result = clusterService.runScript(params);
-        logger.info("执行脚本返回结果result = " + result.getBody());
+        Map<Integer ,Object> resMap= clusterService.runScript(params);
+        logger.info("执行脚本返回结果 resMap = " + resMap);
+        int statudsCode = resMap.keySet().iterator().next() ;
+        String res = (String) resMap.values().iterator().next();
 
-        return result.getStatusCode().value() == 200 ?
-                success(200, "success").addData("data", result.getBody()) :
-                error(400, "error").addData("data", result.getBody());
+        return statudsCode == 200 ?
+                success(statudsCode, "success").addData("data", res) :
+                error(statudsCode, "error").addData("data", res);
 
     }
+
+
+    @RequestMapping("/api_v1/test001")
+    @ApiOperation(value = "测试", httpMethod = "POST")
+    public Message test001() throws Exception {
+
+
+        MlsqlApply mlsqlApply = new MlsqlApply("appName" ,"content" ,2,1 ,System.currentTimeMillis(),
+                -1L,"response " , "applySQL") ;
+
+        applyService.insertApply(mlsqlApply);
+
+
+        System.out.println("");
+
+        return  success(200, "success").addData("data", "success") ;
+
+    }
+
+
+
+
+
 
 
 }

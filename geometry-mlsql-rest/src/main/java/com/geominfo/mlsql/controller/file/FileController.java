@@ -47,7 +47,7 @@ public class FileController extends BaseController{
     @ApiImplicitParams({
             @ApiImplicitParam(value = "文件", name = "file", required = true)
     })
-    public Message uploadfile(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Message uploadfile(HttpServletRequest request) throws Exception {
         Object result =  fileService.formUpload(request ,userName);
         return success(200 ,result.toString()) ;
     }

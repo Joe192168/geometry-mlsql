@@ -1,6 +1,8 @@
 package com.geominfo.mlsql.mapper;
 
 import com.geominfo.mlsql.domain.vo.MlsqlBackendProxy;
+import com.geominfo.mlsql.domain.vo.MlsqlScriptFile;
+import com.geominfo.mlsql.domain.vo.ScriptUserRw;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
@@ -20,4 +22,6 @@ public interface BackendProxyMapper {
     List<MlsqlBackendProxy> getBackendProxyByName(String backendName);
     int intsertBackendProxy(MlsqlBackendProxy mlsqlBackendProxy) ;
     int deleteBackendProxy(MlsqlBackendProxy mlsqlBackendProxy) ;
+
+    List<MlsqlScriptFile> findProjectFiles(Integer userId) ;
 }

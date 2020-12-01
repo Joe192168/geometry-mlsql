@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>mlsql脚本执行</title>
+
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+
+    <script type="text/javascript" src="consoleindex.js">
+
+    </script>
+
+    <style type="text/css">
+        textarea.test{
+            padding:0px;
+            margin:0px;
+            border:2px solid cornflowerblue;
+        }
+    </style>
+</head>
+<body>
+
+<br/>
+<div contenteditable="true">
+    <b id="scriptName">脚本名</b>
+    <br/><br/>
+    <textarea class="test" style="font-size:1.5em;width:1000px; height:500px" name="sql" id="sql" rows="30">
+           显示脚本区域................
+    </textarea>
+
+    <input type="hidden" id="jobType" value="script">
+    <input type="hidden" id="executeMode" value="query">
+    <input type="hidden" id="jobName" value="b4833b75-9b0a-487d-bf59-f38e4c151479">
+    <input type="hidden" id="timeout" value="-1">
+    <input type="hidden" id="silence" value="false">
+    <!--<input type="hidden" id="tags" value="admin_develop">-->
+    <input type="hidden" id="sessionPerUser" value="false">
+    <!--<input type="hidden" id="sessionPerRequest" value="false">-->
+    <input type="hidden" id="async" value="false">
+    <input type="hidden" id="callback" value="false">
+    <input type="hidden" id="skipInclude" value="false">
+    <input type="hidden" id="skipAuth" value="true">
+    <input type="hidden" id="skipGrammarValidate" value="true">
+
+    <br/> <br/>
+    <button class="div1" type="button" id="executed_btn" name="executed_btn" onclick="executedButton()"
+            style="width:100px; height:30px;">运行</button>
+    <br/> <br/>
+    <p id="executedTime"></p>
+    <br/>
+    <textarea name="resultShow" id="resultShow" rows="30" style="width:800px; height:400px;">
+          没有执行的脚本.....
+    </textarea>
+</div>
+
+</body>
+</html>

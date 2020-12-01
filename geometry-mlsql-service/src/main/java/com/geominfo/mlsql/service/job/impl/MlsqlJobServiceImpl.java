@@ -67,5 +67,16 @@ public class MlsqlJobServiceImpl implements MlsqlJobService {
         return newMap;
     }
 
+    @Override
+    public void insertJob(MlsqlJob mlsqlJob) {
+        mlsqlJobMapper.insertJob(mlsqlJob);
+    }
+
+
+    @Override
+    public String updateMlsqlJobByJonName(Map<String, Object> map){
+        int result = mlsqlJobMapper.updateMlsqlJobByJonName(map);
+        return result > 0? InterfaceReturnInformation.SUCCESS: InterfaceReturnInformation.FAILED;
+    }
 
 }
