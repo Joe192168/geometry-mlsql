@@ -47,4 +47,9 @@ public class EngineServiceImpl implements EngineService {
         return engineMapper.getAllEngine(paraMap);
     }
 
+    @Override
+    public List<MlsqlEngine> list() {
+        return engineMapper.list();
+    }
+
 }

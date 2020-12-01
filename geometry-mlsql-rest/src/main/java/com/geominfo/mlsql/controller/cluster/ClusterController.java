@@ -7,6 +7,7 @@ import com.geominfo.mlsql.service.cluster.ApplyService;
 import com.geominfo.mlsql.service.cluster.BackendService;
 import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.service.cluster.DsService;
+import com.geominfo.mlsql.service.engine.EngineService;
 import com.geominfo.mlsql.service.job.MlsqlJobService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
@@ -47,7 +48,7 @@ public class ClusterController extends BaseController {
     private ClusterService clusterService;
 
     @Autowired
-    private ApplyService applyService;
+    private EngineService applyService;
 
     @RequestMapping("/api_v1/cluster")
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
@@ -111,11 +112,7 @@ public class ClusterController extends BaseController {
     @ApiOperation(value = "测试", httpMethod = "POST")
     public Message test001() throws Exception {
 
-
-        MlsqlApply mlsqlApply = new MlsqlApply("appName" ,"content" ,2,1 ,System.currentTimeMillis(),
-                -1L,"response " , "applySQL") ;
-
-        applyService.insertApply(mlsqlApply);
+        List<MlsqlEngine> list=applyService.list();
 
 
         System.out.println("");

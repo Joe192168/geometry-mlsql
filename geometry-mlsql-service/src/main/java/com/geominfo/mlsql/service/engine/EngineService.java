@@ -19,4 +19,5 @@ public interface EngineService {
     int insertEngine(MlsqlEngine mlsqlEngine);
     int deleteEngineById(int id);
     List<MlsqlEngine> getAllEngine(Map<String, Object> paraMap);
+    List<MlsqlEngine> list() ;
 }

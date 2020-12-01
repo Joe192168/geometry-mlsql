@@ -6,6 +6,7 @@ import com.geominfo.mlsql.domain.vo.*;
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.base.BaseServiceImpl;
 import com.geominfo.mlsql.service.cluster.*;
+import com.geominfo.mlsql.service.engine.EngineService;
 import com.geominfo.mlsql.service.job.MlsqlJobService;
 import com.geominfo.mlsql.service.scriptfile.QuillScriptFileService;
 import com.geominfo.mlsql.service.user.UserService;
@@ -72,6 +73,9 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
     @Autowired
     private ApplyService applyService ;
+
+    @Autowired
+    private EngineService engineService ;
 
     @Override
     public <T> T clusterManager(LinkedMultiValueMap<String, String> paramsMap) {
@@ -144,13 +148,19 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         MlsqlUser user = userService.getUserByName(paramsMap.getFirst("owner"));
 
+        List<MlsqlGroupUser> groupUsers = user.getMlsqlGroupUsers() ;
+
         String clusterUrl = CommandUtil.mlsqlClusterUrl();
         String engineUrl = CommandUtil.mlsqlEngineUrl();
 
         String engineName = !paramsMap.containsKey("engineName") || paramsMap.get("engineName").equals("undefined") ?
-                user.getName() : paramsMap.getFirst("engineName");
+                getBackendName(user) : paramsMap.getFirst("engineName");
 
-        List<MlsqlEngine> engines = null; //暂时留空,等华大佬完成方法
+
+        Map<String ,Object> engineMap = new ConcurrentHashMap<>() ;
+        engineMap.put("status" ,!groupUsers.isEmpty() ? groupUsers.get(0).getStatus() : "") ;
+        engineMap.put("userId" ,user.getId()) ;
+        List<MlsqlEngine> engines = engineService.getAllEngine(engineMap);
 
         MlsqlEngine engineConfigOpt = (MlsqlEngine) engines.stream().filter(
                 me -> me.getName().equals(engineName));
@@ -326,6 +336,13 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         return (T) new ConcurrentHashMap<Integer ,String>().put(response.getStatusCodeValue() ,response.getBody())  ;
 
+    }
+
+    private String getBackendName(MlsqlUser mlsqlUser){
+        if(mlsqlUser.getBackendTags() != null && !mlsqlUser.getBackendTags().isEmpty())
+            return mlsqlUser.getBackendTags();
+        else
+            return null ;
     }
 
 

@@ -23,4 +23,5 @@ public interface EngineMapper {
     int insertEngine(MlsqlEngine mlsqlEngine);
     int deleteEngineById(@Param(value = "id") int id);
     List<MlsqlEngine> getAllEngine(Map<String, Object> paraMap);
+    List<MlsqlEngine> list() ;
 }
