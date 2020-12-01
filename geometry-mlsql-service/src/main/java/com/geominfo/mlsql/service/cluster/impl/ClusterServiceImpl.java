@@ -156,21 +156,25 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         String engineName = !paramsMap.containsKey("engineName") || paramsMap.get("engineName").equals("undefined") ?
                 getBackendName(user) : paramsMap.getFirst("engineName");
 
-
         Map<String ,Object> engineMap = new ConcurrentHashMap<>() ;
         engineMap.put("status" ,!groupUsers.isEmpty() ? groupUsers.get(0).getStatus() : "") ;
         engineMap.put("userId" ,user.getId()) ;
         List<MlsqlEngine> engines = engineService.getAllEngine(engineMap);
 
-        MlsqlEngine engineConfigOpt = (MlsqlEngine) engines.stream().filter(
-                me -> me.getName().equals(engineName));
+        List<MlsqlEngine> tmpEngienList = engines.stream().filter(me -> me.getName().equals(engineName))
+                .collect(Collectors.toList()) ;
+
+        MlsqlEngine engineConfigOpt = tmpEngienList.size() > 0 ? tmpEngienList.get(0) : null ;
 
         String _proxyUrl = !clusterUrl.isEmpty() ? clusterUrl : engineUrl;
         String _myUrl = CommandUtil.myUrl().isEmpty() ? "http://" + _proxyUrl : CommandUtil.myUrl();
         String _home = CommandUtil.userHome();
         int _skipAuth = !CommandUtil.enableAuthCenter() ? GlobalConstant.ONE : GlobalConstant.TOW;
 
-        MlsqlEngine engineConfig = !engines.isEmpty() ? engineConfigOpt : null; //这的null等华大佬的EngineService 开发完成
+        MlsqlEngine temEngine = !engineService.list().isEmpty()
+                ? engineService.list().get(0) : new MlsqlEngine(0 , "" ,_proxyUrl , _home ,_myUrl ,_myUrl  ,_myUrl ,
+                _skipAuth ,"{}","");
+        MlsqlEngine engineConfig = engineConfigOpt != null ? engineConfigOpt : temEngine;
 
         String runMode;
         if (paramsMap.containsKey("runMode"))
@@ -338,13 +342,13 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
     }
 
+    //private -------------------------------
     private String getBackendName(MlsqlUser mlsqlUser){
         if(mlsqlUser.getBackendTags() != null && !mlsqlUser.getBackendTags().isEmpty())
             return mlsqlUser.getBackendTags();
         else
             return null ;
     }
-
 
     private long applyTimeOut(String json)
     {

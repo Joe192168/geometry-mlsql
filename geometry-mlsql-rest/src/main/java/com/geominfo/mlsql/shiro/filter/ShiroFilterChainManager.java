@@ -73,8 +73,7 @@ public class ShiroFilterChainManager {
                 "/swagger-resources/**",
                 "/v2/api-docs",
                 "/webjars/springfox-swagger-ui/**",
-                "/api_v1/user/register",
-                "/upload2.html"
+                "/api_v1/user/register"
         );
         defalutAnon.forEach(ignored -> filterChain.put(ignored,"anon"));
         // -------------auth 默认需要认证过滤器的URL PasswordFilter

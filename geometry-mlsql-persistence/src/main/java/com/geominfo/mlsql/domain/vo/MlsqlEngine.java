@@ -21,4 +21,18 @@ public class MlsqlEngine {
     private int skipAuth;
     private String extraOpts;
     private String accessToken;
+
+    public MlsqlEngine(int id, String name, String url, String home, String consoleUrl,
+                       String fileServerUrl, String authServerUrl, int skipAuth, String extraOpts, String accessToken) {
+        this.id = id;
+        this.name = name;
+        this.url = url;
+        this.home = home;
+        this.consoleUrl = consoleUrl;
+        this.fileServerUrl = fileServerUrl;
+        this.authServerUrl = authServerUrl;
+        this.skipAuth = skipAuth;
+        this.extraOpts = extraOpts;
+        this.accessToken = accessToken;
+    }
 }
