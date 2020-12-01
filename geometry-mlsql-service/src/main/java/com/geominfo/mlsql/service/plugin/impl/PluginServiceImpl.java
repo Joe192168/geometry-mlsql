@@ -5,8 +5,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.geominfo.mlsql.domain.vo.PluginStoreItem;
 import com.geominfo.mlsql.service.plugin.PluginService;
 import com.geominfo.mlsql.service.proxy.ProxyService;
-import com.geominfo.mlsql.utils.NetWorkProxy;
-import com.geominfo.mlsql.utils.NetWorkUtil;
+
+
 import com.geominfo.mlsql.utils.VersionSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
