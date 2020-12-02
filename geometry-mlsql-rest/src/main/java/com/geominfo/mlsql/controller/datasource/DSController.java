@@ -137,4 +137,9 @@ public class DSController extends BaseController {
         ExtractClassMsgUtil.extractClassName(MlsqlDs.class);
         return success(HttpStatus.SC_OK,"remove success");
     }
+
+    
+    public Message getCloumn(){
+        return null;
+    }
 }
