@@ -1,11 +1,14 @@
 package com.geominfo.mlsql.service.cluster;
 
+import com.geominfo.mlsql.domain.vo.JDBCD;
 import com.geominfo.mlsql.domain.vo.MlsqlDs;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import org.springframework.stereotype.Service;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @program: geometry-mlsql
@@ -22,5 +25,9 @@ public interface DsService {
     List<MlsqlDs> getDs(MlsqlUser mlsqlUser ,String name ,String format) ;
 
     String getConnect(String name ,MlsqlUser mlsqlUser);
+
+    ResultSet showTable(JDBCD jdbc, String cloumnName,String tableName);
+
+    public Set<String> showTable(JDBCD jdbc);
 
 }

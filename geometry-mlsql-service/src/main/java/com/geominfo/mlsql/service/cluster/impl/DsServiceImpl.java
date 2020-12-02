@@ -5,13 +5,17 @@ import com.geominfo.mlsql.domain.vo.MlsqlDs;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import com.geominfo.mlsql.mapper.MlsqlDsMapper;
 import com.geominfo.mlsql.service.cluster.DsService;
+import com.geominfo.mlsql.service.datasource.DataSourceService;
 import com.geominfo.mlsql.utils.JSONTool;
 import com.sun.org.apache.bcel.internal.generic.NEW;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -27,6 +31,9 @@ public class DsServiceImpl implements DsService {
 
     @Autowired
     private MlsqlDsMapper mlsqlDsMapper ;
+
+    @Autowired
+    private DataSourceService dataSourceService;
 
 
 
@@ -70,6 +77,30 @@ public class DsServiceImpl implements DsService {
                            item.getName()+";"
                ).collect(Collectors.toList()).get(0);
     }
+
+
+    @Override
+    public ResultSet showTable(JDBCD jdbc, String cloumnName,String tableName){
+        JDBCD jdbcd = new JDBCD();
+        jdbcd.setDb(jdbc.getDb());
+        jdbcd.setUrl(jdbc.getUrl());
+        jdbcd.setName(jdbc.getUser());
+        jdbcd.setPassword(jdbc.getPassword());
+        jdbcd.setJType(jdbc.getJType());
+        return  dataSourceService.getQuery(jdbcd,"select max("+ cloumnName +"),min("+ cloumnName +") from "+ tableName);
+    }
+
+    @Override
+    public Set<String> showTable(JDBCD jdbc){
+        JDBCD jdbcd = new JDBCD();
+        jdbcd.setDb(jdbc.getDb());
+        jdbcd.setUrl(jdbc.getUrl());
+        jdbcd.setName(jdbc.getUser());
+        jdbcd.setPassword(jdbc.getPassword());
+        jdbcd.setJType(jdbc.getJType());
+        return  dataSourceService.getTables(jdbcd);
+    }
+
 
 
 }
