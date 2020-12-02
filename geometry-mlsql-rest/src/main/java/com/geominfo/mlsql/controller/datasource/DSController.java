@@ -174,9 +174,7 @@ public class DSController extends BaseController {
     @ApiOperation(value = "获取库中所有表名", tags = {"获取库中所有表名"})
     public Message getDBs(){
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
-        MlsqlUser mlsqlUser1 = new MlsqlUser();
-        mlsqlUser1.setId(1);
-        Stream<MlsqlDs> jdbc = dsService.listDs(mlsqlUser1).stream().filter(mlsqlDs -> mlsqlDs.getFormat().equals("jdbc"));
+        Stream<MlsqlDs> jdbc = dsService.listDs(mlsqlUser).stream().filter(mlsqlDs -> mlsqlDs.getFormat().equals("jdbc"));
         List<DSDB> list = jdbc.map(mlsqlDs -> JSON.parseObject(mlsqlDs.getParams(), JDBCD.class)).filter(jdbcd -> jdbcd.getJType().equals("mysql"))
                 .map(jdbcd -> new DSDB(jdbcd.getName(), jdbcd.getDb(), dsService.showTable(jdbcd))).collect(Collectors.toList());
         List<String> entiyInfo = ExtractClassMsgUtil.extractClassName(DSDB.class);

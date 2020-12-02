@@ -3,10 +3,8 @@ package com.geominfo.mlsql.service.job.impl;
 import com.geominfo.mlsql.domain.vo.MlsqlJob;
 import com.geominfo.mlsql.domain.vo.MlsqlJobRender;
 import com.geominfo.mlsql.mapper.JobMapper;
-import com.geominfo.mlsql.mapper.MlsqlJobMapper;
 import com.geominfo.mlsql.service.job.MlsqlJobService;
 import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
-import io.netty.util.internal.UnstableApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
