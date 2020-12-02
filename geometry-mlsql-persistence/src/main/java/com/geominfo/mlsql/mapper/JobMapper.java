@@ -51,5 +51,11 @@ public interface JobMapper {
     int updateMlsqlJob(Map<String, Object> map);
 
 
+    void insertJob(MlsqlJob mlsqlJob) ;
+
+    int updateMlsqlJobByJonName(Map<String, Object> map);
+
+
+
 
 }

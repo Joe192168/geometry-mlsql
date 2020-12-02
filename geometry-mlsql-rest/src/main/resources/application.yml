@@ -17,6 +17,8 @@ command:
   cluster_url: http://192.168.20.209:8080/run/script
   my_url: dbc:mysql://192.168.2.239:3306/dev_mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false
 
+cloud:
+   url:
 
 logging:
   config: classpath:log4j2.xml
@@ -98,7 +100,7 @@ jasypt:
 spring:
     profiles: dev
     datasource:
-      url: jdbc:mysql://192.168.2.239:3306/dev_mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+      url: jdbc:mysql://192.168.0.47:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
       username: root
       password: 123456
     redis:
