@@ -22,4 +22,5 @@ public class JDBCD {
     private String driver;
     private String user;
     private String password;
+    private String format;
 }
