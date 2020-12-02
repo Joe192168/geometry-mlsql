@@ -78,4 +78,5 @@ public interface UserMapper {
      * return:
      */
     int updateUser(MlsqlUser mlsqlUser);
+
 }

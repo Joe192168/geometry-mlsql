@@ -55,7 +55,7 @@ public class ParamsUtil {
 
         LinkedMultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>() ;
         for(Map.Entry entry : map.entrySet()){
-            paramsMap.add((String)entry.getKey().toString(),(String)entry.getValue());
+            paramsMap.add(entry.getKey().toString(),(String)entry.getValue());
         }
 
         return paramsMap;

@@ -34,7 +34,7 @@ public class CloudController  extends BaseController {
     @Autowired
     private ProxyService proxyService;
 
-    @Value("${cloud.url}")
+//    @Value("${cloud.url}")
     private String cloudUrl;
 
     @RequestMapping(value = "/proxy/api/create_engine", method = RequestMethod.POST)

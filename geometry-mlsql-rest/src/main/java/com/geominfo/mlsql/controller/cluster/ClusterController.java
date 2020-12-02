@@ -9,10 +9,13 @@ import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.service.cluster.DsService;
 import com.geominfo.mlsql.service.engine.EngineService;
 import com.geominfo.mlsql.service.job.MlsqlJobService;
+import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.MapUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -48,7 +53,7 @@ public class ClusterController extends BaseController {
     private ClusterService clusterService;
 
     @Autowired
-    private EngineService applyService;
+    private UserService applyService;
 
     @RequestMapping("/api_v1/cluster")
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
@@ -112,14 +117,31 @@ public class ClusterController extends BaseController {
     @ApiOperation(value = "测试", httpMethod = "POST")
     public Message test001() throws Exception {
 
-        List<MlsqlEngine> list=applyService.list();
+        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>() ;
+        params.add("sql" , SQL);
+        params.add("owner" , "banjianzu@gmail.com");
+        params.add("jobName" , UUID.randomUUID().toString());
+        Map<Integer ,Object> resMap= clusterService.runScript(params);
 
 
-        System.out.println("");
 
-        return  success(200, "success").addData("data", "success") ;
+        return null ;
 
     }
+
+    private static final String SQL =" set user=\"root\";\n" +
+            " set password=\"123456\";\n" +
+            " \n" +
+            " connect jdbc where\n" +
+            " url=\"jdbc:mysql://192.168.2.239:3306/framework?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false\"\n" +
+            " and driver=\"com.mysql.jdbc.Driver\"\n" +
+            " and user=\"${user}\"\n" +
+            " and password=\"${password}\"\n" +
+            " as mydb_1;\n" +
+            " \n" +
+            " load jdbc.`mydb_1.schedule_job_log`  as  tmp ;\n" +
+            " \n" +
+            " select * from tmp as tmp ;" ;
 
 
 

@@ -68,4 +68,5 @@ public class UserServiceImpl implements UserService {
         MlsqlUser user = userMapper.getUserByName(appId);
         return user != null ? new Account(user.getName(),user.getPassword(), "") : null;
     }
+
 }
