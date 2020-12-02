@@ -16,6 +16,7 @@ import com.geominfo.mlsql.utils.PathFunUtil;
 import com.sun.javafx.scene.shape.PathUtils;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import lombok.Data;
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +141,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
 
     @Override
-    public <T> T runScript(LinkedMultiValueMap<String, String> paramsMap) {
+    public <T> T runScript(LinkedMultiValueMap<String, String> paramsMap ) {
 
         remove(paramsMap);
 
@@ -148,18 +149,18 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         MlsqlUser user = userService.getUserByName(paramsMap.getFirst("owner"));
 
-        List<MlsqlGroupUser> groupUsers = user.getMlsqlGroupUsers() ;
-
         String clusterUrl = CommandUtil.mlsqlClusterUrl();
         String engineUrl = CommandUtil.mlsqlEngineUrl();
 
-        String engineName = !paramsMap.containsKey("engineName") || paramsMap.get("engineName").equals("undefined") ?
+        String engineName = !paramsMap.containsKey("engineName")
+                || paramsMap.get("engineName").equals("undefined") ?
                 getBackendName(user) : paramsMap.getFirst("engineName");
 
         Map<String ,Object> engineMap = new ConcurrentHashMap<>() ;
-        engineMap.put("status" ,!groupUsers.isEmpty() ? groupUsers.get(0).getStatus() : "") ;
+//        engineMap.put("status" ,!groupUsers.isEmpty() ? groupUsers.get(0).getStatus() : "") ;
         engineMap.put("userId" ,user.getId()) ;
         List<MlsqlEngine> engines = engineService.getAllEngine(engineMap);
+        logger.info("engines = " + engines);
 
         List<MlsqlEngine> tmpEngienList = engines.stream().filter(me -> me.getName().equals(engineName))
                 .collect(Collectors.toList()) ;
@@ -343,9 +344,14 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
     }
 
     //private -------------------------------
+    private static final String EXTRA_DEFAULT_BACKEND = "backend" ;
     private String getBackendName(MlsqlUser mlsqlUser){
         if(mlsqlUser.getBackendTags() != null && !mlsqlUser.getBackendTags().isEmpty())
-            return mlsqlUser.getBackendTags();
+        {
+           Map<String ,String> map = JSONTool.parseJson(mlsqlUser.getBackendTags() ,Map.class) ;
+            return map.get(EXTRA_DEFAULT_BACKEND);
+        }
+
         else
             return null ;
     }

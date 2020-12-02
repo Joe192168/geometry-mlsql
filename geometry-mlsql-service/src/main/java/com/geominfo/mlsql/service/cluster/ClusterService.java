@@ -1,5 +1,6 @@
 package com.geominfo.mlsql.service.cluster;
 
+import org.apache.http.HttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -17,5 +18,5 @@ import javax.servlet.http.HttpServletRequest;
 public interface ClusterService {
 
     <T> T clusterManager(LinkedMultiValueMap<String, String> params  ) ;
-    <T> T runScript(LinkedMultiValueMap<String, String> params) ;
+    <T> T runScript(LinkedMultiValueMap<String, String> params ) ;
 }
