@@ -25,9 +25,6 @@ public class MlsqlJobServiceImpl implements MlsqlJobService {
     @Autowired
     JobMapper mlsqlJobMapper;
 
-    @Autowired
-    private MlsqlJobMapper mlsqlJobMapper2 ;
-
     public static final Integer RUNNING = 1;
     public static final Integer SUCCESS = 2;
     public static final Integer FAIL = 3;
@@ -72,13 +69,13 @@ public class MlsqlJobServiceImpl implements MlsqlJobService {
 
     @Override
     public void insertJob(MlsqlJob mlsqlJob) {
-        mlsqlJobMapper2.insertJob(mlsqlJob);
+        mlsqlJobMapper.insertJob(mlsqlJob);
     }
 
 
     @Override
     public String updateMlsqlJobByJonName(Map<String, Object> map){
-        int result = mlsqlJobMapper2.updateMlsqlJobByJonName(map);
+        int result = mlsqlJobMapper.updateMlsqlJobByJonName(map);
         return result > 0? InterfaceReturnInformation.SUCCESS: InterfaceReturnInformation.FAILED;
     }
 
