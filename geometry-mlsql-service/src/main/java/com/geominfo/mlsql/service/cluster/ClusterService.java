@@ -6,6 +6,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @program: springboot_console_test
@@ -17,6 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public interface ClusterService {
 
-    <T> T clusterManager(LinkedMultiValueMap<String, String> params  ) ;
-    <T> T runScript(LinkedMultiValueMap<String, String> params ) ;
+    <T> T clusterManager(Map<String, Object> params  ) ;
+    <T> T runScript(Map<String, Object> params ) throws ExecutionException, InterruptedException;
 }

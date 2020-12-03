@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 public class MlsqlEngine {
-    private int id;
+    private long id;
     private String name;
     private String url;
     private String home;
@@ -22,7 +22,7 @@ public class MlsqlEngine {
     private String extraOpts;
     private String accessToken;
 
-    public MlsqlEngine(int id, String name, String url, String home, String consoleUrl,
+    public MlsqlEngine(long id, String name, String url, String home, String consoleUrl,
                        String fileServerUrl, String authServerUrl, int skipAuth, String extraOpts, String accessToken) {
         this.id = id;
         this.name = name;

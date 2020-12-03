@@ -82,16 +82,16 @@ public class HttpUtil {
      */
     public <T> T aynPost(String url, LinkedMultiValueMap<String, String> postParameters) throws ExecutionException, InterruptedException {
 
-        if (!postParameters.containsKey("callback")) {
-            log.info("必须填写回调接口!");
-            return (T) "必须填写回调接口!";
-        }
-
-        if (postParameters.containsKey("callback")) {
-            if (postParameters.get("callback").size() == 0)
-                return (T) "回调接口空";
-        }
-        postParameters.add("async", "true");
+//        if (!postParameters.containsKey("callback")) {
+//            log.info("必须填写回调接口!");
+//            return (T) "必须填写回调接口!";
+//        }
+//
+//        if (postParameters.containsKey("callback")) {
+//            if (postParameters.get("callback").size() == 0)
+//                return (T) "回调接口空";
+//        }
+//        postParameters.add("async", "true");
         return aynNetWorkUtil(url, postParameters);
 
     }

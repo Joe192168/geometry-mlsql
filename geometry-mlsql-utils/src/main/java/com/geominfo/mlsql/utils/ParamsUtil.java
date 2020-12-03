@@ -1,7 +1,6 @@
 package com.geominfo.mlsql.utils;
 
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,6 +13,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -31,15 +31,15 @@ public class ParamsUtil {
     private Map<String, String> paramsMap = new HashMap<String, String>();
 
     public String getParam(String key, String defaultValue) {
-        String value = null ;
-        if(paramsMap.containsKey(key)){
+        String value = null;
+        if (paramsMap.containsKey(key)) {
             value = paramsMap.get(key);
         }
         return (value == null || "".equals(value)) ? defaultValue : value;
     }
 
-    public static  LinkedMultiValueMap<String, String> objectToMap(Object obj) throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+    public static Map<String, Object> objectToMap(Object obj) throws Exception {
+        Map<String, Object> map = new ConcurrentHashMap<>();
 
         BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
@@ -49,22 +49,17 @@ public class ParamsUtil {
                 continue;
             }
             Method getter = property.getReadMethod();
-            Object value = getter!=null ? getter.invoke(obj) : null;
-            map.put(key, value);
+            Object value = getter != null ? getter.invoke(obj) : null;
+            if (value != null)
+                map.put(key, value);
         }
-
-        LinkedMultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>() ;
-        for(Map.Entry entry : map.entrySet()){
-            paramsMap.add(entry.getKey().toString(),(String)entry.getValue());
-        }
-
-        return paramsMap;
+        return map;
     }
 
-    public static  LinkedMultiValueMap<String, String> MapToLinkedMultiValueMap(Map<String, String> map){
-        LinkedMultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>() ;
-        for(Map.Entry entry : map.entrySet()){
-            paramsMap.add(entry.getKey().toString(),entry.getValue().toString());
+    public static LinkedMultiValueMap<String, String> MapToLinkedMultiValueMap(Map<String, String> map) {
+        LinkedMultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        for (Map.Entry entry : map.entrySet()) {
+            paramsMap.add(entry.getKey().toString(), entry.getValue().toString());
         }
 
         return paramsMap;

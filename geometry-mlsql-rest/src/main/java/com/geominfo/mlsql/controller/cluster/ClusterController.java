@@ -14,18 +14,17 @@ import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HTTP;
+import org.omg.CORBA.ServiceInformationHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,10 +51,7 @@ public class ClusterController extends BaseController {
     @Autowired
     private ClusterService clusterService;
 
-    @Autowired
-    private UserService applyService;
-
-    @RequestMapping("/api_v1/cluster")
+    @RequestMapping(value = "/api_v1/cluster" ,method = RequestMethod.POST)
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "执行动作所有接口都要传的参数", name = "action", dataType = "String", paramType = "query", required = true),
@@ -70,7 +66,7 @@ public class ClusterController extends BaseController {
     })
     public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) throws Exception {
 
-        LinkedMultiValueMap<String, String> params = ParamsUtil.objectToMap(clusterManagerParameter);
+       Map<String, Object> params = ParamsUtil.objectToMap(clusterManagerParameter);
         ResponseEntity<String> result = clusterService.clusterManager(params);
         return result.getStatusCode().value() == 200 ?
                         success(200, "success").addData("data", result.getBody()) :
@@ -80,7 +76,34 @@ public class ClusterController extends BaseController {
 
 
 
-    @RequestMapping("/api_v1/run/script")
+//    @RequestMapping(value = "/api_v1/run/script" ,method = RequestMethod.POST)
+//    @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(value = "参数实体类", name = "sql",
+//                    dataType = "String", paramType = "query", required = true)
+//
+//    })
+//    public Message runScript(@RequestBody MLSQLRunScriptParameter mlsqlRunScriptParameter) throws Exception {
+//
+//        Map<String, Object> params = ParamsUtil.objectToMap(mlsqlRunScriptParameter);
+//        if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
+//        if (!params.containsKey("owner")) params.put("owner", userName);
+//        Map<Integer ,Object> resMap= clusterService.runScript(params);
+//        logger.info("执行脚本返回结果 resMap = " + resMap);
+//        int statudsCode = 0;
+//        String res = "" ;
+//        if(!resMap.isEmpty()){
+//             statudsCode = resMap.keySet().iterator().next() ;
+//            res = (String) resMap.values().iterator().next();
+//        }
+//
+//        return statudsCode == 200 ?
+//                success(statudsCode, "success").addData("data", res) :
+//                error(statudsCode, "error").addData("data", res);
+//
+//    }
+
+    @RequestMapping(value = "/api_v1/run/script" ,method = RequestMethod.POST)
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "MLSQL script content", name = "sql", dataType = "String", paramType = "query", required = true),
@@ -96,15 +119,45 @@ public class ClusterController extends BaseController {
             @ApiImplicitParam(value = "validate mlsql grammar. default: true", name = "skipGrammarValidate", dataType = "boolean", paramType = "query"),
             @ApiImplicitParam(value = "proxy parameter,filter backend with this tags", name = "tags", dataType = "String", paramType = "query")
     })
-    public Message runScript(@RequestBody MLSQLRunScriptParameter mlsqlRunScriptParameter) throws Exception {
+    public Message runScript(
+            @RequestParam(value = "sql", required = true) String sql,
+            @RequestParam(value="owner", defaultValue = "admin") String owner,
+            @RequestParam(value="jobType", defaultValue = "script") String jobType,
+            @RequestParam(value="executeMode", defaultValue = "query") String executeMode,
+            @RequestParam(value="silence", defaultValue = "false") String silence,
+            @RequestParam(value="sessionPerUser", defaultValue="false") String sessionPerUser,
+            @RequestParam(value="async", defaultValue="true") String async,
+            @RequestParam(value="callback", defaultValue="") String callback,
+            @RequestParam(value="skipInclude", defaultValue="false") String skipInclude,
+            @RequestParam(value="skipAuth", defaultValue="true") String skipAuth,
+            @RequestParam(value="skipGrammarValidate", defaultValue="true") String skipGrammarValidate,
+            @RequestParam(value="tags", defaultValue="") String tags
+    )throws Exception {
 
-        LinkedMultiValueMap<String, String> params = ParamsUtil.objectToMap(mlsqlRunScriptParameter);
+        Map<String, Object> params = new ConcurrentHashMap<>();
+        params.put("sql" ,sql ) ;
+        params.put("owner" ,owner ) ;
+        params.put("jobType" ,jobType ) ;
+        params.put("executeMode" ,executeMode ) ;
+        params.put("silence" ,silence ) ;
+        params.put("sessionPerUser" ,sessionPerUser ) ;
+        params.put("async" ,async ) ;
+        params.put("callback" ,callback ) ;
+        params.put("skipInclude" ,skipInclude ) ;
+        params.put("skipAuth" ,skipAuth ) ;
+        params.put("skipGrammarValidate" ,skipGrammarValidate ) ;
+        params.put("skipGramtagsmarValidate" ,tags ) ;
+
         if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
-        if (!params.containsKey("owner")) params.add("owner", userName);
-        Map<Integer ,Object> resMap= clusterService.runScript(params);
+        if (!params.containsKey("owner")) params.put("owner", userName);
+        ConcurrentHashMap<Integer ,Object> resMap= clusterService.runScript(params);
         logger.info("执行脚本返回结果 resMap = " + resMap);
-        int statudsCode = resMap.keySet().iterator().next() ;
-        String res = (String) resMap.values().iterator().next();
+        int statudsCode = 0;
+        String res = "" ;
+        if(!resMap.isEmpty()){
+            statudsCode = resMap.keySet().iterator().next() ;
+            res = (String) resMap.values().iterator().next();
+        }
 
         return statudsCode == 200 ?
                 success(statudsCode, "success").addData("data", res) :
@@ -113,21 +166,29 @@ public class ClusterController extends BaseController {
     }
 
 
-    @RequestMapping("/api_v1/test001")
+
+
+    @RequestMapping(value ="/api_v1/test001" ,method = RequestMethod.POST)
     @ApiOperation(value = "测试", httpMethod = "POST")
     public Message test001() throws Exception {
 
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>() ;
-        params.add("sql" , SQL);
-        params.add("owner" , "banjianzu@gmail.com");
-        params.add("jobName" , UUID.randomUUID().toString());
+        Map<String, Object> params = new ConcurrentHashMap<>() ;
+        params.put("sql" , SQL);
+        params.put("owner" , "banjianzu@gmail.com");
+        params.put("jobName" , UUID.randomUUID().toString());
+//        params.put("queryType" , "robot");
+        params.put("async" , "false");
+//        params.put("engineName" , "undefined");
+        params.put("callback" , "http://192.168.20.209:8088/api_v1/job/callback?__auth_secret__=mlsql");
         Map<Integer ,Object> resMap= clusterService.runScript(params);
 
-
+        log.info("resMap = " + resMap);
 
         return null ;
 
     }
+
+
 
     private static final String SQL =" set user=\"root\";\n" +
             " set password=\"123456\";\n" +

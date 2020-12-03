@@ -17,17 +17,17 @@ import java.util.UUID;
 public class MLSQLRunScriptParameter implements Serializable {
 
     private String sql = "select 1 as a,'jack' as b as bbc;" ;
-    private String jobName = UUID.randomUUID().toString();
+    private String owner = UUID.randomUUID().toString();
     private String jobType ="script" ;
     private String callback ;
-    private String skipAuth = "true";
-    private String skipInclude ;
-    private String silence ="false";
-    private String sessionPerUser ="false";
-    private String sessionPerRequest;
-    private String async ="false";
-    private String skipGrammarValidate ="true";
-    private String timeout ="-1";
+    private Boolean skipAuth = true;
+    private Boolean skipInclude = false ;
+    private Boolean silence =false;
+    private Boolean sessionPerUser =false;
+    private Boolean sessionPerRequest = false;
+    private Boolean async =true;
+    private Boolean skipGrammarValidate =true;
+    private Integer timeout =-1;
     private String executeMode ="query";
-    private String tags ;
+    private String tags="" ;
 }

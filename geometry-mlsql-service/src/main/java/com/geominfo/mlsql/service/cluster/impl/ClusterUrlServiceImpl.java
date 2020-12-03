@@ -32,7 +32,7 @@ public class ClusterUrlServiceImpl implements ClusterUrlService {
     }
 
     @Override
-    public ResponseEntity<String> synRunScript(LinkedMultiValueMap<String, String> params) {
+    public ResponseEntity<String> synRunScript(LinkedMultiValueMap<String, String> params) throws ExecutionException, InterruptedException {
         return netWorkUtil.synPost(GlobalConstant.RUN_SCRIPT , params) ;
     }
 

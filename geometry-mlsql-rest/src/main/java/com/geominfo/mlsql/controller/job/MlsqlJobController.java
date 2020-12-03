@@ -66,12 +66,14 @@ public class MlsqlJobController extends BaseController {
             String msg = "";
             if (params.get("stat").equals("succeeded")) {
                 //创建map
+                log.info("回调接口返回的数据 res =" +params.get("res"));
                 map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.SUCCESS,
                         System.currentTimeMillis(), " ", params.get("res"));
                 msg = mlsqlJobService.updateMlsqlJob(map);
 
             } else {
                 //创建map
+                log.info("回调接口返回的数据 msg =" +params.get("msg"));
                 map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.FAIL,
                         System.currentTimeMillis(), params.get("msg"), " ");
                 msg = mlsqlJobService.updateMlsqlJob(map);

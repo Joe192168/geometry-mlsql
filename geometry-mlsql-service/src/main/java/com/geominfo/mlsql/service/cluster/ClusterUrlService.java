@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 public interface ClusterUrlService {
 
     ResponseEntity<String> runScript(String sql) ;
-    ResponseEntity<String> synRunScript(LinkedMultiValueMap<String, String> params) ;
+    ResponseEntity<String> synRunScript(LinkedMultiValueMap<String, String> params) throws ExecutionException, InterruptedException;
     ResponseEntity<String> aynRunScript(LinkedMultiValueMap<String, String> params) throws ExecutionException, InterruptedException;
     ResponseEntity<String> runSQL(LinkedMultiValueMap<String, String> params) ;
     ResponseEntity<String> backendList(LinkedMultiValueMap<String, String> params) ;
