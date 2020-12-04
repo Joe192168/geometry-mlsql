@@ -79,12 +79,6 @@ public class FileController extends BaseController{
         return message.ok(result);
     }
 
-    @RequestMapping("/api_v1/file/upload/callback")
-    @ApiOperation(value = "文件上传回调接口", httpMethod = "GET")
-    public Message uploadcallback() {
-        logger.info("uploadcallback!");
-        return message.ok(GlobalConstant.SUCCESS);
-    }
 
 
 }

@@ -39,6 +39,7 @@ public class BaseServiceImpl {
     }
 
     protected ResponseEntity<String> cPost(String url, LinkedMultiValueMap<String, String> params){
+        System.out.println("rul = " +CommandUtil.mlsqlEngineUrl() );
         return  netWorkUtil.postForEntity(CommandUtil.mlsqlEngineUrl()+url ,params ,String.class) ;
     }
 

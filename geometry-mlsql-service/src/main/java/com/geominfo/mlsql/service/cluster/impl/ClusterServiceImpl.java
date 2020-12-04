@@ -153,7 +153,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
             paramsMap.put("jobName" ,UUID.randomUUID().toString()) ;
 
         if (!paramsMap.containsKey("sessionPerUser"))
-            paramsMap.put("sessionPerUser", "true");
+            paramsMap.put("sessionPerUser", "false");
 
         if (!paramsMap.containsKey("async"))
             paramsMap.put("async", "true");

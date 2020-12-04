@@ -4,33 +4,17 @@ package com.geominfo.mlsql.controller.cluster;
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.*;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
-import com.geominfo.mlsql.service.cluster.ApplyService;
-import com.geominfo.mlsql.service.cluster.BackendService;
 import com.geominfo.mlsql.service.cluster.ClusterService;
-import com.geominfo.mlsql.service.cluster.DsService;
-import com.geominfo.mlsql.service.engine.EngineService;
-import com.geominfo.mlsql.service.job.MlsqlJobService;
-import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.concurrent.ConcurrentRuntimeException;
-import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HTTP;
-import org.omg.CORBA.ServiceInformationHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -121,9 +105,10 @@ public class ClusterController extends BaseController {
 
         if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
         if (!params.containsKey("owner")) params.put("owner", userName);
+
         ConcurrentHashMap<Integer ,Object> resMap= clusterService.runScript(params);
 
-        return returnValue(resMap) ;
+        return returnValue( resMap) ;
 
     }
 

@@ -167,8 +167,7 @@ public class FileServiceImpl<T> extends BaseServiceImpl implements FileService {
         newParams.add("context.__default__include_fetch_url__", myUrl + "/api_v1/script_file/include");
         newParams.add("context.__default__fileserver_url__", myUrl + "/api_v1/file/download");
         newParams.add("context.__default__fileserver_upload_url__", myUrl + "/api_v1/file/upload");
-//        newParams.add("context.__auth_secret__", CommandUtil.auth_secret());
-        newParams.add("context.__auth_secret__", "mlsql");
+        newParams.add("context.__auth_secret__", CommandUtil.auth_secret());
         newParams.add("defaultPathPrefix", CommandUtil.userHome() + "/" + owner);
 
 //        newParams.add("callback", "localhost:8088/file/api_v1/file/upload/callback");
