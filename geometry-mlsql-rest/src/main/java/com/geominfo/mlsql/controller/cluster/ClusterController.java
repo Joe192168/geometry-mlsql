@@ -3,6 +3,7 @@ package com.geominfo.mlsql.controller.cluster;
 
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.*;
+import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.cluster.ApplyService;
 import com.geominfo.mlsql.service.cluster.BackendService;
 import com.geominfo.mlsql.service.cluster.ClusterService;
@@ -67,41 +68,11 @@ public class ClusterController extends BaseController {
     public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) throws Exception {
 
        Map<String, Object> params = ParamsUtil.objectToMap(clusterManagerParameter);
-        ResponseEntity<String> result = clusterService.clusterManager(params);
-        return result.getStatusCode().value() == 200 ?
-                        success(200, "success").addData("data", result.getBody()) :
-                        error(400, "error").addData("data", result.getBody());
+        Map<Integer ,Object> resMap = clusterService.clusterManager(params);
+        return returnValue(resMap) ;
 
     }
 
-
-
-//    @RequestMapping(value = "/api_v1/run/script" ,method = RequestMethod.POST)
-//    @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(value = "参数实体类", name = "sql",
-//                    dataType = "String", paramType = "query", required = true)
-//
-//    })
-//    public Message runScript(@RequestBody MLSQLRunScriptParameter mlsqlRunScriptParameter) throws Exception {
-//
-//        Map<String, Object> params = ParamsUtil.objectToMap(mlsqlRunScriptParameter);
-//        if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
-//        if (!params.containsKey("owner")) params.put("owner", userName);
-//        Map<Integer ,Object> resMap= clusterService.runScript(params);
-//        logger.info("执行脚本返回结果 resMap = " + resMap);
-//        int statudsCode = 0;
-//        String res = "" ;
-//        if(!resMap.isEmpty()){
-//             statudsCode = resMap.keySet().iterator().next() ;
-//            res = (String) resMap.values().iterator().next();
-//        }
-//
-//        return statudsCode == 200 ?
-//                success(statudsCode, "success").addData("data", res) :
-//                error(statudsCode, "error").addData("data", res);
-//
-//    }
 
     @RequestMapping(value = "/api_v1/run/script" ,method = RequestMethod.POST)
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
@@ -152,61 +123,24 @@ public class ClusterController extends BaseController {
         if (!params.containsKey("owner")) params.put("owner", userName);
         ConcurrentHashMap<Integer ,Object> resMap= clusterService.runScript(params);
         logger.info("执行脚本返回结果 resMap = " + resMap);
+
+        return returnValue(resMap) ;
+
+    }
+
+    private Message returnValue(Map<Integer ,Object> resMap)
+    {
         int statudsCode = 0;
         String res = "" ;
-        if(!resMap.isEmpty()){
+        if(resMap != null && !resMap.isEmpty()){
             statudsCode = resMap.keySet().iterator().next() ;
             res = (String) resMap.values().iterator().next();
         }
-
-        return statudsCode == 200 ?
+        return statudsCode == ReturnCode.RETURN_SUCCESS_STATUS ?
                 success(statudsCode, "success").addData("data", res) :
                 error(statudsCode, "error").addData("data", res);
 
     }
-
-
-
-
-    @RequestMapping(value ="/api_v1/test001" ,method = RequestMethod.POST)
-    @ApiOperation(value = "测试", httpMethod = "POST")
-    public Message test001() throws Exception {
-
-        Map<String, Object> params = new ConcurrentHashMap<>() ;
-        params.put("sql" , SQL);
-        params.put("owner" , "banjianzu@gmail.com");
-        params.put("jobName" , UUID.randomUUID().toString());
-//        params.put("queryType" , "robot");
-        params.put("async" , "false");
-//        params.put("engineName" , "undefined");
-        params.put("callback" , "http://192.168.20.209:8088/api_v1/job/callback?__auth_secret__=mlsql");
-        Map<Integer ,Object> resMap= clusterService.runScript(params);
-
-        log.info("resMap = " + resMap);
-
-        return null ;
-
-    }
-
-
-
-    private static final String SQL =" set user=\"root\";\n" +
-            " set password=\"123456\";\n" +
-            " \n" +
-            " connect jdbc where\n" +
-            " url=\"jdbc:mysql://192.168.2.239:3306/framework?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false\"\n" +
-            " and driver=\"com.mysql.jdbc.Driver\"\n" +
-            " and user=\"${user}\"\n" +
-            " and password=\"${password}\"\n" +
-            " as mydb_1;\n" +
-            " \n" +
-            " load jdbc.`mydb_1.schedule_job_log`  as  tmp ;\n" +
-            " \n" +
-            " select * from tmp as tmp ;" ;
-
-
-
-
 
 
 

@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public abstract class BaseController {
 
-    protected String userName ="admin";
+    protected String userName;
     protected Map<String, String> requestParams;
     protected Map<String, String> headers;
     protected String tokenId;

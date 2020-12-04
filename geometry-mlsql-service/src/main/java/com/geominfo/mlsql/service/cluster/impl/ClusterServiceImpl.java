@@ -31,6 +31,7 @@ import sun.rmi.runtime.Log;
 import sun.security.krb5.internal.PAData;
 
 
+import javax.smartcardio.ResponseAPDU;
 import java.util.*;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -140,7 +141,9 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
                 break;
         }
 
-        return (T) result;
+        Map<Integer ,Object> resData = new ConcurrentHashMap<>();
+        resData.put(result.getStatusCode().value() ,result.getBody()) ;
+         return (T) resData;
     }
 
 
@@ -335,7 +338,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         LinkedMultiValueMap<String, String> runParamsMap = transformation(paramsMap);
 
-//        logger.info("----------------打印请求前的参数信息------------------------------");
+//        System.out.println("----------------打印请求前的参数信息------------------------------");
 //        for (Map.Entry entry : runParamsMap.entrySet())
 //            System.out.println("key=" + entry.getKey() + "\n" + "value=" + entry.getValue());
 

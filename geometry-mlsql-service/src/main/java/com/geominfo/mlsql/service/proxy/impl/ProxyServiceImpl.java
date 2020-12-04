@@ -48,7 +48,9 @@ public class ProxyServiceImpl<T> implements ProxyService{
      * @return
      */
     @Override
-    public <T> ResponseEntity<T> postForEntity(String url, LinkedMultiValueMap<String, String> postParameters, Class<T> responseType, Object... uriVariables) {
+    public <T> ResponseEntity<T> postForEntity(String url,
+                                               LinkedMultiValueMap<String, String> postParameters,
+                                               Class<T> responseType, Object... uriVariables) {
         HttpEntity<MultiValueMap<String, String>> requestEntity = getHttpEntity(postParameters);
         ResponseEntity<T> responseEntityPost  = restTemplate.postForEntity(url, requestEntity, responseType, uriVariables);
         return responseEntityPost;
@@ -63,7 +65,9 @@ public class ProxyServiceImpl<T> implements ProxyService{
      * @return
      */
     @Override
-    public <T> ResponseEntity<T> postForEntity(String url, LinkedMultiValueMap<String, String> postParameters, Class<T> responseType) {
+    public <T> ResponseEntity<T> postForEntity(String url,
+                                               LinkedMultiValueMap<String, String> postParameters,
+                                               Class<T> responseType) {
         HttpEntity<MultiValueMap<String, String>> requestEntity = getHttpEntity(postParameters);
         ResponseEntity<T> responseEntityPost  = restTemplate.postForEntity(url, requestEntity, responseType);
         return responseEntityPost;
