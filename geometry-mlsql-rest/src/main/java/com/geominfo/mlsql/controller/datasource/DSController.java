@@ -17,10 +17,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,30 +48,6 @@ public class DSController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/ad", method = RequestMethod.GET)
-    @ApiOperation(value = "新增engine", httpMethod = "POST")
-    public Message addD(){
-        JDBCD jdbcd = new JDBCD();
-        jdbcd.setDb("test");
-        jdbcd.setUrl("jdbc:mysql://192.168.0.47:3306/test");
-        jdbcd.setName("root");
-        jdbcd.setPassword("123456");
-        jdbcd.setJType("mysql");
-        Set<String> tableNames = dataSourceService.getTables(jdbcd); //获取所有表名 对应接口 /api_v1/ds/mysql/dbs
-        //Map<String, Object> tableNames = dataSourceService.testDataSource(jdbcd); //获得连接是否正常  对应接口：/api_v1/ds/add
-        ResultSet rs = dataSourceService.getQuery(jdbcd,"select max(id),min(id) from test_info"); //查询获取表最大值最小值 /api_v1/ds/mysql/column
-        try {
-            while(rs.next()){
-                int max = rs.getInt(1);
-                String min = rs.getString(2);
-                System.out.println("max:"+max+" min："+min);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ApiOperation(value = "增加数据源",tags = {"增加数据源"})
     @ApiImplicitParams({
@@ -87,7 +60,7 @@ public class DSController extends BaseController {
             @ApiImplicitParam(name = "port",value = "端口号",required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "name",value = "名称",required = false, paramType = "query", dataType = "String")
     })
-    public Message addDs(JDBCD jdbcd){
+    public Message addDs(@RequestBody JDBCD jdbcd){
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         if (jdbcd.getJType().equals("mysql") && jdbcd.getFormat().equals("jdbc")){
             JDBCD connectParams = new JDBCD();
@@ -107,7 +80,9 @@ public class DSController extends BaseController {
         String nameAs = null;
         if (StringUtils.isBlank(jdbcd.getName())) {
             nameAs = jdbcd.getDb();
-            requestParams.put("name",nameAs);
+            if(!StringUtils.isBlank(nameAs)){
+                requestParams.put("name",nameAs);
+            }
         }else {
             nameAs = jdbcd.getName();
         }
