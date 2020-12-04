@@ -1,17 +1,15 @@
 package com.geominfo.mlsql.utils;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,16 +24,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ParamsUtil {
 
-    Logger logger = LoggerFactory.getLogger(ParamsUtil.class);
+//    Logger logger = LoggerFactory.getLogger(ParamsUtil.class);
 
-    private Map<String, String> paramsMap = new HashMap<String, String>();
+    private static Map<String, Object> paramsMap = new ConcurrentHashMap<>();
 
-    public String getParam(String key, String defaultValue) {
-        String value = null;
-        if (paramsMap.containsKey(key)) {
+    public  static Object getParam(String key, Object defaultValue) {
+        Object value = null;
+        if (paramsMap.containsKey(key))
             value = paramsMap.get(key);
-        }
+
         return (value == null || "".equals(value)) ? defaultValue : value;
+    }
+
+    public static void setParam(String key ,Object value)
+    {
+        paramsMap.put(key ,value) ;
+    }
+
+    public static boolean containsKey(String key){
+        return paramsMap.containsKey(key) ;
     }
 
     public static Map<String, Object> objectToMap(Object obj) throws Exception {

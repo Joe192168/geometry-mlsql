@@ -3,9 +3,11 @@ package com.geominfo.mlsql.service.cluster.impl;
 
 
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
+import com.geominfo.mlsql.service.base.BaseServiceImpl;
 import com.geominfo.mlsql.service.cluster.ClusterUrlService;
 import com.geominfo.mlsql.service.proxy.ProxyService;
 
+import com.geominfo.mlsql.utils.CommandUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,7 @@ import java.util.concurrent.ExecutionException;
  * @version: 1.0.0
  */
 @Service
-public class ClusterUrlServiceImpl implements ClusterUrlService {
-
-    @Autowired
-    private ProxyService netWorkUtil ;
-
-    private static final String BASE_URL ="http://192.168.20.209:9003" ;
-
+public class ClusterUrlServiceImpl extends BaseServiceImpl implements ClusterUrlService {
 
     @Override
     public ResponseEntity<String> runScript(String sql) {
@@ -78,11 +74,5 @@ public class ClusterUrlServiceImpl implements ClusterUrlService {
     public ResponseEntity<String> backendListNames(LinkedMultiValueMap<String, String> params) {
         return cPost(GlobalConstant.BACKEND_LIST_NAMES , params) ;
     }
-
-    
-    private ResponseEntity<String> cPost(String url,LinkedMultiValueMap<String, String> params){
-       return  netWorkUtil.postForEntity(BASE_URL+url ,params ,String.class) ;
-    }
-
 
 }

@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @RestController
 @RequestMapping(value = "/cluster")
-@Api(value = "集群后台配置接口", tags = {"集群后台配置接口"})
+@Api(value = "集群后台中转接口", tags = {"集群后台中转接口"})
 @Log4j2
 public class ClusterController extends BaseController {
 
@@ -122,7 +122,6 @@ public class ClusterController extends BaseController {
         if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
         if (!params.containsKey("owner")) params.put("owner", userName);
         ConcurrentHashMap<Integer ,Object> resMap= clusterService.runScript(params);
-        logger.info("执行脚本返回结果 resMap = " + resMap);
 
         return returnValue(resMap) ;
 
@@ -130,7 +129,7 @@ public class ClusterController extends BaseController {
 
     private Message returnValue(Map<Integer ,Object> resMap)
     {
-        int statudsCode = 0;
+        int statudsCode = -1;
         String res = "" ;
         if(resMap != null && !resMap.isEmpty()){
             statudsCode = resMap.keySet().iterator().next() ;

@@ -1,5 +1,10 @@
 package com.geominfo.mlsql.service.base;
 
+import com.geominfo.mlsql.service.proxy.ProxyService;
+import com.geominfo.mlsql.utils.CommandUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -14,9 +19,11 @@ import java.util.Map;
  * @create: 2020-07-09 11:08
  * @version: 1.0.0
  */
+@Service
 public class BaseServiceImpl {
 
-//    protected Map<String, Object> paramsMap = new HashMap<>();
+    @Autowired
+    private ProxyService netWorkUtil ;
 
     protected String[] params(String key ,HttpServletRequest request) {
         return request.getParameterMap().get(key);
@@ -29,6 +36,10 @@ public class BaseServiceImpl {
     protected boolean hasParam(String key ,HttpServletRequest request)
     {
         return request.getParameterMap().containsKey(key) ;
+    }
+
+    protected ResponseEntity<String> cPost(String url, LinkedMultiValueMap<String, String> params){
+        return  netWorkUtil.postForEntity(CommandUtil.mlsqlEngineUrl()+url ,params ,String.class) ;
     }
 
 

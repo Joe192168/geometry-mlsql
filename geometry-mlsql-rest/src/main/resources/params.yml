@@ -1,0 +1,7 @@
+mlsql.engine.url=http://192.168.20.209:9003
+mlsql.cluster.url=http://192.168.20.209:9003
+my.url=jdbc:mysql://192.168.2.239:3306/dev_mlsql_console?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false
+user.home=/home/mlsql
+single.user.upload.bytes=131072000
+enable.auth.center=false
+auth.secret=mlsql

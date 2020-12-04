@@ -78,9 +78,6 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
     @Autowired
     private EngineService engineService;
 
-//    @Value("${auth_secret}")
-    private String authSecret;
-
 
     @Override
     public <T> T clusterManager(Map<String, Object> qparamsMap) {
@@ -192,8 +189,9 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         MlsqlEngine engineConfigOpt = tmpEngienList.size() > 0 ? tmpEngienList.get(0) : null;
 
         String _proxyUrl = !clusterUrl.isEmpty() ? clusterUrl : engineUrl;
-        String _myUrl = CommandUtil.myUrl().isEmpty() ? "http://" + _proxyUrl : CommandUtil.myUrl();
+        String _myUrl = CommandUtil.myUrl().isEmpty() ?  _proxyUrl : CommandUtil.myUrl();
         String _home = CommandUtil.userHome();
+
         int _skipAuth = !CommandUtil.enableAuthCenter() ? GlobalConstant.ONE : GlobalConstant.TOW;
 
         MlsqlEngine temEngine = !engineService.list().isEmpty()
@@ -273,7 +271,8 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         if (!paramsMap.containsKey("context.__auth_secret__"))
             paramsMap.put("context.__auth_secret__",
-                    authSecret == null || authSecret.equals("") ? UUID.randomUUID().toString() : authSecret);
+                    CommandUtil.auth_secret() == null || CommandUtil.auth_secret().equals("")
+                            ? UUID.randomUUID().toString() : CommandUtil.auth_secret());
 
         if (!paramsMap.containsKey("tags"))
             paramsMap.put("tags", tags);
