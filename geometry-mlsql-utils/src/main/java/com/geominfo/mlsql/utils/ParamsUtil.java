@@ -1,10 +1,9 @@
 package com.geominfo.mlsql.utils;
 
 
-
-
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -24,25 +23,24 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ParamsUtil {
 
-//    Logger logger = LoggerFactory.getLogger(ParamsUtil.class);
+    //    Logger logger = LoggerFactory.getLogger(ParamsUtil.class);
+    private volatile static Map<String, Object> paramsMap = new ConcurrentHashMap<>();
 
-    private static Map<String, Object> paramsMap = new ConcurrentHashMap<>();
-
-    public  static Object getParam(String key, Object defaultValue) {
+    public static Object getParam(String key, Object defaultValue) {
         Object value = null;
         if (paramsMap.containsKey(key))
             value = paramsMap.get(key);
 
-        return (value == null || "".equals(value)) ? defaultValue : value;
+        return value == null ? defaultValue : value;
     }
 
-    public static void setParam(String key ,Object value)
-    {
-        paramsMap.put(key ,value) ;
+    public static void setParam(String key, Object value) {
+        if (key != null && value != null)
+            paramsMap.put(key, value);
     }
 
-    public static boolean containsKey(String key){
-        return paramsMap.containsKey(key) ;
+    public static boolean containsKey(String key) {
+        return paramsMap.containsKey(key);
     }
 
     public static Map<String, Object> objectToMap(Object obj) throws Exception {
