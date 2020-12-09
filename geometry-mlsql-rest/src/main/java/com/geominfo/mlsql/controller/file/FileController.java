@@ -2,10 +2,8 @@ package com.geominfo.mlsql.controller.file;
 
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.Message;
-import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.file.FileService;
 import com.geominfo.mlsql.util.ReturnUtil;
-import com.sun.org.apache.regexp.internal.RE;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 

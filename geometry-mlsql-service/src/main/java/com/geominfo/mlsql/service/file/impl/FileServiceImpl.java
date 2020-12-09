@@ -201,8 +201,6 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
         newParams.add("defaultPathPrefix", engineConfig.getHome() + "/" + user.getName());
         newParams.add("skipAuth", String.valueOf(1 == engineConfig.getSkipAuth()));
         newParams.add("skipGrammarValidate", "false");
-//        newParams.add("async" ,"false");
-
 
         Map<Integer, Object> resMap = new ConcurrentHashMap<>();
         ResponseEntity<String> responseEntity = clusterUrlService.synRunScript(newParams);
@@ -217,7 +215,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
             Map<String, String> map = JSONTool.parseJson(mlsqlUser.getBackendTags(), Map.class);
             return map.get(EXTRA_DEFAULT_BACKEND);
         } else
-            return null;
+            return "";
     }
 
     private boolean deleteQuietly(File file) {
@@ -278,8 +276,6 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
                     returnMap.put(200, "success");
                 else returnMap.put(400, "error");
             }
-
-
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             logger.error(GlobalConstant.DOWNLAOD_FAIL, e);
@@ -306,7 +302,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
 
         String targetFilePath = new PathFunUtil(GlobalConstant.DEFAULT_TEMP_PATH +
-                CommandUtil.md5("userName")).add(newFile).toPath(); //这需要用户权限模块
+                CommandUtil.md5(owner)).add(newFile).toPath();
 
         try {
             if (newFile.endsWith("")) {

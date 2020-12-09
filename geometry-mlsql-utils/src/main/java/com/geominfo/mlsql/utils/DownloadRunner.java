@@ -72,7 +72,6 @@ public class DownloadRunner {
             return 500;
         }
 
-        response.setContentType("application/octet-stream;charset=UTF-8");
         OutputStream outputStream = null;
         try {
             outputStream = response.getOutputStream();
