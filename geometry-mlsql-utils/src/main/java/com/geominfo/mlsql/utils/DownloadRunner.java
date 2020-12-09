@@ -58,23 +58,34 @@ public class DownloadRunner {
         return 200;
     }
 
-    public static int getTarFileByPath(HttpServletResponse response, String pathStr) throws UnsupportedEncodingException {
+    public static int getTarFileByPath(HttpServletResponse response, String pathStr) {
 
         String[] fileChunk = pathStr.split("/");
         response.setContentType("application/octet-stream");
         //response.setHeader("Transfer-Encoding", "chunked");
-        response.setHeader(HEADER_KEY, HEADER_VALUE + "\"" + URLEncoder.encode(fileChunk[fileChunk.length - 1] + ".tar", "utf-8") + "\"");
+        try {
+            response.setHeader(HEADER_KEY,
+                    HEADER_VALUE + "\"" +
+                            URLEncoder.encode(fileChunk[fileChunk.length - 1] + ".tar", "utf-8") + "\"");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return 500;
+        }
 
+        response.setContentType("application/octet-stream;charset=UTF-8");
+        OutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 500;
+        }
+
+        ArchiveOutputStream tarOutputStream = new TarArchiveOutputStream(outputStream);
+        List<File> files = new ArrayList<>();
+        iteratorFiles(pathStr, files);
 
         try {
-            OutputStream outputStream = response.getOutputStream();
-
-            ArchiveOutputStream tarOutputStream = new TarArchiveOutputStream(outputStream);
-
-            List<File> files = new ArrayList<File>();
-
-            iteratorFiles(pathStr, files);
-
             if (files.size() > 0) {
                 InputStream inputStream = null;
                 int len = files.size();
@@ -89,13 +100,14 @@ public class DownloadRunner {
                 }
                 tarOutputStream.flush();
                 tarOutputStream.close();
-                return 200;
-            } else return 400;
+            } else return 500;
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return 500;
 
         }
+
+        return 200;
     }
 }

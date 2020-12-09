@@ -165,7 +165,6 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         if (!paramsMap.containsKey("timeout"))
             paramsMap.put("timeout", "-1");
 
-
         MlsqlUser user = userService.getUserByName(paramsMap.get("owner").toString());
 
         String clusterUrl = CommandUtil.mlsqlClusterUrl();
@@ -400,7 +399,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
             Map<String, String> map = JSONTool.parseJson(mlsqlUser.getBackendTags(), Map.class);
             return map.get(EXTRA_DEFAULT_BACKEND);
         } else
-            return null;
+            return "";
     }
 
     private long applyTimeOut(String json) {

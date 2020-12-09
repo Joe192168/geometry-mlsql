@@ -78,18 +78,11 @@ public class GlobalConstant {
     public static final String BACKEND_LIST_NAMES= "/backend/list/names";
     public static final String SUCCESS= "success";
     public static final String PUBLIC= "public/";
-    public static final String DATA_MLSQL_DATA= "/data/mlsql/data/";
 
-    public static final String TAR= ".tar";
 
     public static final String DOWNLAOD_FAIL= "download fail";
-    public static final String RUN_COMMAND_DOWNLAODEXT= "run command as DownloadExt.`` where from=";
-    public static final String AND_TO_TMP_UPLAOD= " and to='/tmp/upload';";
-    public static final String RUN_COMMAND_UPLOADFILETOSERVIEREXT= "run command as UploadFileToServerExt.`";
-    public static final String TOKEN_NAME_AND_TOKENVALUE= "` where tokenName='access-token' and tokenValue=";
     public static final String API_FILE_DOWNLAOD= "/api_v1/file/download";
     public static final String API_FILE_UPLAOD= "/api_v1/file/upload";
-    public static final String AYN_POST_UPLOADCALLBACK_URL= "localhost:8080/uploadcallback";
     public static final String SHOW_JOBS= "!show jobs  ";
 
     public static String STREAMING_DSL_AUTH_META_CLIENT = "streaming.dsl.auth.meta.client.MLSQLConsoleClient";

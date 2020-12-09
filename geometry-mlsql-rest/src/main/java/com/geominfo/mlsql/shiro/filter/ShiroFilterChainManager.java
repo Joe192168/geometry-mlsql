@@ -1,6 +1,5 @@
 package com.geominfo.mlsql.shiro.filter;
 
-import com.geominfo.mlsql.domain.rule.RolePermRule;
 import com.geominfo.mlsql.service.user.TeamRoleService;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.shiro.config.RestPathMatchingFilterChainResolver;
@@ -12,8 +11,6 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -73,7 +70,8 @@ public class ShiroFilterChainManager {
                 "/swagger-resources/**",
                 "/v2/api-docs",
                 "/webjars/springfox-swagger-ui/**",
-                "/api_v1/user/register"
+                "/api_v1/user/register",
+                "/upload.html"
         );
         defalutAnon.forEach(ignored -> filterChain.put(ignored,"anon"));
         // -------------auth 默认需要认证过滤器的URL PasswordFilter

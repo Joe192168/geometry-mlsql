@@ -4,7 +4,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
+
 
 /**
  * @program: geometry-mlsql
@@ -14,9 +15,11 @@ import java.util.concurrent.ExecutionException;
  * @version: 1.0.0
  */
 @Service
-public interface FileService<T> {
+public interface FileService {
 
-    T formUpload(HttpServletRequest request ,String owner) throws  Exception;
-    T download(Object o, HttpServletResponse response ,String owner) ;
-    T publicDownload(Object o, HttpServletResponse response ,String owner) throws ExecutionException, InterruptedException;
+    <T> T formUpload(HttpServletRequest request, String owner) throws Exception;
+
+    <T> T download(HttpServletResponse response, Map<String, Object> paramMap);
+
+    <T> T publicDownload(Object o, HttpServletResponse response, String owner);
 }
