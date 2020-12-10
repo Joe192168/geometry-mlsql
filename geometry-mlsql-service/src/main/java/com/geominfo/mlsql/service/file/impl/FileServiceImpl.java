@@ -20,9 +20,11 @@ import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.codec.EncodingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -265,18 +267,12 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
         logger.info("Write " + targetFilePath + " to response");
 
         try {
-            if (fileName.endsWith(".tar")) {
-                int status = DownloadRunner.getTarFileByTarFile(response, targetFilePath);
-                if (status == 200)
-                    returnMap.put(200, "success");
-                else returnMap.put(400, "error");
-            } else{
-                int status =  DownloadRunner.getTarFileByPath(response, targetFilePath);
-                if (status == 200)
-                    returnMap.put(200, "success");
-                else returnMap.put(400, "error");
-            }
-        } catch (UnsupportedEncodingException e) {
+            int status = DownloadRunner.getTarFileByPath(response, targetFilePath);
+            if (status == 200)
+                returnMap.put(200, "success");
+            else returnMap.put(400, "error");
+
+        } catch (EncodingException e) {
             e.printStackTrace();
             logger.error(GlobalConstant.DOWNLAOD_FAIL, e);
         }
@@ -300,25 +296,12 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
                 .split(GlobalConstant.HTTP_SEPARATED)).stream().filter(f -> !f.isEmpty()).collect(Collectors.toList());
         String newFile = newFiles.get(newFiles.size() - GlobalConstant.ONE);
 
-
         String targetFilePath = new PathFunUtil(GlobalConstant.DEFAULT_TEMP_PATH +
                 CommandUtil.md5(owner)).add(newFile).toPath();
 
-        try {
-            if (newFile.endsWith("")) {
-                DownloadRunner.getTarFileByTarFile(response, targetFilePath);
-            } else {
-                DownloadRunner.getTarFileByPath(response, targetFilePath);
-            }
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            logger.error(GlobalConstant.DOWNLAOD_FAIL, e);
-        }
-
+        DownloadRunner.getTarFileByPath(response, targetFilePath);
 
         return (T) returnMap;
-
 
     }
 

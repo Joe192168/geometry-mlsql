@@ -14,7 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by allwefantasy on 11/7/2017.
+ * @program: geometry-mlsql
+ * @description:  文件下载
+ * @author: BJZ
+ * @create: 2020-11-09 14:43
+ * @version: 1.0.0
  */
 public class DownloadRunner {
 
@@ -39,23 +43,6 @@ public class DownloadRunner {
                 }
             }
         }
-    }
-
-    public static int getTarFileByTarFile(HttpServletResponse response, String pathStr) throws UnsupportedEncodingException {
-
-        String[] fileChunk = pathStr.split("/");
-        response.setContentType("application/octet-stream");
-        //response.setHeader("Transfer-Encoding", "chunked");
-        response.setHeader(HEADER_KEY, HEADER_VALUE + "\"" + URLEncoder.encode(fileChunk[fileChunk.length - 1], "utf-8") + "\"");
-
-        try {
-            org.apache.commons.io.IOUtils.copyLarge(new FileInputStream(new File(pathStr)), response.getOutputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 500;
-
-        }
-        return 200;
     }
 
     public static int getTarFileByPath(HttpServletResponse response, String pathStr) {

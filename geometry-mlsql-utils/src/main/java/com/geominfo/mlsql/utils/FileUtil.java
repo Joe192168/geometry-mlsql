@@ -31,10 +31,10 @@ public class FileUtil {
                 return 0L;
             } else {
                 File[] arr$ = files;
-                int len$ = files.length;
+                int len = files.length;
 
-                for(int i$ = 0; i$ < len$; ++i$) {
-                    File file = arr$[i$];
+                for(int i = 0; i< len; ++i) {
+                    File file = arr$[i];
                     size += sizeOf(file);
                 }
 
@@ -60,11 +60,11 @@ public class FileUtil {
 
     }
 
-    public static FileOutputStream openOutputStream(File file) throws IOException {
+    private static FileOutputStream openOutputStream(File file) throws IOException {
         return openOutputStream(file, false);
     }
 
-    public static FileOutputStream openOutputStream(File file, boolean append) throws IOException {
+    private static FileOutputStream openOutputStream(File file, boolean append) throws IOException {
         if (file.exists()) {
             if (file.isDirectory()) {
                 throw new IOException("File '" + file + "' exists but is a directory");

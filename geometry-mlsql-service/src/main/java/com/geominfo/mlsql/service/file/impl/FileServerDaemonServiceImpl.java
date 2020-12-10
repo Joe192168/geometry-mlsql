@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @program: geometry-mlsql
- * @description: 文件处理服务守护进程
+ * @description:  定时清除旧的文件
  * @author: BJZ
  * @create: 2020-07-09 14:43
  * @version: 1.0.0
