@@ -70,12 +70,10 @@ public class FileController extends BaseController{
             @ApiParam(value = "fileName", required = true) String fileName ,
             @ApiParam(value = "userName", required = true) String userName ,
             @ApiParam(value = "auth_secret", required = true) String auth_secret
-            )
+            ) {
 
-            throws UnsupportedEncodingException {
-
-        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-
+        HttpServletResponse response = ((ServletRequestAttributes)
+                RequestContextHolder.getRequestAttributes()).getResponse();
         Map<String ,Object> paramMap = new ConcurrentHashMap<>() ;
         paramMap.put("owner" ,userName) ;
         paramMap.put("fileName" ,fileName) ;
