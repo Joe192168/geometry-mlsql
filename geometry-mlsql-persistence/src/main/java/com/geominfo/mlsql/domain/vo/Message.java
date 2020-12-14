@@ -142,7 +142,7 @@ public class Message {
     public  Message returnValue(Map<Integer ,Object> resMap)
     {
         int statudsCode = 500;
-        Object res = "" ;
+        Object res = null;
         if(resMap != null && !resMap.isEmpty()){
             statudsCode = resMap.keySet().iterator().next() ;
             res =  resMap.values().iterator().next();
