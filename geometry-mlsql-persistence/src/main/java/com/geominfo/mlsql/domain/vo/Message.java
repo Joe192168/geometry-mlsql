@@ -142,10 +142,10 @@ public class Message {
     public  Message returnValue(Map<Integer ,Object> resMap)
     {
         int statudsCode = 500;
-        String res = "" ;
+        Object res = "" ;
         if(resMap != null && !resMap.isEmpty()){
             statudsCode = resMap.keySet().iterator().next() ;
-            res = (String) resMap.values().iterator().next();
+            res =  resMap.values().iterator().next();
         }
         return statudsCode == 200 ?
                 success(statudsCode, "success").addData("data", res) :
