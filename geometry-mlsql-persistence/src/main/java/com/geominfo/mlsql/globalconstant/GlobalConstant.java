@@ -25,44 +25,21 @@ public class GlobalConstant {
      */
     public static final String BIXT_ROOT = "10005";
 
-    public static final int MAX_SIZE = 10000;
     public static final int SIXTY = 60;
     public static final int ZERO = 0;
     public static final int ONE = 1;
     public static final int TOW = 2;
-    public static final int FOUR = 4;
-    public static final int ONE_HUNDRED = 100;
+
     public static final int TOW_HUNDRED = 200;
-    public static final int FOUR_HUNDRED = 400;
-    public static final int FIVE_HUNDRED = 500;
     public static final long FILE_MAX_BYTES = 1000 * 60 * 120;
 
 
     public static final String DEFAULT_TEMP_PATH = "/tmp/upload/";
-    public static final String HTTP_HEAD_TOW = "http://";
     public static final String HTTP_SEPARATED = "/";
 
-    public static final String ENCODE = "UTF-8";
-    public static final String MLSQL_CLUSTER_DEFAULT_URL = "192.168.20.209:9003";
-
-
-    public static final String TRUE = "true";
-
-    public static final String CORRECT_PATH = "file path is not correct";
-    public static final String POINT = ".";
-    public static final String POINT2 = "..";
     public static final String SEMICOLON = ";";
     public static final String SQL = "sql";
-    public static final String OWNER = "owner";
-    public static final String JOB_NAME = "jobName";
-    public static final String SESSION_PERUSER = "sessionPerUser";
-    public static final String SHOW_STACK = "show_stack";
-    public static final String TAGS = "tags";
-    public static final String CONTEXT_DEFAULT_INCLUDE_URL = "context.__default__include_fetch_url__";
-    public static final String CONTEXT_DEFAULT_FILESERVER_URL = "context.__default__fileserver_url__";
-    public static final String CONTEXT_DEFAULT_FILESERVER_UPLOAD_URL = "context.__default__fileserver_upload_url__";
-    public static final String CONTEXT_AUTH_SECRET = "context.__auth_secret__";
-    public static final String DEFAULTPATHPREFIX = "defaultPathPrefix";
+
 
     public static final String CALLBACK = "callback";
 

@@ -139,12 +139,10 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
             }
 
             finalDir = tempFilePath.substring(homeDir.getPath().length());
-
             logger.info(String.format("upload to %s ", targetPath.getPath()));
 
             FileUtil.copyInputStreamToFile(fileContent, targetPath);
             fileContent.close();
-
 
         }
 
