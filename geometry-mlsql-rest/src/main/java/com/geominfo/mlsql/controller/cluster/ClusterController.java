@@ -3,9 +3,7 @@ package com.geominfo.mlsql.controller.cluster;
 
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.*;
-import com.geominfo.mlsql.globalconstant.ReturnCode;
 import com.geominfo.mlsql.service.cluster.ClusterService;
-import com.geominfo.mlsql.util.ReturnUtil;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
@@ -37,8 +35,9 @@ public class ClusterController extends BaseController {
     @Autowired
     private ClusterService clusterService;
 
+
     @Autowired
-    private ReturnUtil returnUtil ;
+    private Message message ;
 
     @RequestMapping(value = "/api_v1/cluster" ,method = RequestMethod.POST)
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
@@ -57,7 +56,7 @@ public class ClusterController extends BaseController {
 
        Map<String, Object> params = ParamsUtil.objectToMap(clusterManagerParameter);
         Map<Integer ,Object> resMap = clusterService.clusterManager(params);
-        return returnUtil.returnValue(resMap) ;
+        return message.returnValue(resMap) ;
 
     }
 
@@ -112,12 +111,8 @@ public class ClusterController extends BaseController {
 
         ConcurrentHashMap<Integer ,Object> resMap= clusterService.runScript(params);
 
-        return returnUtil.returnValue( resMap) ;
+        return message.returnValue( resMap) ;
 
     }
-
-
-
-
 
 }

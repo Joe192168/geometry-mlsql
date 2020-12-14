@@ -137,4 +137,26 @@ public class Message {
         this.addMeta("msg","操作成功");
         this.addMeta("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
+
+
+    public  Message returnValue(Map<Integer ,Object> resMap)
+    {
+        int statudsCode = 500;
+        String res = "" ;
+        if(resMap != null && !resMap.isEmpty()){
+            statudsCode = resMap.keySet().iterator().next() ;
+            res = (String) resMap.values().iterator().next();
+        }
+        return statudsCode == 200 ?
+                success(statudsCode, "success").addData("data", res) :
+                error(statudsCode, "error").addData("data", res);
+
+    }
+
+    private  Message success(int statusCode,String statusMsg){
+        Message message = new Message();
+        message.ok(statusCode, statusMsg);
+        return message;
+    }
+
 }

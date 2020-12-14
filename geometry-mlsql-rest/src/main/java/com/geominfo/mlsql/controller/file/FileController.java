@@ -3,7 +3,6 @@ package com.geominfo.mlsql.controller.file;
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.service.file.FileService;
-import com.geominfo.mlsql.util.ReturnUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 
@@ -18,8 +17,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.UnsupportedEncodingException;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +40,7 @@ public class FileController extends BaseController{
     private FileService fileService;
 
     @Autowired
-    private ReturnUtil returnUtil ;
+    private Message returnUtil ;
 
     @RequestMapping(value = "/api_v1/file/upload" ,method = RequestMethod.POST)
     @ApiOperation(value = "文件上传接口", httpMethod = "POST")
