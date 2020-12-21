@@ -34,9 +34,9 @@ import java.util.stream.Stream;
  * @create: 2020-11-30 15:42
  * @version: 1.0.0
  */
+@Api(value="数据源维护接口类", tags = {"数据源维护接口类"})
 @RestController
-@RequestMapping("/api_v1/ds")
-@Api(value="数据源维护接口类",tags={"数据源维护接口"})
+@RequestMapping(value = "/api_v1/ds")
 @Log4j2
 public class DSController extends BaseController {
     @Autowired
@@ -49,7 +49,7 @@ public class DSController extends BaseController {
     private UserService userService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    @ApiOperation(value = "增加数据源",tags = {"增加数据源"})
+    @ApiOperation(value = "增加数据源")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jType",value = "连接数据库类型",required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "format",value = "连接数据库格式",required = true, paramType = "query", dataType = "String"),
@@ -90,7 +90,7 @@ public class DSController extends BaseController {
         return success(HttpStatus.SC_OK,"sava success");
     }
 
-    @ApiOperation(value = "查询所有数据源",tags = {"查询所有数据源"})
+    @ApiOperation(value = "查询所有数据源")
     @RequestMapping(value = "/list", method = {RequestMethod.POST,RequestMethod.GET})
     public Message list(){
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
@@ -99,7 +99,7 @@ public class DSController extends BaseController {
         return success(HttpStatus.SC_OK,"success").addData("schema",list).addData("data",mlsqlDs);
     }
 
-    @ApiOperation(value = "获取单个数据源",tags = {"获取单个数据源"})
+    @ApiOperation(value = "获取单个数据源")
     @RequestMapping(value = "/mysql/connect/get",method = {RequestMethod.POST,RequestMethod.GET})
     @ApiImplicitParam(name = "name",value = "名称",required = true, paramType = "query", dataType = "String")
     public Message getMySQLConnect(@RequestParam(value = "name",required = true) String name){
@@ -107,7 +107,7 @@ public class DSController extends BaseController {
         return success(HttpStatus.SC_OK,"get success").addData("connect",dsService.getConnect(name,mlsqlUser));
     }
 
-    @ApiOperation(value = "删除单个数据源",tags = {"删除单个数据源"})
+    @ApiOperation(value = "删除单个数据源")
     @RequestMapping(value = "/remove", method = {RequestMethod.POST,RequestMethod.GET})
     public Message remove(@RequestParam(value = "id", required = true) Integer id){
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
@@ -117,7 +117,7 @@ public class DSController extends BaseController {
     }
 
     @RequestMapping(value = "/mysql/column",method = {RequestMethod.POST,RequestMethod.GET})
-    @ApiOperation(value = "查询表中最大最小值",tags = {"查询表中最大最小值"})
+    @ApiOperation(value = "查询表中最大最小值")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cloumnName", value = "列名", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "dbName", value = "数据库名", required = true, paramType = "query", dataType = "String"),
@@ -146,7 +146,7 @@ public class DSController extends BaseController {
 
 
     @RequestMapping(value = "/mysql/dbs", method = {RequestMethod.POST,RequestMethod.GET})
-    @ApiOperation(value = "获取库中所有表名", tags = {"获取库中所有表名"})
+    @ApiOperation(value = "获取库中所有表名")
     public Message getDBs(){
         MlsqlUser mlsqlUser = userService.getUserByName(userName);
         Stream<MlsqlDs> jdbc = dsService.listDs(mlsqlUser).stream().filter(mlsqlDs -> mlsqlDs.getFormat().equals("jdbc"));
