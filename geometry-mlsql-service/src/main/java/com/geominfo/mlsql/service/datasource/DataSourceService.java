@@ -22,4 +22,11 @@ public interface DataSourceService {
     Map<String, Object> testDataSource(JDBCD jdbcd);
     Set<String> getTables(JDBCD jdbcd);
     ResultSet getQuery(JDBCD jdbcd, String sql);
+
+    /**
+     * 根据不同的数据库类型获取JDBCD对象
+     * @param jdbcd
+     * @return
+     */
+    JDBCD JDBCDConnectParams(JDBCD jdbcd);
 }

@@ -8,6 +8,7 @@ import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.MapUtils;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,10 @@ public class ClusterController extends BaseController {
             @RequestParam(value="skipGrammarValidate", defaultValue="true") String skipGrammarValidate,
             @RequestParam(value="tags", defaultValue="") String tags
     )throws Exception {
-
+        //屏蔽用户sql中出现connect语句
+        if (sql.toLowerCase().contains("connect ")){
+            return error(HttpStatus.SC_INTERNAL_SERVER_ERROR,"Refuse to enforce");
+        }
         Map<String, Object> params = new ConcurrentHashMap<>();
         params.put("sql" ,sql ) ;
         params.put("owner" ,owner ) ;

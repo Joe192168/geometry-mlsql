@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.AppRuntimeMapper">
+    <insert id="insertAppDS" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+        INSERT INTO
+        w_connect_table(format,db,options)
+        VALUES
+        (#{format},#{db},#{options})
+    </insert>
+
+    <select id="getAppRuntimeList" resultType="com.geominfo.mlsql.domain.appruntimefull.wConnectTable">
+        SELECT id, format, db, options FROM w_connect_table
+    </select>
+
+    <update id="updateConnectParams">
+        UPDATE w_connect_table
+        SET format = #{format},options=#{options}
+        WHERE db = #{db}
+    </update>
+</mapper>

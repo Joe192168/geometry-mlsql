@@ -1,6 +1,7 @@
 package com.geominfo.mlsql.domain.vo;
 
 import lombok.Data;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.sql.DataSource;
 
@@ -23,4 +24,5 @@ public class JDBCD {
     private String user;
     private String password;
     private String format;
+    private String family;
 }

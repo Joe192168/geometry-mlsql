@@ -2,20 +2,21 @@ package com.geominfo.mlsql.service.datasource.impl;
 
 import com.geominfo.mlsql.domain.vo.JDBCD;
 import com.geominfo.mlsql.service.datasource.DataSourceService;
-import com.geominfo.mlsql.utils.JDBCUtils;
 import com.geominfo.mlsql.utils.metadb.meta.core.MetaLoader;
 import com.geominfo.mlsql.utils.metadb.meta.core.MetaLoaderImpl;
-import com.geominfo.mlsql.utils.metadb.util.ResultSetExtractor;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @program: MLSQL CONSOLE后端接口
@@ -35,7 +36,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         try {
             HikariDataSource hikariDataSource = new HikariDataSource();
             hikariDataSource.setJdbcUrl(jdbcd.getUrl());
-            hikariDataSource.setUsername(jdbcd.getName());
+            hikariDataSource.setUsername(jdbcd.getUser());
             hikariDataSource.setPassword(jdbcd.getPassword());
             hikariDataSource.setDriverClassName(jdbcd.getDriver());
             //解决oracle读取不到REMARKS表注解设置
@@ -102,6 +103,54 @@ public class DataSourceServiceImpl implements DataSourceService {
         MetaLoader metaLoader = getMetaLoader(jdbcd);
         return metaLoader.query(sql);
     }
+
+    @Override
+    public JDBCD JDBCDConnectParams(JDBCD jdbcd) {
+        JDBCD connectParams = null;
+        if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("mysql") && jdbcd.getFormat().toLowerCase().equals("jdbc")){
+            connectParams = createJDBCD(jdbcd, "jdbc:mysql://" + jdbcd.getHost() + ":"
+                    + jdbcd.getPort() + "/" + jdbcd.getDb(),"com.mysql.jdbc.Driver");
+        } else if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("oracle") && jdbcd.getFormat().toLowerCase().equals("jdbc")) {
+            connectParams = createJDBCD(jdbcd, "jdbc:oracle:thin:@//" + jdbcd.getHost() +":"
+                    + jdbcd.getPort()+"/"+jdbcd.getDb(),"oracle.jdbc.driver.OracleDriver");
+        } else if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("sqlserver") && jdbcd.getFormat().toLowerCase().equals("jdbc")) {
+            connectParams = createJDBCD(jdbcd, "jdbc:sqlserver://"+ jdbcd.getHost()+ ":" +
+                    jdbcd.getPort() + ";DatabaseName=" + jdbcd.getDb(),"com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } else if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("hbase") && jdbcd.getFormat().toLowerCase().equals("hbase")) {
+            connectParams = createJDBCD(jdbcd, "url","driver");
+        }
+        return connectParams;
+    }
+
+
+    /**
+     * 创建JDBCD对象
+     * @param jdbcd
+     * @param url
+     * @param driver
+     * @return
+     */
+    public JDBCD createJDBCD(JDBCD jdbcd,String url,String driver) {
+        JDBCD connectParams = new JDBCD();
+        connectParams.setDb(jdbcd.getDb());
+        connectParams.setUrl(url);
+        connectParams.setDriver(driver);
+        connectParams.setUser(jdbcd.getUser());
+        connectParams.setName(jdbcd.getName());
+        connectParams.setPassword(jdbcd.getPassword());
+        connectParams.setFormat(jdbcd.getFormat());
+        connectParams.setHost(jdbcd.getHost());
+        connectParams.setJType(jdbcd.getJType().replaceAll("\\s*", "").toLowerCase());
+        connectParams.setPort(jdbcd.getPort());
+        if (StringUtils.isBlank(jdbcd.getFamily())) {
+            connectParams.setFamily("0");
+        } else {
+            connectParams.setFamily(jdbcd.getFamily());
+        }
+        return connectParams;
+    }
+
+
 
     /**
      *

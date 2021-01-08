@@ -23,7 +23,9 @@ public interface MlsqlDsMapper {
    List<MlsqlDs> listDs(int userId) ;
    List<MlsqlDs> getDs(Map<String, Object> map) ;
 
+   MlsqlDs getDsInfo(String asName);
 
+   void updateDs(MlsqlDs mlsqlDs);
 
     
 
