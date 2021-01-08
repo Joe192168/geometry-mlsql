@@ -4,7 +4,7 @@ server:
     context-path: /
 
 engine:
-  url: http://192.168.148.231:9003
+  url: http://192.168.0.202:9003
 
 cluster:
   url: http://192.168.148.231:9003
@@ -105,9 +105,11 @@ jasypt:
 spring:
     profiles: dev
     datasource:
-      url: jdbc:mysql://192.168.2.237:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.2.237:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+      url: jdbc:mysql://192.168.0.47:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
       username: root
       password: 123456
+
     redis:
       # 服务器IP地址
       host: 127.0.0.1
