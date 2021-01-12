@@ -133,16 +133,21 @@ public class DataSourceServiceImpl implements DataSourceService {
     public JDBCD createJDBCD(JDBCD jdbcd,String url,String driver) {
         JDBCD connectParams = new JDBCD();
         connectParams.setDb(jdbcd.getDb());
-        connectParams.setUrl(url);
+        if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("hbase")) {
+            connectParams.setUrl(jdbcd.getHost() + ":" + jdbcd.getPort());
+            connectParams.setFormat("org.apache.spark.sql.execution.datasources.hbase");
+        } else {
+            connectParams.setUrl(url);
+            connectParams.setFormat(jdbcd.getFormat().toLowerCase());
+        }
         connectParams.setDriver(driver);
         connectParams.setUser(jdbcd.getUser());
         connectParams.setName(jdbcd.getName());
         connectParams.setPassword(jdbcd.getPassword());
-        connectParams.setFormat(jdbcd.getFormat());
         connectParams.setHost(jdbcd.getHost());
         connectParams.setJType(jdbcd.getJType().replaceAll("\\s*", "").toLowerCase());
         connectParams.setPort(jdbcd.getPort());
-        if (StringUtils.isBlank(jdbcd.getFamily())) {
+        if (StringUtils.isBlank(jdbcd.getFamily()) || jdbcd.getFamily().toLowerCase().equals("string")) {
             connectParams.setFamily("0");
         } else {
             connectParams.setFamily(jdbcd.getFamily());

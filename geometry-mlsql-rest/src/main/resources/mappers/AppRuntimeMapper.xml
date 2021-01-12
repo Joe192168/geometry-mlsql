@@ -8,7 +8,7 @@
         (#{format},#{db},#{options})
     </insert>
 
-    <select id="getAppRuntimeList" resultType="com.geominfo.mlsql.domain.appruntimefull.wConnectTable">
+    <select id="getAppRuntimeList" resultType="com.geominfo.mlsql.domain.appruntimefull.WConnectTable">
         SELECT id, format, db, options FROM w_connect_table
     </select>
 

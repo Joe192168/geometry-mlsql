@@ -10,7 +10,7 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class wConnectTable {
+public class WConnectTable {
     private Integer id;
     private String format;
     private String db;

@@ -25,4 +25,5 @@ public class JDBCD {
     private String password;
     private String format;
     private String family;
+    private String collection;
 }

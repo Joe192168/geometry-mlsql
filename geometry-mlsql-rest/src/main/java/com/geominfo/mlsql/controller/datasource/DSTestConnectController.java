@@ -2,7 +2,7 @@ package com.geominfo.mlsql.controller.datasource;
 
 import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.controller.base.BaseController;
-import com.geominfo.mlsql.domain.appruntimefull.wConnectTable;
+import com.geominfo.mlsql.domain.appruntimefull.WConnectTable;
 import com.geominfo.mlsql.domain.vo.JDBCD;
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlDs;
@@ -74,7 +74,7 @@ public class DSTestConnectController extends BaseController {
             if (connectInfo.get("flag") == Boolean.FALSE) {
                 return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, connectInfo.get("msg").toString());
             }
-            //测试Hbase(暂时不要看这段代码，功能还没有完成)
+            //测试Hbase
         } else if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("hbase") ||
                 jdbcd.getFormat().toLowerCase().equals("hbase")) {
             String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
@@ -83,7 +83,7 @@ public class DSTestConnectController extends BaseController {
             postParameters.add("owner", userName);
             //调用engine/run/script接口
             ResponseEntity<String> responseEntity = proxyService.postForEntity(engineUrl + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
-            String body = responseEntity.getBody();
+            responseEntity.getBody();
         }
         return success(HttpStatus.SC_OK, "sava success").addData("jdbcd", jdbcd);
     }
@@ -113,8 +113,16 @@ public class DSTestConnectController extends BaseController {
         //修改mlsql_ds表中的数据
         dsService.updateDs(mlsqlDs);
         //修改w_connect_table表中的数据
-        wConnectTable wct = appRuntimeDsService.getWConnectTable(connectParams);
+        WConnectTable wct = appRuntimeDsService.getWConnectTable(connectParams);
         appRuntimeDsService.updateConnectParams(wct);
+        //拼接参数
+        String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
+        LinkedMultiValueMap<String, String> postParameters = new LinkedMultiValueMap<String, String>();
+        postParameters.add("sql", connectSQL);
+        postParameters.add("owner", userName);
+        //调用engine/run/script接口
+        ResponseEntity<String> responseEntity = proxyService.postForEntity(engineUrl + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
+        responseEntity.getBody();
         return success(HttpStatus.SC_OK, "update sucess");
     }
 

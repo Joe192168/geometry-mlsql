@@ -1,6 +1,6 @@
 package com.geominfo.mlsql.service.appruntimefull;
 
-import com.geominfo.mlsql.domain.appruntimefull.wConnectTable;
+import com.geominfo.mlsql.domain.appruntimefull.WConnectTable;
 import com.geominfo.mlsql.domain.vo.JDBCD;
 
 import java.util.List;
@@ -18,20 +18,20 @@ public interface AppRuntimeDsService {
      * 向表中插入启动数据
      * @param wct
      */
-    void insertAppDS(wConnectTable wct);
+    void insertAppDS(WConnectTable wct);
 
     /**
      * 获取所有启动参数
      * @return List<wConnectTable>
      */
-    List<wConnectTable> getAppRuntimeList();
+    List<WConnectTable> getAppRuntimeList();
 
     /**
      * 获取wConnectTable对象
      * @param jdbcd
      * @return wConnectTable
      */
-    wConnectTable getWConnectTable(JDBCD jdbcd);
+    WConnectTable getWConnectTable(JDBCD jdbcd);
 
     /**
      * 拼接connect语句参数
@@ -41,5 +41,5 @@ public interface AppRuntimeDsService {
     String jointConnectPrams(JDBCD connectParams);
 
 
-    void updateConnectParams(wConnectTable wct);
+    void updateConnectParams(WConnectTable wct);
 }

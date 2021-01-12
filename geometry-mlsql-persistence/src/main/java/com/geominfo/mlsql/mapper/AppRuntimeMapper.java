@@ -1,7 +1,6 @@
 package com.geominfo.mlsql.mapper;
 
-import com.geominfo.mlsql.domain.appruntimefull.wConnectTable;
-import com.geominfo.mlsql.domain.vo.JDBCD;
+import com.geominfo.mlsql.domain.appruntimefull.WConnectTable;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +17,10 @@ import java.util.List;
 @Component
 public interface AppRuntimeMapper {
 
-    void insertAppDS(wConnectTable wct);
+    void insertAppDS(WConnectTable wct);
 
-    List<wConnectTable> getAppRuntimeList();
+    List<WConnectTable> getAppRuntimeList();
 
-    void updateConnectParams(wConnectTable wct);
+    void updateConnectParams(WConnectTable wct);
 
 }
