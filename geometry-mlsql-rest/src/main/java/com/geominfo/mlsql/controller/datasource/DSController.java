@@ -73,7 +73,7 @@ public class DSController extends BaseController {
             @ApiImplicitParam(name = "family", value = "列族", required = false, paramType = "query", dataType = "String")
     })
     public Message addDs(@RequestBody JDBCD jdbcd) {
-        //MlsqlUser mlsqlUser = userService.getUserByName(userName);
+        MlsqlUser mlsqlUser = userService.getUserByName(userName);
         MlsqlDs ds = dsService.getDs(jdbcd.getName());
         if (ds != null) {
             return error(HttpStatus.SC_OK, "dataSource is existing");
@@ -84,8 +84,8 @@ public class DSController extends BaseController {
             requestParams.put("driver", connectParams.getDriver());
             requestParams.put("format",requestParams.get("format").toLowerCase());
             requestParams.put("family",connectParams.getFamily());
-            //保存到mlsql_ds表中         mlsqlUser.getId()
-            dsService.saveDs(new MlsqlDs(jdbcd.getName(), jdbcd.getFormat().toLowerCase(), JSONObject.toJSONString(requestParams), 1));
+            //保存到mlsql_ds表中
+            dsService.saveDs(new MlsqlDs(jdbcd.getName(), jdbcd.getFormat().toLowerCase(), JSONObject.toJSONString(requestParams), mlsqlUser.getId()));
             WConnectTable wct = appRuntimeDsService.getWConnectTable(connectParams);
             //保存到w_connect_full表中
             appRuntimeDsService.insertAppDS(wct);
