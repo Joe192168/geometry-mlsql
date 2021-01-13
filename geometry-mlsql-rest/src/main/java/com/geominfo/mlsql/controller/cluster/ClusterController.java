@@ -37,9 +37,9 @@ public class ClusterController extends BaseController {
 
 
     @Autowired
-    private Message message ;
+    private Message message;
 
-    @RequestMapping(value = "/api_v1/cluster" ,method = RequestMethod.POST)
+    @RequestMapping(value = "/api_v1/cluster", method = RequestMethod.POST)
     @ApiOperation(value = "集群后台配置接口", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "执行动作所有接口都要传的参数", name = "action", dataType = "String", paramType = "query", required = true),
@@ -54,30 +54,26 @@ public class ClusterController extends BaseController {
     })
     public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) throws Exception {
 
-       Map<String, Object> params = ParamsUtil.objectToMap(clusterManagerParameter);
-        Map<Integer ,Object> resMap = clusterService.clusterManager(params);
-        return message.returnValue(resMap) ;
+        Map<String, Object> params = ParamsUtil.objectToMap(clusterManagerParameter);
+        Map<Integer, Object> resMap = clusterService.clusterManager(params);
+        return message.returnValue(resMap);
 
     }
 
 
-    @RequestMapping(value = "/api_v1/run/script" ,method = RequestMethod.POST)
+    @RequestMapping(value = "/api_v1/run/script", method = RequestMethod.POST)
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
     public Message runScript(@RequestBody ScriptRun scriptRun
-    )throws Exception {
+    ) throws Exception {
 
-        Map<String, Object> params = ParamsUtil.objectToMap(scriptRun) ;
-        if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
-        if(!ParamsUtil.containsKey("owner") && params.containsKey("owner"))
-            ParamsUtil.setParam("owner",params.get("owner"));
+        Map<String, Object> params = ParamsUtil.objectToMap(scriptRun);
+        if (!ParamsUtil.containsKey("owner") && params.containsKey("owner"))
+            ParamsUtil.setParam("owner", params.get("owner"));
         if (!params.containsKey("owner")) params.put("owner", userName);
 
-        ConcurrentHashMap<Integer ,Object> resMap= clusterService.runScript(params);
-
-        return message.returnValue( resMap) ;
+        return message.returnValue(clusterService.runScript(params));
 
     }
-
 
 
 }
