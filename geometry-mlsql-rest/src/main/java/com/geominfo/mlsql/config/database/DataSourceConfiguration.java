@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-
 import java.sql.SQLException;
 
 /**
@@ -65,7 +64,7 @@ public class DataSourceConfiguration {
     @Value("${spring.datasource.useGlobalDataSourceStat}")
     private boolean useGlobalDataSourceStat;
 
-    @Bean     //声明其为Bean实例
+    @Bean(name = "primaryDataSource")     //声明其为Bean实例
     @Primary  //在同样的DataSource中，首先使用被标注的DataSource
     public DruidDataSource dataSource() {
         DruidDataSource dataSource = new DruidDataSource();

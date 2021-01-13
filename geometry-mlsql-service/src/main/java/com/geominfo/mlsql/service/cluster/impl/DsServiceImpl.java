@@ -99,6 +99,15 @@ public class DsServiceImpl implements DsService {
         return  dataSourceService.getTables(jdbcd);
     }
 
+    @Override
+    public MlsqlDs getDs(String asName) {
+        return mlsqlDsMapper.getDsInfo(asName);
+    }
+
+    @Override
+    public void updateDs(MlsqlDs mlsqlDs) {
+        mlsqlDsMapper.updateDs(mlsqlDs);
+    }
 
 
 }

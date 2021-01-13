@@ -36,7 +36,7 @@
     <select id="getDs" parameterType="map" resultType="com.geominfo.mlsql.domain.vo.MlsqlDs">
         SELECT
         id,
-        name,
+        `name`,
         format,
         params,
         mlsql_user_id AS mlsqlUserId
@@ -49,5 +49,24 @@
         AND
         format=#{pFormat}
     </select>
+
+    <select id="getDsInfo"  resultType="com.geominfo.mlsql.domain.vo.MlsqlDs">
+        SELECT
+        id,
+        `name`,
+        format,
+        params,
+        mlsql_user_id AS mlsqlUserId
+        FROM
+        mlsql_ds
+        WHERE
+        `name`=#{asName}
+    </select>
+
+    <update id="updateDs">
+        UPDATE mlsql_ds
+        set format = #{format}, params = #{params}
+        WHERE `name` = #{name}
+    </update>
 
 </mapper>

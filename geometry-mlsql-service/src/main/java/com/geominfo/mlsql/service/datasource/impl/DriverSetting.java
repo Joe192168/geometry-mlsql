@@ -20,8 +20,8 @@ public class DriverSetting {
             jdbcd.setDriver("com.mysql.jdbc.Driver");
         } if(dbType.toLowerCase().equals("oracle")){
             jdbcd.setDriver("oracle.jdbc.driver.OracleDriver");
-        } if(dbType.toLowerCase().equals("microsoft sql server")){
-            jdbcd.setDriver("com.microsoft.jdbc.sqlserver.SQLServerDriver");
+        } if(dbType.toLowerCase().equals("sqlserver")){
+            jdbcd.setDriver("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } else {
 
         }
