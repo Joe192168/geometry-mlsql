@@ -7,6 +7,7 @@ import com.geominfo.mlsql.domain.vo.MlsqlJob;
 import com.geominfo.mlsql.domain.vo.MlsqlJobRender;
 import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import com.geominfo.mlsql.globalconstant.ReturnCode;
+import com.geominfo.mlsql.service.cluster.ScriptLogService;
 import com.geominfo.mlsql.service.job.MlsqlJobService;
 import com.geominfo.mlsql.service.job.impl.MlsqlJobServiceImpl;
 import com.geominfo.mlsql.service.user.UserService;
@@ -15,7 +16,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import jdk.internal.org.objectweb.asm.Opcodes;
 import lombok.extern.log4j.Log4j2;
+import net.bytebuddy.asm.Advice;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @program: geometry-mlsql
@@ -47,6 +51,9 @@ public class MlsqlJobController extends BaseController {
     @Autowired
     private MlsqlJobService mlsqlJobService;
 
+    @Autowired
+    private ScriptLogService scriptLogService ;
+
 
     @RequestMapping(value = "/callback", method = RequestMethod.POST)
     @ApiOperation(value = "异步执行", httpMethod = "POST", notes = "post请求")
@@ -55,7 +62,7 @@ public class MlsqlJobController extends BaseController {
             @ApiImplicitParam(name = "params", value = "engine执行成功或者失败信息", required = true, paramType = "query", dataType = "Map")
     })
     public Message jobCallBack(
-            @RequestParam(value = "", required = true) Map<String, String> params) {
+            @RequestParam(value = "", required = true) Map<String, String> params) throws ExecutionException, InterruptedException {
         String aaa = "";
          /*CommandUtil.auth_secret()*/
         if (!params.get("__auth_secret__").equals("mlsql")) {
@@ -66,10 +73,14 @@ public class MlsqlJobController extends BaseController {
             String msg = "";
             if (params.get("stat").equals("succeeded")) {
                 //创建map
-                log.info("回调接口返回的数据 res =" +params.get("res"));
+                Object o = params.get("res") ;
+                log.info("回调接口返回的数据 res =" +o);
                 map = mlsqlJobService.createMap(0, jobName, MlsqlJobServiceImpl.SUCCESS,
-                        System.currentTimeMillis(), " ", params.get("res"));
+                        System.currentTimeMillis(), " ", o.toString());
                 msg = mlsqlJobService.updateMlsqlJob(map);
+
+                //保存相应Log
+                scriptLogService.addLog(o.toString());
 
             } else {
                 //创建map

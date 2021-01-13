@@ -296,7 +296,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         if (paramsMap.get("async").toString().equals("true"))
         {
-            if (!paramsMap.containsKey("callback"))
+            if (!paramsMap.containsKey("callback") || paramsMap.get("callback").equals(""))
                 paramsMap.put("callback", engineConfig.getConsoleUrl() + "/api_v1/job/callback?__auth_secret__=" +
                         paramsMap.get("context.__auth_secret__"));
         }
@@ -393,6 +393,15 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
     //private -------------------------------
     private static final String EXTRA_DEFAULT_BACKEND = "backend";
+
+    private String formatSQL(String sql)
+    {
+        if(sql.equals("")) return "" ;
+
+
+        return "" ;
+
+    }
 
     private String getBackendName(MlsqlUser mlsqlUser) {
         if (mlsqlUser.getBackendTags() != null && !mlsqlUser.getBackendTags().isEmpty()) {

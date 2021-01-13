@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.geominfo.mlsql.mapper.ScriptExeLogMapper">
+
+    <update id="updateLog" parameterType="com.geominfo.mlsql.domain.vo.ScriptExeLog">
+        UPDATE script_exe_log
+        SET `logicalExecutionPlan` = #{logicalExecutionPlan},
+        `physicalExecutionPlan` = #{physicalExecutionPlan}
+        WHERE `groupId` = #{groupId}
+    </update>
+
+    <insert id="addLog" parameterType="com.geominfo.mlsql.domain.vo.ScriptExeLog">
+        INSERT INTO script_exe_log(
+        duration,
+        jobId,
+        job,
+        stages,
+        tasks,
+        inPutSum,
+        inPutByte,
+        outPutSum,
+        outPutBtye,
+        logicalExecutionPlan,
+        physicalExecutionPlan,
+        remarks,
+        groupId)
+        VALUES (
+        #{duration}
+         ,#{jobId}
+        ,#{job}
+        ,#{stages}
+        ,#{tasks}
+        ,#{inPutSum}
+        ,#{inPutByte}
+        ,#{outPutSum}
+        ,#{outPutBtye}
+        ,#{logicalExecutionPlan}
+        ,#{physicalExecutionPlan}
+        ,#{remarks}
+        ,#{groupId}
+        )
+    </insert>
+</mapper>

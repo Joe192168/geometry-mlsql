@@ -63,50 +63,13 @@ public class ClusterController extends BaseController {
 
     @RequestMapping(value = "/api_v1/run/script" ,method = RequestMethod.POST)
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "MLSQL script content", name = "sql", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(value = "the user who execute this API default: admin", name = "owner", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(value = "tscript|stream|sql; default is script", name = "jobType", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(value = "query|analyze; default is query", name = "executeMode", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(value = "the last sql in the script will return nothing. default: false", name = "silence", dataType = "boolean", paramType = "query"),
-            @ApiImplicitParam(value = "If set true, the owner will have their own session otherwise share the same. default: false", name = "sessionPerUser", dataType = "boolean", paramType = "query"),
-            @ApiImplicitParam(value = "If set true ,please also provide a callback url use `callback` parameter and the job will run in background and the API will return.  default: false", name = "async", dataType = "boolean", paramType = "query"),
-            @ApiImplicitParam(value = "Used when async is set true. callback is a url. default: false", name = "callback", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(value = "disable include statement. default: false", name = "skipInclude", dataType = "boolean", paramType = "query"),
-            @ApiImplicitParam(value = "disable table authorize . default: true", name = "skipAuth", dataType = "boolean", paramType = "query"),
-            @ApiImplicitParam(value = "validate mlsql grammar. default: true", name = "skipGrammarValidate", dataType = "boolean", paramType = "query"),
-            @ApiImplicitParam(value = "proxy parameter,filter backend with this tags", name = "tags", dataType = "String", paramType = "query")
-    })
-    public Message runScript(
-            @RequestParam(value = "sql", required = true) String sql,
-            @RequestParam(value="owner", defaultValue = "admin") String owner,
-            @RequestParam(value="jobType", defaultValue = "script") String jobType,
-            @RequestParam(value="executeMode", defaultValue = "query") String executeMode,
-            @RequestParam(value="silence", defaultValue = "false") String silence,
-            @RequestParam(value="sessionPerUser", defaultValue="false") String sessionPerUser,
-            @RequestParam(value="async", defaultValue="true") String async,
-            @RequestParam(value="callback", defaultValue="") String callback,
-            @RequestParam(value="skipInclude", defaultValue="false") String skipInclude,
-            @RequestParam(value="skipAuth", defaultValue="true") String skipAuth,
-            @RequestParam(value="skipGrammarValidate", defaultValue="true") String skipGrammarValidate,
-            @RequestParam(value="tags", defaultValue="") String tags
+    public Message runScript(@RequestBody ScriptRun scriptRun
     )throws Exception {
 
-        Map<String, Object> params = new ConcurrentHashMap<>();
-        params.put("sql" ,sql ) ;
-        params.put("owner" ,owner ) ;
-        params.put("jobType" ,jobType ) ;
-        params.put("executeMode" ,executeMode ) ;
-        params.put("silence" ,silence ) ;
-        params.put("sessionPerUser" ,sessionPerUser ) ;
-        params.put("async" ,async ) ;
-        params.put("callback" ,callback ) ;
-        params.put("skipInclude" ,skipInclude ) ;
-        params.put("skipAuth" ,skipAuth ) ;
-        params.put("skipGrammarValidate" ,skipGrammarValidate ) ;
-        params.put("skipGramtagsmarValidate" ,tags ) ;
-
+        Map<String, Object> params = ParamsUtil.objectToMap(scriptRun) ;
         if (MapUtils.isEmpty(params)) return error(400, "参数为空!");
+        if(!ParamsUtil.containsKey("owner") && params.containsKey("owner"))
+            ParamsUtil.setParam("owner",params.get("owner"));
         if (!params.containsKey("owner")) params.put("owner", userName);
 
         ConcurrentHashMap<Integer ,Object> resMap= clusterService.runScript(params);
@@ -114,5 +77,7 @@ public class ClusterController extends BaseController {
         return message.returnValue( resMap) ;
 
     }
+
+
 
 }
