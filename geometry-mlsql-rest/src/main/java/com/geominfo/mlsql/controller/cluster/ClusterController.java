@@ -8,6 +8,7 @@ import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.MapUtils;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,11 +66,11 @@ public class ClusterController extends BaseController {
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
     public Message runScript(@RequestBody ScriptRun scriptRun
     ) throws Exception {
-
+        System.out.println("==============="+scriptRun.getSkipConnect());
         Map<String, Object> params = ParamsUtil.objectToMap(scriptRun);
         if (!ParamsUtil.containsKey("owner") && params.containsKey("owner"))
             ParamsUtil.setParam("owner", params.get("owner"));
-        if (!params.containsKey("owner")) params.put("owner", userName);
+        if (!params.containsKey("owner")) params.put("owner", scriptRun.getOwner());
 
         return message.returnValue(clusterService.runScript(params));
 

@@ -50,8 +50,8 @@ public class DSTestConnectController extends BaseController {
     @Autowired
     private ProxyService proxyService;
 
-    @Value("${engine.url}")
-    private String engineUrl;
+    @Value("${my_url.url2}")
+    private String myUrl;
 
     @RequestMapping(value = "/testConnect", method = {RequestMethod.POST, RequestMethod.GET})
     @ApiOperation(value = "测试数据源")
@@ -82,7 +82,7 @@ public class DSTestConnectController extends BaseController {
             postParameters.add("sql", connectSQL);
             postParameters.add("owner", userName);
             //调用engine/run/script接口
-            ResponseEntity<String> responseEntity = proxyService.postForEntity(engineUrl + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
+            ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster" + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
             responseEntity.getBody();
         }
         return success(HttpStatus.SC_OK, "sava success").addData("jdbcd", jdbcd);
@@ -121,7 +121,7 @@ public class DSTestConnectController extends BaseController {
         postParameters.add("sql", connectSQL);
         postParameters.add("owner", userName);
         //调用engine/run/script接口
-        ResponseEntity<String> responseEntity = proxyService.postForEntity(engineUrl + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
+        ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster" + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
         responseEntity.getBody();
         return success(HttpStatus.SC_OK, "update sucess");
     }

@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -38,6 +39,16 @@ public class ProxyServiceImpl<T> implements ProxyService{
         return requestEntity;
     }
 
+    private  HttpEntity<String> getHttpEntity(String formEntity){
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<String> requestEntity = new HttpEntity<String>(formEntity, headers);
+        return requestEntity;
+    }
+
+
     /**
      * post 请求url带变量
      * @param url
@@ -53,6 +64,13 @@ public class ProxyServiceImpl<T> implements ProxyService{
                                                Class<T> responseType, Object... uriVariables) {
         HttpEntity<MultiValueMap<String, String>> requestEntity = getHttpEntity(postParameters);
         ResponseEntity<T> responseEntityPost  = restTemplate.postForEntity(url, requestEntity, responseType, uriVariables);
+        return responseEntityPost;
+    }
+
+    @Override
+    public <T> ResponseEntity<T> postForEntity(String url,String jsonParam, Class<T> responseType) {
+        HttpEntity<String> httpEntity = getHttpEntity(jsonParam);
+        ResponseEntity<T> responseEntityPost  = restTemplate.postForEntity(url, httpEntity, responseType);
         return responseEntityPost;
     }
 
