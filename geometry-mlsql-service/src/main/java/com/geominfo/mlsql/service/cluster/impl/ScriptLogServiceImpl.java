@@ -36,6 +36,7 @@ public class ScriptLogServiceImpl implements ScriptLogService {
     private static final String LOG_SCRIPT = "load _mlsql_.`jobs/v2/";
     private static final String ACTIVEJOBS = "activeJobs";
     private static final String LOGICALEXECUTIONPLAN = "logicalExecutionPlan";
+    private static final String JSON_IS_EMPTY = "json is empty!" ;
 
     @Override
     public <T> T addLog(T t) {
@@ -53,9 +54,7 @@ public class ScriptLogServiceImpl implements ScriptLogService {
              else if (!resJson.equals("[]"))
                 postScript(GROUPID_LOG_SCRIPT);
             else
-                return (T) result.put(500, "json is empty!");
-
-
+                return (T) result.put(500, JSON_IS_EMPTY);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,13 +65,13 @@ public class ScriptLogServiceImpl implements ScriptLogService {
     }
 
     private String insertLog(String json) {
-        checkJson(json);
+        if(!checkJson(json))  return JSON_IS_EMPTY;
         JSONArray ja = JSON.parseArray(json);
-        if (ja.size() == 0) return "json is empty!";
+        if (ja.size() == 0) return JSON_IS_EMPTY;
         JSONObject mainJo = ja.getJSONObject(0);
 
         JSONArray actionJsonArray = mainJo.getJSONArray("activeJobs");
-        if (actionJsonArray.size() == 0) return "json is empty!";
+        if (actionJsonArray.size() == 0) return JSON_IS_EMPTY;
         JSONObject aJo = actionJsonArray.getJSONObject(0);
 
         ScriptExeLog se = new ScriptExeLog();
@@ -96,9 +95,9 @@ public class ScriptLogServiceImpl implements ScriptLogService {
     }
 
     private String analysisJson(String json, String target) {
-        checkJson(json);
+        if(!checkJson(json))  return JSON_IS_EMPTY;
         JSONArray ja = JSON.parseArray(json);
-        if (ja.size() == 0) return "";
+        if (ja.size() == 0) return JSON_IS_EMPTY;
         return ja.getJSONObject(ja.size() - 1).get(target).toString();
     }
 
@@ -115,8 +114,9 @@ public class ScriptLogServiceImpl implements ScriptLogService {
 
     }
 
-    private void checkJson(String json) {
-        if (json == null || json.equals("") || json.equals("[]")) throw new IllegalArgumentException("json is empty!");
+    private boolean checkJson(String json) {
+        if (json == null || json.equals("") || json.equals("[]")) return false;
+        return  true ;
     }
 
     private void postScript(String sql) throws ExecutionException, InterruptedException {

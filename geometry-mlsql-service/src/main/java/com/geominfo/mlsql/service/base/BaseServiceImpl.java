@@ -35,11 +35,6 @@ public class BaseServiceImpl {
         return request.getParameter(key);
     }
 
-    protected boolean hasParam(String key ,HttpServletRequest request)
-    {
-        return request.getParameterMap().containsKey(key) ;
-    }
-
     protected ResponseEntity<String> cPost(String url, LinkedMultiValueMap<String, String> params){
 //        System.out.println("run rul = " +CommandUtil.mlsqlEngineUrl() );
         return  netWorkUtil.postForEntity(CommandUtil.mlsqlEngineUrl()+url ,params ,String.class) ;

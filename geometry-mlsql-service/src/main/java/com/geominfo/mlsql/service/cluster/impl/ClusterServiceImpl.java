@@ -146,7 +146,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
 
     @Override
-    public <T> T runScript(Map<String, Object> paramsMap) throws ExecutionException, InterruptedException {
+    public <T> T runScript(Map<String, Object> paramsMap)  {
 
         assert (paramsMap.containsKey("owner") && paramsMap.containsKey("sql"));
 
@@ -341,7 +341,14 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 //        for (Map.Entry entry : runParamsMap.entrySet())
 //            System.out.println("key=" + entry.getKey() + "\n" + "value=" + entry.getValue());
 
-        ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
+        ResponseEntity<String> response = null;
+        try {
+            response = clusterUrlService.synRunScript(runParamsMap);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("同步执行返回数据 = " + response.getBody());
 
@@ -385,23 +392,14 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
             mlsqlJobService.updateMlsqlJobByJonName(map);
         }
 
-        Map<Integer ,Object> errorData = new ConcurrentHashMap<>();
-        errorData.put(200, response.getBody()) ;
-        return (T)errorData ;
+        Map<Integer ,Object> resData = new ConcurrentHashMap<>();
+        resData.put(200, response.getBody()) ;
+        return (T)resData ;
 
     }
 
     //private -------------------------------
     private static final String EXTRA_DEFAULT_BACKEND = "backend";
-
-    private String formatSQL(String sql)
-    {
-        if(sql.equals("")) return "" ;
-
-
-        return "" ;
-
-    }
 
     private String getBackendName(MlsqlUser mlsqlUser) {
         if (mlsqlUser.getBackendTags() != null && !mlsqlUser.getBackendTags().isEmpty()) {

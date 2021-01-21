@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @RestController
 @RequestMapping(value = "/cluster")
-@Api(value = "集群后台中转接口", tags = {"集群后台中转接口"})
+@Api(value = "集群后台中转接口控制类", tags = {"集群后台中转接口控制类"})
 @Log4j2
 public class ClusterController extends BaseController {
 
