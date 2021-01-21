@@ -24,4 +24,5 @@ public class ScriptRun {
     private String skipAuth = "true" ;
     private String skipGrammarValidate = "true" ;
     private String tags  ;
+    private Boolean skipConnect = false;
 }
