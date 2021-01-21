@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -73,7 +74,7 @@ public class DSController extends BaseController {
             @ApiImplicitParam(name = "family", value = "列族", required = false, paramType = "query", dataType = "String")
     })
     public Message addDs(@RequestBody JDBCD jdbcd) {
-        //MlsqlUser mlsqlUser = userService.getUserByName(userName);
+        MlsqlUser mlsqlUser = userService.getUserByName(userName);
         MlsqlDs ds = dsService.getDs(jdbcd.getName());
         if (ds != null) {
             return error(HttpStatus.SC_OK, "dataSource is existing");
@@ -82,27 +83,19 @@ public class DSController extends BaseController {
             JDBCD connectParams = dataSourceService.JDBCDConnectParams(jdbcd);
             requestParams.put("url", connectParams.getUrl());
             requestParams.put("driver", connectParams.getDriver());
-            requestParams.put("format",requestParams.get("format").toLowerCase());
-            requestParams.put("family",connectParams.getFamily());
-            //保存到mlsql_ds表中  mlsqlUser.getId()
-            dsService.saveDs(new MlsqlDs(jdbcd.getName(), jdbcd.getFormat().toLowerCase(), JSONObject.toJSONString(requestParams), 1));
+            requestParams.put("format", requestParams.get("format").toLowerCase());
+            requestParams.put("family", connectParams.getFamily());
+            //保存到mlsql_ds表中
+            dsService.saveDs(new MlsqlDs(jdbcd.getName(), jdbcd.getFormat().toLowerCase(), JSONObject.toJSONString(requestParams), mlsqlUser.getId()));
             WConnectTable wct = appRuntimeDsService.getWConnectTable(connectParams);
             //保存到w_connect_full表中
             appRuntimeDsService.insertAppDS(wct);
             //拼接连接参数
             String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
-            /*LinkedMultiValueMap<String, String> postParameters = new LinkedMultiValueMap<String, String>();
-            postParameters.add("sql", connectSQL);
-            postParameters.add("owner", "ryan@gmail.com");
-            postParameters.add("skipConnect","true");*/
-            ScriptRun scriptRun = new ScriptRun();
-            scriptRun.setSql(connectSQL);
-            scriptRun.setOwner("ryan@gmail.com");
-            scriptRun.setSkipConnect(true);
+            ScriptRun scriptRun = new ScriptRun("true", userName, connectSQL, "true");
             String jsonString = JSON.toJSONString(scriptRun);
             //调用engine/run/script接口
             ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster/api_v1/run/script", jsonString, String.class);
-            responseEntity.getBody();
             return success(HttpStatus.SC_OK, "sava success");
         }
     }

@@ -12,33 +12,23 @@ import com.geominfo.mlsql.service.scriptfile.QuillScriptFileService;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.utils.CommandUtil;
 import com.geominfo.mlsql.utils.JSONTool;
-import com.geominfo.mlsql.utils.ParamsUtil;
 import com.geominfo.mlsql.utils.PathFunUtil;
-import com.sun.javafx.scene.shape.PathUtils;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import lombok.Data;
-import org.apache.http.HttpResponse;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import org.springframework.util.LinkedMultiValueMap;
-import scala.Int;
-import sun.rmi.runtime.Log;
-import sun.security.krb5.internal.PAData;
 
 
-import javax.smartcardio.ResponseAPDU;
 import java.util.*;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 
 /**
@@ -49,6 +39,7 @@ import java.util.stream.StreamSupport;
  * @version: 1.0.0
  */
 @Service
+@Log4j2
 public class ClusterServiceImpl extends BaseServiceImpl implements ClusterService {
     Logger logger = LoggerFactory.getLogger(ClusterServiceImpl.class);
 
@@ -146,7 +137,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
 
     @Override
-    public <T> T runScript(Map<String, Object> paramsMap) throws ExecutionException, InterruptedException {
+    public <T> T runScript(Map<String, Object> paramsMap){
 
         assert (paramsMap.containsKey("owner") && paramsMap.containsKey("sql"));
 
@@ -243,6 +234,10 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         String tags = sql.contains("!scheduler") ? tagsMap.get("scheduler") : tagsMap.get("normal");
         if (tags == null)
             tags = "";
+
+        if (!paramsMap.containsKey("context.__skipConnect__")) {
+            paramsMap.put("context.__skipConnect__",paramsMap.get("skipConnect"));
+        }
 
         if (!paramsMap.containsKey("context.__default__include_fetch_url__"))
             paramsMap.put("context.__default__include_fetch_url__",
@@ -341,7 +336,16 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 //        for (Map.Entry entry : runParamsMap.entrySet())
 //            System.out.println("key=" + entry.getKey() + "\n" + "value=" + entry.getValue());
 
-        ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
+
+        //ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
+        ResponseEntity<String> response = null;
+        try {
+            response = clusterUrlService.synRunScript(runParamsMap);
+        } catch (Exception e) {
+            Map<Integer ,Object> errorData = new ConcurrentHashMap<>();
+            errorData.put(500, e);
+            return (T)errorData ;
+        }
 
         System.out.println("同步执行返回数据 = " + response.getBody());
 

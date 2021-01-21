@@ -13,6 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @program: MLSQL CONSOLE后端接口
@@ -85,9 +86,9 @@ public class ProxyServiceImpl<T> implements ProxyService{
     @Override
     public <T> ResponseEntity<T> postForEntity(String url,
                                                LinkedMultiValueMap<String, String> postParameters,
-                                               Class<T> responseType) {
+                                               Class<T> responseType){
         HttpEntity<MultiValueMap<String, String>> requestEntity = getHttpEntity(postParameters);
-        ResponseEntity<T> responseEntityPost  = restTemplate.postForEntity(url, requestEntity, responseType);
+        ResponseEntity<T> responseEntityPost = responseEntityPost = restTemplate.postForEntity(url, requestEntity, responseType);
         return responseEntityPost;
     }
 

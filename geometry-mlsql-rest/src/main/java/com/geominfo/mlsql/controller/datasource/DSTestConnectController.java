@@ -1,11 +1,13 @@
 package com.geominfo.mlsql.controller.datasource;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.appruntimefull.WConnectTable;
 import com.geominfo.mlsql.domain.vo.JDBCD;
 import com.geominfo.mlsql.domain.vo.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlDs;
+import com.geominfo.mlsql.domain.vo.ScriptRun;
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.appruntimefull.AppRuntimeDsService;
 import com.geominfo.mlsql.service.cluster.DsService;
@@ -78,12 +80,16 @@ public class DSTestConnectController extends BaseController {
         } else if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("hbase") ||
                 jdbcd.getFormat().toLowerCase().equals("hbase")) {
             String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
-            LinkedMultiValueMap<String, String> postParameters = new LinkedMultiValueMap<String, String>();
-            postParameters.add("sql", connectSQL);
-            postParameters.add("owner", userName);
+            ScriptRun scriptRun = new ScriptRun("false", userName, connectSQL, "true");
+            String jsonString = JSON.toJSONString(scriptRun);
             //调用engine/run/script接口
-            ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster" + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
-            responseEntity.getBody();
+            ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster/api_v1/run/script", jsonString, String.class);
+            JSONObject jsonObject = JSON.parseObject(responseEntity.getBody());
+            JSONObject meta = JSON.parseObject(jsonObject.getString("meta"));
+            JSONObject data = JSON.parseObject(jsonObject.getString("data"));
+            if (Integer.valueOf(meta.getString("code")) != 200) {
+                return error(Integer.valueOf(meta.getString("code")), data.getString("data"));
+            }
         }
         return success(HttpStatus.SC_OK, "sava success").addData("jdbcd", jdbcd);
     }
@@ -117,12 +123,10 @@ public class DSTestConnectController extends BaseController {
         appRuntimeDsService.updateConnectParams(wct);
         //拼接参数
         String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
-        LinkedMultiValueMap<String, String> postParameters = new LinkedMultiValueMap<String, String>();
-        postParameters.add("sql", connectSQL);
-        postParameters.add("owner", userName);
+        ScriptRun scriptRun = new ScriptRun("true", userName, connectSQL, "true");
+        String jsonString = JSON.toJSONString(scriptRun);
         //调用engine/run/script接口
-        ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster" + GlobalConstant.RUN_SCRIPT, postParameters, String.class);
-        responseEntity.getBody();
+        ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster/api_v1/run/script", jsonString, String.class);
         return success(HttpStatus.SC_OK, "update sucess");
     }
 

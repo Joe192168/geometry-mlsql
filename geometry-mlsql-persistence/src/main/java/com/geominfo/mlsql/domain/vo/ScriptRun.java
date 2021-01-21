@@ -24,5 +24,14 @@ public class ScriptRun {
     private String skipAuth = "true" ;
     private String skipGrammarValidate = "true" ;
     private String tags  ;
-    private Boolean skipConnect = false;
+    private String skipConnect = "false";
+
+    public ScriptRun() {}
+
+    public ScriptRun(String async, String owner, String sql, String skipConnect){
+        this.async = async;
+        this.owner = owner;
+        this.sql = sql;
+        this.skipConnect = skipConnect;
+    }
 }
