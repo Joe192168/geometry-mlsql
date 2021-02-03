@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -17,7 +18,11 @@ import java.util.Map;
 @Service
 public interface FileService {
 
-    <T> T formUpload(HttpServletRequest request, String owner) throws Exception;
+    <T> T formUpload(HttpServletRequest request, String owner,String targetPath) throws Exception;
+
+    <T> T dowonloadToLocal(HttpServletRequest request) throws Exception;
+
+    <T> T skipEngine(String fromPath, String owner) throws ExecutionException, InterruptedException;
 
     <T> T download(HttpServletResponse response, Map<String, Object> paramMap);
 

@@ -11,10 +11,12 @@ import com.geominfo.mlsql.service.file.FileService;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.utils.*;
 
+import com.geominfo.mlsql.utils.StringUtils;
 import org.apache.commons.fileupload.FileItem;
 
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.*;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 import org.slf4j.Logger;
@@ -65,7 +67,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
 
     @Override
-    public <T> T formUpload(HttpServletRequest request, String owner) throws Exception {
+    public <T> T formUpload(HttpServletRequest request, String owner, String tgPath) throws Exception {
 
         fileServerDaemonService.init();
 
@@ -146,10 +148,11 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
         }
 
-        return runUpload(finalDir, 0, owner);
+        return runUpload(finalDir, 0, owner, tgPath);
     }
 
-    private <T> T runUpload(String finalDir, int type, String owner) throws ExecutionException, InterruptedException {
+
+    private <T> T runUpload(String finalDir, int type, String owner, String targetPath) throws ExecutionException, InterruptedException {
 
         LinkedMultiValueMap<String, String> newParams = new LinkedMultiValueMap<String, String>();
         MlsqlUser user = userService.getUserByName(owner);
@@ -166,11 +169,10 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
         MlsqlEngine engineConfig = tmpEngienList.size() > 0 ? tmpEngienList.get(0) : null;
 
-
         switch (type) {
             case 0:
                 newParams.add("sql", "\nrun command as DownloadExt.`` where from=" +
-                        "\"" + finalDir + "\"" + " and to=" + "\"" + "/tmp/upload" + "\"" + ";\n");
+                        "\"" + finalDir + "\"" + " and to=" + "\"" + targetPath + "\"" + ";\n");
                 break;
 
             case 1:
@@ -300,6 +302,81 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
         DownloadRunner.getTarFileByPath(response, targetFilePath);
 
         return (T) returnMap;
+
+    }
+
+
+    /**
+     * 以下都是文件下载
+     *
+     * @param request
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+
+    @Override
+    public <T> T dowonloadToLocal(HttpServletRequest request) throws Exception {
+        fileServerDaemonService.init();
+        ServletFileUpload sfu = new ServletFileUpload(new DiskFileItemFactory());
+        sfu.setHeaderEncoding("UTF-8");
+        List<FileItem> fileItems = sfu.parseRequest(request);
+        return (T) fileItems;
+    }
+
+    @Override
+    public <T> T skipEngine(String fromPath, String owner) throws ExecutionException, InterruptedException {
+
+        LinkedMultiValueMap<String, String> newParams = new LinkedMultiValueMap<String, String>();
+        MlsqlUser user = userService.getUserByName(owner);
+
+        List<MlsqlEngine> engines = engineService.list();
+
+        String engineName = !newParams.containsKey("engineName")
+                || newParams.get("engineName").equals("undefined") ?
+                getBackendName(user) : newParams.get("engineName").toString();
+
+
+        List<MlsqlEngine> tmpEngienList = engines.stream().filter(me -> me.getName().equals(engineName))
+                .collect(Collectors.toList());
+
+        MlsqlEngine engineConfig = tmpEngienList.size() > 0 ? tmpEngienList.get(0) : null;
+
+
+        newParams.add("sql", "\nrun command as DownloadLocalExt.`` where from=" +
+                "\"" + fromPath + "\";\n");
+
+        logger.info("文件上传sql=" + newParams.get("sql"));
+
+        newParams.add("owner", owner);
+        newParams.add("jobName", UUID.randomUUID().toString());
+        newParams.add("sessionPerUser", "true");
+        newParams.add("show_stack", "false");
+        newParams.add("tags", user.getBackendTags());
+
+        newParams.add("context.__default__include_fetch_url__", engineConfig.getConsoleUrl() + "/api_v1/script_file/include");
+        newParams.add("context.__default__console_url__", engineConfig.getConsoleUrl());
+        newParams.add("context.__default__fileserver_url__", engineConfig.getFileServerUrl() + "/api_v1/file/acceptStream");
+        newParams.add("context.__auth_client__", "streaming.dsl.auth.meta.client.MLSQLConsoleClient");
+        newParams.add("context.__auth_server_url__", engineConfig.getAuthServerUrl() + "/api_v1/table/auth");
+        newParams.add("context.__auth_secret__", CommandUtil.auth_secret());
+        newParams.add("access_token", engineConfig.getAccessToken());
+        newParams.add("defaultPathPrefix", engineConfig.getHome() + "/" + user.getName());
+        newParams.add("skipAuth", String.valueOf(1 == engineConfig.getSkipAuth()));
+        newParams.add("skipGrammarValidate", "false");
+
+        Map<Integer, Object> resMap = new ConcurrentHashMap<>();
+
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = clusterUrlService.synRunScript(newParams);
+        } catch (Exception e) {
+            Map<Integer, Object> errorData = new ConcurrentHashMap<>();
+            errorData.put(500, e);
+            return (T) errorData;
+        }
+        resMap.put(200, responseEntity != null ? responseEntity.getBody() : null);
+        return (T) resMap;
 
     }
 
