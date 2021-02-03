@@ -20,5 +20,5 @@ import java.util.concurrent.ExecutionException;
 public interface ClusterService {
 
     <T> T clusterManager(Map<String, Object> params  ) ;
-    <T> T runScript(Map<String, Object> params );
+    <T> T runScript(Map<String, Object> params ) throws ExecutionException, InterruptedException;
 }
