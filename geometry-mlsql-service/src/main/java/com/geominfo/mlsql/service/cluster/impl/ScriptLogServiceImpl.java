@@ -31,9 +31,6 @@ public class ScriptLogServiceImpl implements ScriptLogService {
     @Autowired
     private ScriptExeLogMapper scriptExeLogMapper;
 
-    private static final String GROUPID_LOG_SCRIPT = "load _mlsql_.`log/-1` where filePath=\"engine_log\" as output;";
-    private static final String OFFSET = "offset";
-    private static final String DEFAULTMLSQLJOBPROGRESSLISTENER = "DefaultMLSQLJobProgressListener";
     private static final String LOG_SCRIPT = "load _mlsql_.`jobs/v2/";
     private static final String ACTIVEJOBS = "activeJobs";
     private static final String LOGICALEXECUTIONPLAN = "logicalExecutionPlan";
@@ -45,15 +42,11 @@ public class ScriptLogServiceImpl implements ScriptLogService {
 
         try {
             String resJson = t.toString();
-            if (resJson.contains(OFFSET) && resJson.contains(DEFAULTMLSQLJOBPROGRESSLISTENER)) {
-                String groupID = getGroupid(analysisJson(resJson, "value"));
-                if (groupID != null && !groupID.equals(""))
-                    postScript(LOG_SCRIPT + groupID + "` as wow ;");
-
-            } else if (resJson.contains(ACTIVEJOBS) && resJson.contains(LOGICALEXECUTIONPLAN))
+             if (resJson.contains(ACTIVEJOBS) && resJson.contains(LOGICALEXECUTIONPLAN))
                 return (T) result.put(200 ,insertLog(resJson));
-             else if (!resJson.equals("[]"))
-                postScript(GROUPID_LOG_SCRIPT);
+             else if (!resJson.equals("[]") && !ParamsUtil.getParam("sql","").toString().contains("!show"))
+                 postScript(LOG_SCRIPT + ParamsUtil.getParam("groupId" ,"") + "` as wow ;");
+
             else
                 return (T) result.put(500, JSON_IS_EMPTY);
 
@@ -92,28 +85,11 @@ public class ScriptLogServiceImpl implements ScriptLogService {
 
         scriptExeLogMapper.addLog(se);
 
+
+
         return "success";
     }
 
-    private String analysisJson(String json, String target) {
-        if(!checkJson(json))  return JSON_IS_EMPTY;
-        JSONArray ja = JSON.parseArray(json);
-        if (ja.size() == 0) return JSON_IS_EMPTY;
-        return ja.getJSONObject(ja.size() - 1).get(target).toString();
-    }
-
-    private String getGroupid(String json) {
-        if(json.equals("[]")) return null ;
-        String[] tempStrSplit = json.substring(1, json.length() - 1).split("\",\"");
-        if(tempStrSplit.length == 0) return "" ;
-        String[] jsonSplit = tempStrSplit[tempStrSplit.length - 1].split(" ");
-        if (jsonSplit.length == 0) return "";
-        String tmpGroupid = jsonSplit[8];
-        String groupid = tmpGroupid.substring(1, tmpGroupid.length() - 1);
-        ParamsUtil.setParam("jobGroupId", groupid);
-        return groupid;
-
-    }
 
     private boolean checkJson(String json) {
         if (json == null || json.equals("") || json.equals("[]")) return false;

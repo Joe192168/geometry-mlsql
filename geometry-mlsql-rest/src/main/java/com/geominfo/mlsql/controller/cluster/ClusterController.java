@@ -60,15 +60,16 @@ public class ClusterController extends BaseController {
     }
 
 
+    private static final String OWNER = "owner" ;
     @RequestMapping(value = "/api_v1/run/script", method = RequestMethod.POST)
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
     public Message runScript(@RequestBody ScriptRun scriptRun
     ) throws Exception {
         System.out.println(scriptRun.getSkipConnect());
         Map<String, Object> params = ParamsUtil.objectToMap(scriptRun);
-        if (!ParamsUtil.containsKey("owner") && params.containsKey("owner"))
-            ParamsUtil.setParam("owner", params.get("owner"));
-        if (!params.containsKey("owner")) params.put("owner", scriptRun.getOwner());
+        if (!ParamsUtil.containsKey(OWNER) && params.containsKey(OWNER))
+            ParamsUtil.setParam(OWNER, params.get(OWNER));
+        if (!params.containsKey(OWNER)) params.put(OWNER, scriptRun.getOwner());
 
         Map<Integer ,Object> temp = clusterService.runScript(params);
         if(temp.containsKey(500)){
