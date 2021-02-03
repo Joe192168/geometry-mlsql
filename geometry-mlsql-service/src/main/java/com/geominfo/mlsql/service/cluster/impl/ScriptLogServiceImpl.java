@@ -44,8 +44,10 @@ public class ScriptLogServiceImpl implements ScriptLogService {
              if (resJson.contains(ACTIVEJOBS) && resJson.contains(LOGICALEXECUTIONPLAN))
                 return (T) result.put(200 ,insertLog(resJson));
              else if (!resJson.equals("[]") && !ParamsUtil.getParam("sql","").toString().contains("!show"))
-                 postScript(LOG_SCRIPT + ParamsUtil.getParam("groupId" ,"") + "` as wow ;");
-
+             {
+                 String tmp = LOG_SCRIPT + ParamsUtil.getParam("groupId" ,"") + "` as wow ;";
+                 postScript(tmp);
+             }
             else
                 return (T) result.put(500, JSON_IS_EMPTY);
 
@@ -84,8 +86,6 @@ public class ScriptLogServiceImpl implements ScriptLogService {
 
         scriptExeLogMapper.addLog(se);
 
-
-
         return "success";
     }
 
@@ -95,10 +95,11 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         return  true ;
     }
 
-    private void postScript(String sql) throws ExecutionException, InterruptedException {
+    private void postScript(String sql)  {
         Map<String, Object> paramMap = new ConcurrentHashMap<>();
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
+        paramMap.put("skipConnect", "true");
         clusterService.runScript(paramMap);
     }
 

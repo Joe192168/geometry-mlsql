@@ -86,7 +86,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         String action = qparamsMap.get("action").toString();
 
-        LinkedMultiValueMap<String, String> paramsMap = transformation(qparamsMap);
+            LinkedMultiValueMap<String, String> paramsMap = transformation(qparamsMap);
 
         switch (action) {
 
@@ -236,7 +236,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
             tagsMap.put(MlsqlUser.STATUS_NORMAL, user.getBackendTags());
         }
 
-        String tags = sql.contains("!scheduler") ? tagsMap.get("scheduler") : tagsMap.get("normal");
+        String tags = sql.contains("!scheduler") ? tagsMap.get("scheduler") : tagsMap.get(MlsqlUser.STATUS_NORMAL);
         if (tags == null)
             tags = "";
 
@@ -335,7 +335,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
         long startTime = System.currentTimeMillis();
 
-        LinkedMultiValueMap<String, String> runParamsMap = transformation(paramsMap);
+        LinkedMultiValueMap<String, String> runParamsMap =  transformation(paramsMap);
 
 //        System.out.println("----------------打印请求前的参数信息------------------------------");
 //        for (Map.Entry entry : runParamsMap.entrySet())
@@ -344,8 +344,6 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         //save sql
         ParamsUtil.setParam("sql" ,runParamsMap.getFirst("sql"));
 
-
-        //ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
         ResponseEntity<String> response = null;
         try {
             response = clusterUrlService.synRunScript(runParamsMap);
@@ -405,15 +403,6 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
     //private -------------------------------
     private static final String EXTRA_DEFAULT_BACKEND = "backend";
-
-    private String formatSQL(String sql)
-    {
-        if(sql.equals("")) return "" ;
-
-
-        return "" ;
-
-    }
 
     private String getBackendName(MlsqlUser mlsqlUser) {
         if (mlsqlUser.getBackendTags() != null && !mlsqlUser.getBackendTags().isEmpty()) {

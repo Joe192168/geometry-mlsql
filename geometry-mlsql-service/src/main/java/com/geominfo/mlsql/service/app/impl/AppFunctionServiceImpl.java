@@ -113,6 +113,7 @@ public class AppFunctionServiceImpl extends BaseServiceImpl implements AppFuncti
     private String postRequest(String sql) {
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
+        paramMap.put("skipConnect", "true");
         paramMap.put("async", "false");
         String requestRes = ((Map<Integer, Object>) clusterService.runScript(paramMap)).get(200).toString();
         return requestRes;

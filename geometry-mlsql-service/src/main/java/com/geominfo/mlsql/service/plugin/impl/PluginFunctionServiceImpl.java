@@ -99,6 +99,7 @@ public class PluginFunctionServiceImpl extends BaseServiceImpl implements Plugin
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
         paramMap.put("async", "false");
+        paramMap.put("skipConnect", "true");
         Map<Integer, Object>  res = clusterService.runScript(paramMap);
         return res.containsKey(200) ? res.get(200).toString() : "";
     }

@@ -51,9 +51,14 @@ public class ClusterController extends BaseController {
             @ApiImplicitParam(value = "/backend/tags/update 接口需要传的参数", name = "merge", dataType = "String", paramType = "query", required = false)
 
     })
-    public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) throws Exception {
+    public Message clusterManager(@RequestBody ClusterManagerParameter clusterManagerParameter) {
 
-        Map<String, Object> params = ParamsUtil.objectToMap(clusterManagerParameter);
+        Map<String, Object> params = null;
+        try {
+            params = ParamsUtil.objectToMap(clusterManagerParameter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map<Integer, Object> resMap = clusterService.clusterManager(params);
         return message.returnValue(resMap);
 
@@ -64,17 +69,19 @@ public class ClusterController extends BaseController {
     @RequestMapping(value = "/api_v1/run/script", method = RequestMethod.POST)
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
     public Message runScript(@RequestBody ScriptRun scriptRun
-    ) throws Exception {
-        Map<String, Object> params = ParamsUtil.objectToMap(scriptRun);
+    )  {
+        Map<String, Object> params = null;
+        try {
+            params = ParamsUtil.objectToMap(scriptRun);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (!ParamsUtil.containsKey(OWNER) && params.containsKey(OWNER))
             ParamsUtil.setParam(OWNER, params.get(OWNER));
-        if (!params.containsKey(OWNER)) params.put(OWNER, scriptRun.getOwner());
+        if (!params.containsKey(OWNER)) params.put(OWNER, userName);
 
         Map<Integer ,Object> temp = clusterService.runScript(params);
-        if(temp.containsKey(500)){
-            CustomException e = (CustomException)temp.get(500);
-            temp.put(500,e.getBody());
-        }
+
         return message.returnValue(temp);
     }
 
