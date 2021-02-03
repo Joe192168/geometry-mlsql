@@ -9,6 +9,10 @@ import lombok.extern.log4j.Log4j2;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +25,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -152,14 +157,11 @@ public class FileController extends BaseController {
             if (files.size() > 0) {
                 for (FileItem item : files) {
                     InputStream fis = item.getInputStream();
-                    byte[] buffer = new byte[fis.available()];
-                    fis.read(buffer);
-                    fis.close();
                     response.reset();
                     response.setCharacterEncoding("utf-8");
                     response.addHeader("Content-Disposition", "attachment;filename=" +
                             URLEncoder.encode(fileName, "UTF-8"));
-                    OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
+                    ServletOutputStream outputStream = response.getOutputStream();
                     org.apache.commons.io.IOUtils.copyLarge(fis, outputStream);
                 }
             }
@@ -168,5 +170,36 @@ public class FileController extends BaseController {
             return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getBody());
         }
     }
+
+
+
+    @RequestMapping(value = "/api_v1/file/executeDownload1", method = {RequestMethod.POST, RequestMethod.GET})
+    @ApiOperation(value = "执行下载")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "文件下载路径", name = "fromPath", dataType = "String", paramType = "query", required = true)
+    })
+    public Message executeDownload1(@RequestParam(value = "fromPath", required = true) String fromPath,
+                                   HttpServletResponse response) throws Exception {
+        try {
+            String fileName = fromPath.substring(fromPath.lastIndexOf("/") + 1);
+            Configuration conf = new Configuration();
+            conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
+            //conf.addResource("core-site.xml");
+            FileSystem fs = FileSystem.get(conf);
+            FSDataInputStream fis = fs.open(new Path("/home/users/" + userName + "/" + fromPath));
+            response.reset();
+            response.setCharacterEncoding("utf-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" +
+                    URLEncoder.encode(fileName, "UTF-8"));
+            ServletOutputStream outputStream = response.getOutputStream();
+            org.apache.commons.io.IOUtils.copyLarge(fis, outputStream);
+            return success(HttpStatus.SC_OK, "download success");
+        } catch (CustomException e){
+            return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getBody());
+        }
+    }
+
+
+
 
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.domain.vo.ScriptExeLog;
+import com.geominfo.mlsql.domain.vo.ScriptRun;
 import com.geominfo.mlsql.mapper.ScriptExeLogMapper;
 import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.service.cluster.ScriptLogService;
@@ -119,7 +120,18 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         return  true ;
     }
 
-    private void postScript(String sql) throws ExecutionException, InterruptedException {
+    private void postScript(String sql) throws Exception {
+        ScriptRun scriptRun = new ScriptRun();
+        scriptRun.setExecuteMode("query");
+        scriptRun.setSilence("false");
+        scriptRun.setSessionPerUser("false");
+        scriptRun.setAsync("false");
+        scriptRun.setSkipInclude("false");
+        scriptRun.setSkipAuth("true");
+        scriptRun.setSkipGrammarValidate("true");
+        scriptRun.setSkipConnect("true");
+        Map<String, Object> params = ParamsUtil.objectToMap(scriptRun);
+
         Map<String, Object> paramMap = new ConcurrentHashMap<>();
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));

@@ -137,7 +137,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
 
     @Override
-    public <T> T runScript(Map<String, Object> paramsMap){
+    public <T> T runScript(Map<String, Object> paramsMap) throws ExecutionException, InterruptedException {
 
         assert (paramsMap.containsKey("owner") && paramsMap.containsKey("sql"));
 
@@ -235,9 +235,9 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         if (tags == null)
             tags = "";
 
-        if (!paramsMap.containsKey("context.__skipConnect__")) {
+        /*if (!paramsMap.containsKey("context.__skipConnect__")) {
             paramsMap.put("context.__skipConnect__",paramsMap.get("skipConnect"));
-        }
+        }*/
 
         if (!paramsMap.containsKey("context.__default__include_fetch_url__"))
             paramsMap.put("context.__default__include_fetch_url__",
@@ -337,15 +337,15 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 //            System.out.println("key=" + entry.getKey() + "\n" + "value=" + entry.getValue());
 
 
-        //ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
-        ResponseEntity<String> response = null;
+        ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
+        /*ResponseEntity<String> response = null;
         try {
             response = clusterUrlService.synRunScript(runParamsMap);
         } catch (Exception e) {
             Map<Integer ,Object> errorData = new ConcurrentHashMap<>();
             errorData.put(500, e);
             return (T)errorData ;
-        }
+        }*/
 
         System.out.println("同步执行返回数据 = " + response.getBody());
 

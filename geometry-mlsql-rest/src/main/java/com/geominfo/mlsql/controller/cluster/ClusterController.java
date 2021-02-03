@@ -64,6 +64,7 @@ public class ClusterController extends BaseController {
     @ApiOperation(value = "执行脚本接口", httpMethod = "POST")
     public Message runScript(@RequestBody ScriptRun scriptRun
     ) throws Exception {
+        System.out.println(scriptRun.getSkipConnect());
         Map<String, Object> params = ParamsUtil.objectToMap(scriptRun);
         if (!ParamsUtil.containsKey("owner") && params.containsKey("owner"))
             ParamsUtil.setParam("owner", params.get("owner"));
