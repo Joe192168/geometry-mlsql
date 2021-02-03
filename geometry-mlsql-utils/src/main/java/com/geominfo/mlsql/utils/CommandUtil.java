@@ -26,6 +26,8 @@ public class CommandUtil {
     private static final String AUTH_SECRET = "user.auth.secret";
     private static Map<String, Object> paramsMap;
 
+    private CommandUtil(){}
+
     static {
         try {
             InputStream in = CommandUtil.class
