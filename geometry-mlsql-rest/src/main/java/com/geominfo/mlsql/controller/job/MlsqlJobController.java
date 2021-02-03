@@ -12,6 +12,7 @@ import com.geominfo.mlsql.service.job.MlsqlJobService;
 import com.geominfo.mlsql.service.job.impl.MlsqlJobServiceImpl;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.systemidentification.InterfaceReturnInformation;
+import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -69,6 +70,11 @@ public class MlsqlJobController extends BaseController {
             return error(HttpStatus.SC_INTERNAL_SERVER_ERROR,"requirement failed: __auth_secret__ is not right");
         } else {
             String jobName = JSONObject.parseObject(params.get("jobInfo")).getString("jobName");
+            String groupId = JSONObject.parseObject(params.get("jobInfo")).getString("groupId");
+            if(!groupId.equals(""))
+                ParamsUtil.setParam("groupId" ,groupId);
+
+
             Map<String, Object> map;
             String msg = "";
             if (params.get("stat").equals("succeeded")) {

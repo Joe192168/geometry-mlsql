@@ -12,6 +12,7 @@ import com.geominfo.mlsql.service.scriptfile.QuillScriptFileService;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.utils.CommandUtil;
 import com.geominfo.mlsql.utils.JSONTool;
+import com.geominfo.mlsql.utils.ParamsUtil;
 import com.geominfo.mlsql.utils.PathFunUtil;
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
@@ -142,7 +143,11 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         assert (paramsMap.containsKey("owner") && paramsMap.containsKey("sql"));
 
         if(!paramsMap.containsKey("jobName"))
-            paramsMap.put("jobName" ,UUID.randomUUID().toString()) ;
+        {
+            String jobName= UUID.randomUUID().toString();
+            paramsMap.put("jobName" ,jobName) ;
+            ParamsUtil.setParam("jobName" ,jobName);
+        }
 
         if (!paramsMap.containsKey("sessionPerUser"))
             paramsMap.put("sessionPerUser", "false");
@@ -334,7 +339,10 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
 //        System.out.println("----------------打印请求前的参数信息------------------------------");
 //        for (Map.Entry entry : runParamsMap.entrySet())
-//            System.out.println("key=" + entry.getKey() + "\n" + "value=" + entry.getValue());
+//            System.out.println("key=" + entry.getKey() + "\n" + "value=" + entry.getValue());\
+
+        //save sql
+        ParamsUtil.setParam("sql" ,runParamsMap.getFirst("sql"));
 
 
         //ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
