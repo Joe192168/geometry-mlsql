@@ -10,9 +10,14 @@ import com.geominfo.mlsql.service.cluster.ScriptLogService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @program: geometry-mlsql
@@ -70,19 +75,18 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         JSONObject aJo = actionJsonArray.getJSONObject(0);
 
         ScriptExeLog se = new ScriptExeLog();
-        se.setGroupId(mainJo.getString("groupId"));
-
-        se.setJob(aJo.getInteger("job"));
-        se.setDuration(aJo.getInteger(  "duration"));
-        se.setJobId(aJo.getString(  "jobId"));
-        se.setStages(aJo.getInteger("stages"));
-        se.setTasks(aJo.getInteger("numTasks"));
-        se.setInPutSum(aJo.getInteger("inPutSum"));
-        se.setInPutByte(aJo.getString("inPutByte"));
-        se.setOutPutSum(aJo.getInteger("outPutSum"));
-        se.setOutPutBtye(aJo.getString("outPutBtye"));
-        se.setLogicalExecutionPlan(aJo.getString("logicalExecutionPlan"));
-        se.setPhysicalExecutionPlan(aJo.getString("physicalExecutionPlan"));
+        StringBuilder sb = new StringBuilder() ;
+        se.setJobId(mainJo.getString("groupId"));
+        se.setSparkUiJobCnt(aJo.getInteger("job"));
+        se.setSparkUiStageCnt(aJo.getInteger(  "stages"));
+        se.setSparkUiTaskCnt(aJo.getInteger(  "stages"));
+        se.setExplainMsg(aJo.getString(  "logicalExecutionPlan"));
+        sb.append("{ \"inPutSum\":").append(aJo.getInteger("inPutSum"))
+                .append(", \"inPutByte\":").append(aJo.getInteger("inPutByte"))
+                .append(", \"outPutSum\":").append(aJo.getInteger("outPutSum"))
+                .append(", \"outPutBtye\":").append(aJo.getInteger("outPutBtye")).append("}") ;
+        se.setExtraOpts(sb.toString());
+        se.setCreateTime(new Date(System.currentTimeMillis()));
 
         scriptExeLogMapper.addLog(se);
 
@@ -108,6 +112,7 @@ public class ScriptLogServiceImpl implements ScriptLogService {
             e.printStackTrace();
         }
     }
+
 
 
 }

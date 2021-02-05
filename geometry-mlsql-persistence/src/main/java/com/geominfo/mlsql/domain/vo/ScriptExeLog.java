@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.annotation.security.DenyAll;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @program: geometry-mlsql
@@ -18,20 +19,14 @@ public class ScriptExeLog implements Serializable {
       private static final long serialVersionUID = 1L;
 
       private Integer id ;
-      private Integer duration ;
       private String jobId ;
+      private Integer sparkUiJobCnt ;
+      private Integer sparkUiStageCnt ;
+      private Integer sparkUiTaskCnt ;
+      private String explainMsg ;
+      private String extraOpts ;
+      private Date createTime ;
 
-      private Integer job;
-      private Integer stages;
-      private Integer tasks;
-      private Integer inPutSum;
-      private String  inPutByte;
-      private Integer  outPutSum;
-      private String outPutBtye;
-      private String logicalExecutionPlan ;
-      private String physicalExecutionPlan ;
-      private String remarks ;
-      private String groupId ;
 
 
 
