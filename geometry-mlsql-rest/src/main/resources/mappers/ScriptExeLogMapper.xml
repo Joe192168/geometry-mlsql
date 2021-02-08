@@ -10,34 +10,22 @@
     </update>
 
     <insert id="addLog" parameterType="com.geominfo.mlsql.domain.vo.ScriptExeLog">
-        INSERT INTO script_exe_log(
-        duration,
-        jobId,
-        job,
-        stages,
-        tasks,
-        inPutSum,
-        inPutByte,
-        outPutSum,
-        outPutBtye,
-        logicalExecutionPlan,
-        physicalExecutionPlan,
-        remarks,
-        groupId)
+        INSERT INTO t_script_exec_metric_log(
+        job_id,
+        spark_ui_job_cnt,
+        spark_ui_stage_cnt,
+        spark_ui_task_cnt,
+        explain_msg,
+        extra_opts,
+        create_time)
         VALUES (
-        #{duration}
-         ,#{jobId}
-        ,#{job}
-        ,#{stages}
-        ,#{tasks}
-        ,#{inPutSum}
-        ,#{inPutByte}
-        ,#{outPutSum}
-        ,#{outPutBtye}
-        ,#{logicalExecutionPlan}
-        ,#{physicalExecutionPlan}
-        ,#{remarks}
-        ,#{groupId}
+        #{jobId}
+         ,#{sparkUiJobCnt}
+        ,#{sparkUiStageCnt}
+        ,#{sparkUiTaskCnt}
+        ,#{explainMsg}
+        ,#{extraOpts}
+        ,#{createTime}
         )
     </insert>
 </mapper>

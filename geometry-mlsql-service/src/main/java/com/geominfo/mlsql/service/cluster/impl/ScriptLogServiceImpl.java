@@ -4,16 +4,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.domain.vo.ScriptExeLog;
-import com.geominfo.mlsql.domain.vo.ScriptRun;
 import com.geominfo.mlsql.mapper.ScriptExeLogMapper;
 import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.service.cluster.ScriptLogService;
 import com.geominfo.mlsql.utils.ParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @program: geometry-mlsql
@@ -45,8 +49,10 @@ public class ScriptLogServiceImpl implements ScriptLogService {
              if (resJson.contains(ACTIVEJOBS) && resJson.contains(LOGICALEXECUTIONPLAN))
                 return (T) result.put(200 ,insertLog(resJson));
              else if (!resJson.equals("[]") && !ParamsUtil.getParam("sql","").toString().contains("!show"))
-                 postScript(LOG_SCRIPT + ParamsUtil.getParam("groupId" ,"") + "` as wow ;");
-
+             {
+                 String tmp = LOG_SCRIPT + ParamsUtil.getParam("groupId" ,"") + "` as wow ;";
+                 postScript(tmp);
+             }
             else
                 return (T) result.put(500, JSON_IS_EMPTY);
 
@@ -69,23 +75,20 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         JSONObject aJo = actionJsonArray.getJSONObject(0);
 
         ScriptExeLog se = new ScriptExeLog();
-        se.setGroupId(mainJo.getString("groupId"));
-
-        se.setJob(aJo.getInteger("job"));
-        se.setDuration(aJo.getInteger(  "duration"));
-        se.setJobId(aJo.getString(  "jobId"));
-        se.setStages(aJo.getInteger("stages"));
-        se.setTasks(aJo.getInteger("numTasks"));
-        se.setInPutSum(aJo.getInteger("inPutSum"));
-        se.setInPutByte(aJo.getString("inPutByte"));
-        se.setOutPutSum(aJo.getInteger("outPutSum"));
-        se.setOutPutBtye(aJo.getString("outPutBtye"));
-        se.setLogicalExecutionPlan(aJo.getString("logicalExecutionPlan"));
-        se.setPhysicalExecutionPlan(aJo.getString("physicalExecutionPlan"));
+        StringBuilder sb = new StringBuilder() ;
+        se.setJobId(mainJo.getString("groupId"));
+        se.setSparkUiJobCnt(aJo.getInteger("job"));
+        se.setSparkUiStageCnt(aJo.getInteger(  "stages"));
+        se.setSparkUiTaskCnt(aJo.getInteger(  "stages"));
+        se.setExplainMsg(aJo.getString(  "logicalExecutionPlan"));
+        sb.append("{ \"inPutSum\":").append(aJo.getInteger("inPutSum"))
+                .append(", \"inPutByte\":").append(aJo.getInteger("inPutByte"))
+                .append(", \"outPutSum\":").append(aJo.getInteger("outPutSum"))
+                .append(", \"outPutBtye\":").append(aJo.getInteger("outPutBtye")).append("}") ;
+        se.setExtraOpts(sb.toString());
+        se.setCreateTime(new Date(System.currentTimeMillis()));
 
         scriptExeLogMapper.addLog(se);
-
-
 
         return "success";
     }
@@ -96,12 +99,20 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         return  true ;
     }
 
-    private void postScript(String sql) throws Exception {
+    private void postScript(String sql)  {
         Map<String, Object> paramMap = new ConcurrentHashMap<>();
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
-        clusterService.runScript(paramMap);
+        paramMap.put("skipConnect", "true");
+        try {
+            clusterService.runScript(paramMap);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
 
 }

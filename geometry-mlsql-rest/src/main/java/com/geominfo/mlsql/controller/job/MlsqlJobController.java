@@ -70,10 +70,12 @@ public class MlsqlJobController extends BaseController {
             return error(HttpStatus.SC_INTERNAL_SERVER_ERROR,"requirement failed: __auth_secret__ is not right");
         } else {
             String jobName = JSONObject.parseObject(params.get("jobInfo")).getString("jobName");
-            String groupId = JSONObject.parseObject(params.get("jobInfo")).getString("groupId");
-            if(!groupId.equals(""))
-                ParamsUtil.setParam("groupId" ,groupId);
 
+           if( params.containsKey("jobInfo")){
+                String groupId = JSONObject.parseObject(params.get("jobInfo")).getString("groupId");
+                if(!groupId.equals(""))
+                    ParamsUtil.setParam("groupId" ,groupId);
+            }
 
             Map<String, Object> map;
             String msg = "";

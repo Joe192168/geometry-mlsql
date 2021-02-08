@@ -47,15 +47,22 @@ public class AppFunctionServiceImpl extends BaseServiceImpl implements AppFuncti
 
     private static final String SCRIPT_FUNCTIONS = "!show functions;";
     private static final String SCRIPT_FUNCTION_NAME = "!show function ";
+    private static final int ALL = 0;
+    private static final int START = 1;
+    private static final int END = 2;
 
 
     @Override
     public <T> T find(String fName) {
         if (fName == null)
             return findAll();
-        else if (fName.startsWith("*") && fName.endsWith("*")) {
-            return findVague(fName);
-        } else
+        else if (fName.startsWith("*") && fName.endsWith("*"))
+            return findVague(fName, ALL);
+        else if(fName.startsWith("*"))
+            return findVague(fName, START);
+        else if(fName.endsWith("*"))
+            return findVague(fName, END);
+         else
             return findByName(fName);
 
     }
@@ -90,18 +97,33 @@ public class AppFunctionServiceImpl extends BaseServiceImpl implements AppFuncti
         return (T) resMap;
     }
 
-    private <T> T findVague(String vagueStr) {
+    private <T> T findVague(String vagueStr, int type) {
 
         if (allCacheList.size() == 0)
             findAll();
 
         ArrayList<String> vagueList = new ArrayList<>();
+        String target  = vagueStr.trim().replace("*" , "");
+        switch (type) {
+            case ALL:
+                vagueAll(vagueList ,target);
+                break;
 
-        String tmp = vagueStr.trim();
-        String target = tmp.substring(1, tmp.length() - 1);
-        for (String curStr : allCacheList)
-            if (curStr.contains(target))
-                vagueList.add(curStr);
+            case START:
+                for (String curStr : allCacheList)
+                    if (curStr.startsWith(target))
+                        vagueList.add(curStr);
+                break;
+            case END:
+                for (String curStr : allCacheList)
+                    if (curStr.endsWith(target))
+                        vagueList.add(curStr);
+                break;
+
+            default:
+                vagueAll(vagueList ,target);
+                break;
+        }
 
         //加入缓存
         resMap.put(200, vagueList);
@@ -110,11 +132,25 @@ public class AppFunctionServiceImpl extends BaseServiceImpl implements AppFuncti
 
     }
 
+    private void vagueAll(ArrayList<String> vagueList ,String target){
+        for (String curStr : allCacheList)
+            if (curStr.contains(target))
+                vagueList.add(curStr);
+
+    }
     private String postRequest(String sql) {
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
+        paramMap.put("skipConnect", "true");
         paramMap.put("async", "false");
-        String requestRes = ((Map<Integer, Object>) clusterService.runScript(paramMap)).get(200).toString();
+        String requestRes = null;
+        try {
+            requestRes = ((Map<Integer, Object>) clusterService.runScript(paramMap)).get(200).toString();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return requestRes;
     }
 

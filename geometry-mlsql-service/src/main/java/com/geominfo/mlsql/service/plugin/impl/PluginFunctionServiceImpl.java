@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -36,15 +37,21 @@ public class PluginFunctionServiceImpl extends BaseServiceImpl implements Plugin
 
     private static final String SCRIPT_PLUGIN = "!show et;";
     private static final String SCRIPT_PLUGIN_NAME = "!show et ";
-
+    private static final int ALL = 0;
+    private static final int START = 1;
+    private static final int END = 2;
 
     @Override
     public <T> T find(String pName) {
         if (pName == null)
             return findAll();
         else if (pName.startsWith("*") && pName.endsWith("*"))
-            return findVague(pName);
-         else
+            return findVague(pName, ALL);
+        else if(pName.startsWith("*"))
+            return findVague(pName, START);
+        else if(pName.endsWith("*"))
+            return findVague(pName, END);
+        else
             return findByName(pName);
 
     }
@@ -76,17 +83,34 @@ public class PluginFunctionServiceImpl extends BaseServiceImpl implements Plugin
         return (T) resMap;
     }
 
-    private <T> T findVague(String vagueStr) {
+    private <T> T findVague(String vagueStr ,int type) {
 
         if (allCacheMap.size() == 0)
             findAll();
 
         ArrayList<String> vagueList = new ArrayList<>();
-        String tmp = vagueStr.trim();
-        String target = tmp.substring(1, tmp.length() - 1);
-        for (Map.Entry entry : allCacheMap.entrySet())
-            if (entry.getKey().toString().contains(target))
-                vagueList.add(entry.getValue().toString());
+        String target  = vagueStr.trim().replace("*" , "");
+
+        switch (type) {
+            case ALL:
+                vagueAll(vagueList ,target);
+                break;
+
+            case START:
+                for (Map.Entry entry : allCacheMap.entrySet())
+                    if (entry.getKey().toString().startsWith(target))
+                        vagueList.add(entry.getValue().toString());
+                break;
+            case END:
+                for (Map.Entry entry : allCacheMap.entrySet())
+                    if (entry.getKey().toString().endsWith(target))
+                        vagueList.add(entry.getValue().toString());
+                break;
+
+            default:
+                vagueAll(vagueList ,target);
+                break;
+        }
 
         //加入缓存
         resMap.put(200, vagueList);
@@ -95,11 +119,27 @@ public class PluginFunctionServiceImpl extends BaseServiceImpl implements Plugin
 
     }
 
+    private void vagueAll(ArrayList<String> vagueList ,String target){
+        for (Map.Entry entry : allCacheMap.entrySet())
+            if (entry.getKey().toString().contains(target))
+                vagueList.add(entry.getValue().toString());
+
+    }
+
+
     private String postRequest(String sql) {
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
         paramMap.put("async", "false");
-        Map<Integer, Object>  res = clusterService.runScript(paramMap);
+        paramMap.put("skipConnect", "true");
+        Map<Integer, Object>  res = null;
+        try {
+            res = clusterService.runScript(paramMap);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return res.containsKey(200) ? res.get(200).toString() : "";
     }
 
