@@ -19,5 +19,4 @@ public class FileInfo {
     private String size;
     private String crateDate;
     private String path;
-
 }
