@@ -104,13 +104,7 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
         paramMap.put("skipConnect", "true");
-        try {
-            clusterService.runScript(paramMap);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        clusterService.runScript(paramMap);
     }
 
 

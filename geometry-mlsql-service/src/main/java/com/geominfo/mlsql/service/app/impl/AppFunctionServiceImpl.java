@@ -144,13 +144,7 @@ public class AppFunctionServiceImpl extends BaseServiceImpl implements AppFuncti
         paramMap.put("skipConnect", "true");
         paramMap.put("async", "false");
         String requestRes = null;
-        try {
-            requestRes = ((Map<Integer, Object>) clusterService.runScript(paramMap)).get(200).toString();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        requestRes = ((Map<Integer, Object>) clusterService.runScript(paramMap)).get(200).toString();
         return requestRes;
     }
 
