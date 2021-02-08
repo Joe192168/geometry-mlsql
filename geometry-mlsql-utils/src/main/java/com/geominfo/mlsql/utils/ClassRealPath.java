@@ -14,9 +14,4 @@ public class ClassRealPath {
         String path = jarF.getParentFile().toString();
         return path;
     }
-
-    /*public static void main(String[] args) {
-        String path = ClassRealPath.getClassRealPath(ClassRealPath.class) + "\\core-site.xml";
-        System.out.println(path);
-    }*/
 }

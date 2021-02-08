@@ -281,7 +281,7 @@ public class FileController extends BaseController {
     })
     public Message console_fileListInfo(@RequestParam(value = "targetPath", required = true) String targetPath) throws Exception {
         MlsqlEngine mlsqlEngine = fileService.getMlsqlEngine("ryan@gmail.com");
-        Path path = new Path(mlsqlEngine.getHome()+"/" + "ryan@gmail.com" + "/" + targetPath);
+        Path path = new Path(mlsqlEngine.getHome() + "/" + "ryan@gmail.com" + "/" + targetPath);
         Configuration conf = new Configuration();
         FileSystem fs = null;
         try {
@@ -306,7 +306,7 @@ public class FileController extends BaseController {
                 }
                 return success(HttpStatus.SC_OK, "success").addData("fileInfo", fileInfos);
             } else {
-                return error(HttpStatus.SC_INTERNAL_SERVER_ERROR,"path  does not exist");
+                return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "path  does not exist");
             }
 
         } catch (CustomException e) {
@@ -362,16 +362,16 @@ public class FileController extends BaseController {
             if (fs.exists(path)) {
                 if (fs.isFile(path)) {
                     fs.delete(path, true);
-                    return success(HttpStatus.SC_OK,"delete file success");
+                    return success(HttpStatus.SC_OK, "delete file success");
                 } else {
                     fs.delete(path, recursive);
-                    return success(HttpStatus.SC_OK,"delete directory success");
+                    return success(HttpStatus.SC_OK, "delete directory success");
                 }
             } else {
-                return error(HttpStatus.SC_INTERNAL_SERVER_ERROR,"path  does not exist");
+                return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "path  does not exist");
             }
         } catch (CustomException e) {
-            return error(HttpStatus.SC_INTERNAL_SERVER_ERROR,e.getBody());
+            return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getBody());
         } finally {
             fs.close();
         }

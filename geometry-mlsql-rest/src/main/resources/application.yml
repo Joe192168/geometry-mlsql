@@ -4,13 +4,14 @@ server:
     context-path: /
 
 engine:
-  url: http://192.168.0.202:9003
+  url: http://192.168.0.47:9003
 
 cluster:
   url: http://192.168.148.231:9003
 
 my_url:
   url: http://192.168.20.209:9002
+  url2: http://localhost:9002
 
 cloud:
   url:
@@ -106,7 +107,7 @@ spring:
     profiles: dev
     datasource:
       #url: jdbc:mysql://192.168.2.237:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-      url: jdbc:mysql://192.168.0.47:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+      url: jdbc:mysql://192.168.0.47:3306/mlsql_console2?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
       username: root
       password: 123456
 
