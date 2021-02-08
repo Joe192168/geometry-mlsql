@@ -380,4 +380,34 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
     }
 
+    public <T> T getMlsqlEngine(String userName) {
+        MlsqlUser user = userService.getUserByName(userName);
+
+        String clusterUrl = CommandUtil.mlsqlClusterUrl();
+        String engineUrl = CommandUtil.mlsqlEngineUrl();
+
+        String engineName = getBackendName(user);
+
+//      List<MlsqlEngine> engines = engineService.getAllEngine(engineMap);
+        List<MlsqlEngine> engines = engineService.list();
+
+
+        List<MlsqlEngine> tmpEngienList = engines.stream().filter(me -> me.getName().equals(engineName))
+                .collect(Collectors.toList());
+
+        MlsqlEngine engineConfigOpt = tmpEngienList.size() > 0 ? tmpEngienList.get(0) : null;
+
+        String _proxyUrl = !clusterUrl.isEmpty() ? clusterUrl : engineUrl;
+        String _myUrl = CommandUtil.myUrl().isEmpty() ?  _proxyUrl : CommandUtil.myUrl();
+        String _home = CommandUtil.userHome();
+
+        int _skipAuth = !CommandUtil.enableAuthCenter() ? GlobalConstant.ONE : GlobalConstant.TOW;
+
+        MlsqlEngine temEngine = !engineService.list().isEmpty()
+                ? engineService.list().get(0) : new MlsqlEngine(0, "", _proxyUrl, _home, _myUrl, _myUrl, _myUrl,
+                _skipAuth, "{}", "");
+        MlsqlEngine engineConfig = engineConfigOpt != null ? engineConfigOpt : temEngine;
+        return (T) engineConfig;
+    }
+
 }

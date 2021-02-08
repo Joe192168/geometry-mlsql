@@ -88,7 +88,146 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>UTF-8</encoding>
+					<compilerArguments>
+						<extdirs>libs</extdirs>
+						<verbose />
+						<bootclasspath>C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/rt.jar;C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/jce.jar;C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/lib/jsse.jar</bootclasspath>
+					</compilerArguments>
+				</configuration>
+			</plugin>
+			<!--<plugin>
+				<groupId>org.springframework.boot</groupId>
+				&lt;!&ndash;在添加了该插件之后，当运行“mvn package”进行打包时，会打包成一个可以直接运行的 JAR 文件，使用“java -jar”命令就可以直接运行。这在很大程度上简化了应用的部署，只需要安装了 JRE 就可以运行。&ndash;&gt;
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>-->
+
 		</plugins>
 	</build>
+
+	<!--<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<includes>
+						<include>**/*.java</include>
+						<include>**/*.scala</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<compilerArgument>-g</compilerArgument>
+					<verbose>true</verbose>
+					<encoding>UTF-8</encoding>
+				</configuration>
+
+			</plugin>
+			<plugin>
+				&lt;!&ndash; maven 打包插件 打原始jar包 第三方依赖打入jar包中&ndash;&gt;
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							&lt;!&ndash;这里要替换成jar包main方法所在类 &ndash;&gt;
+							<mainClass>com.geominfo.mlsql.GeometryMlsqlRestApplication</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;
+						<phase>package</phase> &lt;!&ndash; 指定在打包节点执行jar包合并操作 &ndash;&gt;
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.scala-tools</groupId>
+				<artifactId>maven-scala-plugin</artifactId>
+				<version>2.15.2</version>
+				<configuration>
+					<args>
+						<arg>
+							-g:vars
+						</arg>
+					</args>
+					<verbose>true</verbose>
+				</configuration>
+				<executions>
+					<execution>
+						<id>scala-compile-first</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>scala-test-compile</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			&lt;!&ndash;   要将源码放上去，需要加入这个插件    &ndash;&gt;
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			&lt;!&ndash;将jdk也打入jar&ndash;&gt;
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>UTF-8</encoding>
+					<compilerArguments>
+						<extdirs>libs</extdirs>
+						&lt;!&ndash;  rt包没有打到项目中去 &ndash;&gt;
+						<verbose />
+						&lt;!&ndash; C:/Program Files/Java/jdk1.8.0_201 是我本地安装的jdk家目录，rt.jar等jar 我在 jdk家目录下的 /jre/lib/ 目录中有发现存在，你们需要注意确认自己的实际情况,Windows分隔符英文分号,linux分隔符英文冒号  &ndash;&gt;
+						<bootclasspath>C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/rt.jar;C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/jce.jar;C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/lib/jsse.jar</bootclasspath>
+					</compilerArguments>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>-->
+
 
 </project>

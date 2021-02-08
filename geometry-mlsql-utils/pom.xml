@@ -237,13 +237,7 @@
 			<version>6.2.2.jre8</version>
 		</dependency>
 
-
-        <!--<dependency>-->
-            <!--<groupId>com.geominfo.mlsql</groupId>-->
-            <!--<artifactId>geometry-mlsql-persistence</artifactId>-->
-            <!--<version>0.0.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
-
+		<!--springBoot从hdfs上下载文件，需要导入以下三个包-->
 		<!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -256,7 +250,6 @@
 			<artifactId>hadoop-hdfs</artifactId>
 			<version>2.7.1</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>

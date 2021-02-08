@@ -27,4 +27,6 @@ public interface FileService {
     <T> T download(HttpServletResponse response, Map<String, Object> paramMap);
 
     <T> T publicDownload(Object o, HttpServletResponse response, String owner);
+
+    <T> T getMlsqlEngine(String userName);
 }

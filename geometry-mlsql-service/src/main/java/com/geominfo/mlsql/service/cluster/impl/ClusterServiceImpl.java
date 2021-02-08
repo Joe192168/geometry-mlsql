@@ -138,7 +138,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
 
 
     @Override
-    public <T> T runScript(Map<String, Object> paramsMap) throws ExecutionException, InterruptedException {
+    public <T> T runScript(Map<String, Object> paramsMap) {
 
         assert (paramsMap.containsKey("owner") && paramsMap.containsKey("sql"));
 
@@ -240,10 +240,6 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         if (tags == null)
             tags = "";
 
-        /*if (!paramsMap.containsKey("context.__skipConnect__")) {
-            paramsMap.put("context.__skipConnect__",paramsMap.get("skipConnect"));
-        }*/
-
         if (!paramsMap.containsKey("context.__default__include_fetch_url__"))
             paramsMap.put("context.__default__include_fetch_url__",
                     engineConfig.getConsoleUrl() + GlobalConstant.SCRIPT_FILE_INCLUDE);
@@ -327,6 +323,10 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         boolean queryType = paramsMap.containsKey("queryType") ?
                 paramsMap.get("queryType").equals("analysis_workshop_apply_action") : false;
 
+        if (!paramsMap.containsKey("context.__skipConnect__")) {
+            paramsMap.put("context.__skipConnect__",paramsMap.containsKey("skipConnect")? paramsMap.get("skipConnect") : false);
+        }
+
         if (queryType)
             paramsMap.put("timeout", String.valueOf(applyTimeOut(user.getBackendTags()) * 1000));
 
@@ -345,15 +345,15 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         ParamsUtil.setParam("sql" ,runParamsMap.getFirst("sql"));
 
 
-        ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
-        /*ResponseEntity<String> response = null;
+        //ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
+        ResponseEntity<String> response = null;
         try {
             response = clusterUrlService.synRunScript(runParamsMap);
         } catch (Exception e) {
             Map<Integer ,Object> errorData = new ConcurrentHashMap<>();
             errorData.put(500, e);
             return (T)errorData ;
-        }*/
+        }
 
         System.out.println("同步执行返回数据 = " + response.getBody());
 

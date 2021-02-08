@@ -97,17 +97,6 @@ public class ScriptLogServiceImpl implements ScriptLogService {
     }
 
     private void postScript(String sql) throws Exception {
-        ScriptRun scriptRun = new ScriptRun();
-        scriptRun.setExecuteMode("query");
-        scriptRun.setSilence("false");
-        scriptRun.setSessionPerUser("false");
-        scriptRun.setAsync("false");
-        scriptRun.setSkipInclude("false");
-        scriptRun.setSkipAuth("true");
-        scriptRun.setSkipGrammarValidate("true");
-        scriptRun.setSkipConnect("true");
-        Map<String, Object> params = ParamsUtil.objectToMap(scriptRun);
-
         Map<String, Object> paramMap = new ConcurrentHashMap<>();
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
