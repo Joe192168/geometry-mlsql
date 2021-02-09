@@ -82,11 +82,7 @@ public class ClusterController extends BaseController {
         if (!params.containsKey(OWNER)) params.put(OWNER, userName);
 
         Map<Integer ,Object> temp = clusterService.runScript(params);
-        if (temp.containsKey(500)) {
-            CustomException e = (CustomException) temp.get(500);
-            temp.put(500, e.getBody());
-            return message.returnValue(temp);
-        }
+
         return message.returnValue(temp);
     }
 
