@@ -2,16 +2,18 @@ package com.geominfo.mlsql.controller.datasource;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.geominfo.mlsql.config.restful.CustomException;
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.appruntimefull.WConnectTable;
 import com.geominfo.mlsql.domain.vo.*;
-import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.appruntimefull.AppRuntimeDsService;
+import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.service.cluster.DsService;
 import com.geominfo.mlsql.service.datasource.DataSourceService;
 import com.geominfo.mlsql.service.proxy.ProxyService;
 import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.util.ExtractClassMsgUtil;
+import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,10 +58,11 @@ public class DSController extends BaseController {
     private AppRuntimeDsService appRuntimeDsService;
 
     @Autowired
-    private ProxyService proxyService;
+    private ClusterService clusterService;
 
-    @Value("${my_url.url2}")
-    private String myUrl;
+    @Autowired
+    private Message message;
+
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ApiOperation(value = "增加数据源")
@@ -74,7 +78,7 @@ public class DSController extends BaseController {
             @ApiImplicitParam(name = "family", value = "列族", required = false, paramType = "query", dataType = "String")
     })
     public Message addDs(@RequestBody JDBCD jdbcd) {
-        MlsqlUser mlsqlUser = userService.getUserByName(userName);
+        MlsqlUser mlsqlUser = userService.getUserByName("ryan@gmail.com");
         MlsqlDs ds = dsService.getDs(jdbcd.getName());
         if (ds != null) {
             return error(HttpStatus.SC_OK, "dataSource is existing");
@@ -92,11 +96,20 @@ public class DSController extends BaseController {
             appRuntimeDsService.insertAppDS(wct);
             //拼接连接参数
             String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
-            ScriptRun scriptRun = new ScriptRun("true", userName, connectSQL, "true");
-            String jsonString = JSON.toJSONString(scriptRun);
-            //调用engine/run/script接口
-            ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster/api_v1/run/script", jsonString, String.class);
-            return success(HttpStatus.SC_OK, "sava success");
+            ScriptRun scriptRun = new ScriptRun("false", "ryan@gmail.com", connectSQL, "true");
+            Map<String, Object> params = null;
+            try {
+               params = ParamsUtil.objectToMap(scriptRun);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Map<Integer ,Object> temp = clusterService.runScript(params);
+            if (temp.containsKey(500)) {
+                CustomException e = (CustomException) temp.get(500);
+                temp.put(500, e.getBody());
+                return message.returnValue(temp);
+            }
+            return message.returnValue(temp);
         }
     }
 

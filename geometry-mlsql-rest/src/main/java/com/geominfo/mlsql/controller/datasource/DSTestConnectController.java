@@ -2,6 +2,7 @@ package com.geominfo.mlsql.controller.datasource;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.geominfo.mlsql.config.restful.CustomException;
 import com.geominfo.mlsql.controller.base.BaseController;
 import com.geominfo.mlsql.domain.appruntimefull.WConnectTable;
 import com.geominfo.mlsql.domain.vo.JDBCD;
@@ -10,9 +11,11 @@ import com.geominfo.mlsql.domain.vo.MlsqlDs;
 import com.geominfo.mlsql.domain.vo.ScriptRun;
 import com.geominfo.mlsql.globalconstant.GlobalConstant;
 import com.geominfo.mlsql.service.appruntimefull.AppRuntimeDsService;
+import com.geominfo.mlsql.service.cluster.ClusterService;
 import com.geominfo.mlsql.service.cluster.DsService;
 import com.geominfo.mlsql.service.datasource.DataSourceService;
 import com.geominfo.mlsql.service.proxy.ProxyService;
+import com.geominfo.mlsql.utils.ParamsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -50,10 +53,11 @@ public class DSTestConnectController extends BaseController {
     private AppRuntimeDsService appRuntimeDsService;
 
     @Autowired
-    private ProxyService proxyService;
+    private ClusterService clusterService;
 
-    @Value("${my_url.url2}")
-    private String myUrl;
+    @Autowired
+    private Message message;
+
 
     @RequestMapping(value = "/testConnect", method = {RequestMethod.POST, RequestMethod.GET})
     @ApiOperation(value = "测试数据源")
@@ -68,7 +72,7 @@ public class DSTestConnectController extends BaseController {
             @ApiImplicitParam(name = "name", value = "别名", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "family", value = "列族", required = false, paramType = "query", dataType = "String")
     })
-    public Message connectDS(JDBCD jdbcd) {
+    public Message connectDS(@RequestBody JDBCD jdbcd) {
         JDBCD connectParams = dataSourceService.JDBCDConnectParams(jdbcd);
         if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("jdbc") ||
                 jdbcd.getFormat().toLowerCase().equals("jdbc")) {
@@ -80,16 +84,20 @@ public class DSTestConnectController extends BaseController {
         } else if (jdbcd.getJType().replaceAll("\\s*", "").toLowerCase().equals("hbase") ||
                 jdbcd.getFormat().toLowerCase().equals("hbase")) {
             String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
-            ScriptRun scriptRun = new ScriptRun("false", userName, connectSQL, "true");
-            String jsonString = JSON.toJSONString(scriptRun);
-            //调用engine/run/script接口
-            ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster/api_v1/run/script", jsonString, String.class);
-            JSONObject jsonObject = JSON.parseObject(responseEntity.getBody());
-            JSONObject meta = JSON.parseObject(jsonObject.getString("meta"));
-            JSONObject data = JSON.parseObject(jsonObject.getString("data"));
-            if (Integer.valueOf(meta.getString("code")) != 200) {
-                return error(Integer.valueOf(meta.getString("code")), data.getString("data"));
+            ScriptRun scriptRun = new ScriptRun("false", "ryan@gmail.com", connectSQL, "true");
+            Map<String, Object> params = null;
+            try {
+                params = ParamsUtil.objectToMap(scriptRun);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            Map<Integer ,Object> temp = clusterService.runScript(params);
+            if (temp.containsKey(500)) {
+                CustomException e = (CustomException) temp.get(500);
+                temp.put(500, e.getBody());
+                return message.returnValue(temp);
+            }
+            return message.returnValue(temp);
         }
         return success(HttpStatus.SC_OK, "sava success").addData("jdbcd", jdbcd);
     }
@@ -107,7 +115,7 @@ public class DSTestConnectController extends BaseController {
             @ApiImplicitParam(name = "name", value = "别名", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "family", value = "列族", required = false, paramType = "query", dataType = "String")
     })
-    public Message updateConnectParams(JDBCD jdbcd) {
+    public Message updateConnectParams(@RequestBody JDBCD jdbcd) {
         JDBCD connectParams = dataSourceService.JDBCDConnectParams(jdbcd);
         requestParams.put("url", connectParams.getUrl());
         requestParams.put("driver", connectParams.getDriver());
@@ -123,11 +131,21 @@ public class DSTestConnectController extends BaseController {
         appRuntimeDsService.updateConnectParams(wct);
         //拼接参数
         String connectSQL = appRuntimeDsService.jointConnectPrams(connectParams);
-        ScriptRun scriptRun = new ScriptRun("true", userName, connectSQL, "true");
-        String jsonString = JSON.toJSONString(scriptRun);
-        //调用engine/run/script接口
-        ResponseEntity<String> responseEntity = proxyService.postForEntity(myUrl + "/cluster/api_v1/run/script", jsonString, String.class);
-        return success(HttpStatus.SC_OK, "update sucess");
+        ScriptRun scriptRun = new ScriptRun("false", "ryan@gmail.com", connectSQL, "true");
+
+        Map<String, Object> params = null;
+        try {
+            params = ParamsUtil.objectToMap(scriptRun);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Map<Integer ,Object> temp = clusterService.runScript(params);
+        if (temp.containsKey(500)) {
+            CustomException e = (CustomException) temp.get(500);
+            temp.put(500, e.getBody());
+            return message.returnValue(temp);
+        }
+        return message.returnValue(temp);
     }
 
 }
