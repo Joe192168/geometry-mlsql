@@ -11,7 +11,9 @@ import com.geominfo.mlsql.utils.ParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -38,7 +40,7 @@ public class ScriptLogServiceImpl implements ScriptLogService {
     private static final String LOG_SCRIPT = "load _mlsql_.`jobs/v2/";
     private static final String ACTIVEJOBS = "activeJobs";
     private static final String LOGICALEXECUTIONPLAN = "logicalExecutionPlan";
-    private static final String JSON_IS_EMPTY = "json is empty!" ;
+    private static final String JSON_IS_EMPTY = "json is empty!";
 
     @Override
     public <T> T addLog(T t) {
@@ -46,14 +48,12 @@ public class ScriptLogServiceImpl implements ScriptLogService {
 
         try {
             String resJson = t.toString();
-             if (resJson.contains(ACTIVEJOBS) && resJson.contains(LOGICALEXECUTIONPLAN))
-                return (T) result.put(200 ,insertLog(resJson));
-             else if (!resJson.equals("[]") && !ParamsUtil.getParam("sql","").toString().contains("!show"))
-             {
-                 String tmp = LOG_SCRIPT + ParamsUtil.getParam("groupId" ,"") + "` as wow ;";
-                 postScript(tmp);
-             }
-            else
+            if (resJson.contains(ACTIVEJOBS) && resJson.contains(LOGICALEXECUTIONPLAN))
+                return (T) result.put(200, insertLog(resJson));
+            else if (!resJson.equals("[]") && !ParamsUtil.getParam("sql", "").toString().contains("!show")) {
+                String tmp = LOG_SCRIPT + ParamsUtil.getParam("groupId", "") + "` as wow ;";
+                postScript(tmp);
+            } else
                 return (T) result.put(500, JSON_IS_EMPTY);
 
         } catch (Exception e) {
@@ -64,31 +64,60 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         return (T) result.put(500, "error");
     }
 
+
+    @Override
+    public <T> T addExecutionPlan(String executionPlan, String groupId) {
+        ScriptExeLog se = new ScriptExeLog();
+        se.setJobId(groupId);
+        se.setExplainMsg(executionPlan);
+        se.setCreateTime(new Date(System.currentTimeMillis()));
+        scriptExeLogMapper.addLog(se);
+        Map<Integer, Object> result = new ConcurrentHashMap<>();
+        return (T) result.put(200, "success");
+
+    }
+
     private String insertLog(String json) {
-        if(!checkJson(json))  return JSON_IS_EMPTY;
+        if (!checkJson(json)) return JSON_IS_EMPTY;
         JSONArray ja = JSON.parseArray(json);
         if (ja.size() == 0) return JSON_IS_EMPTY;
         JSONObject mainJo = ja.getJSONObject(0);
 
         JSONArray actionJsonArray = mainJo.getJSONArray("activeJobs");
         if (actionJsonArray.size() == 0) return JSON_IS_EMPTY;
-        JSONObject aJo = actionJsonArray.getJSONObject(0);
 
-        ScriptExeLog se = new ScriptExeLog();
-        StringBuilder sb = new StringBuilder() ;
-        se.setJobId(mainJo.getString("groupId"));
-        se.setSparkUiJobCnt(aJo.getInteger("job"));
-        se.setSparkUiStageCnt(aJo.getInteger(  "stages"));
-        se.setSparkUiTaskCnt(aJo.getInteger(  "stages"));
-        se.setExplainMsg(aJo.getString(  "logicalExecutionPlan"));
-        sb.append("{ \"inPutSum\":").append(aJo.getInteger("inPutSum"))
-                .append(", \"inPutByte\":").append(aJo.getInteger("inPutByte"))
-                .append(", \"outPutSum\":").append(aJo.getInteger("outPutSum"))
-                .append(", \"outPutBtye\":").append(aJo.getInteger("outPutBtye")).append("}") ;
-        se.setExtraOpts(sb.toString());
-        se.setCreateTime(new Date(System.currentTimeMillis()));
+        List<ScriptExeLog> scriptExeLogsList = new ArrayList<>();
+        String groupID = "";
+        String exe_msg = "" ;
 
-        scriptExeLogMapper.addLog(se);
+        for (int i = 0; i < actionJsonArray.size(); i++) {
+            JSONObject aJo = actionJsonArray.getJSONObject(i);
+            ScriptExeLog se = new ScriptExeLog();
+            StringBuilder sb = new StringBuilder();
+            groupID = mainJo.getString("groupId");
+            if (!groupID.equals("")) {
+                if(exe_msg.equals(""))
+                    exe_msg= scriptExeLogMapper.findByGroupID(groupID);
+                se.setExplainMsg(exe_msg);
+            }
+
+            se.setJobId(groupID);
+            se.setSparkUiJobCnt(aJo.getInteger("job"));
+            se.setSparkUiStageCnt(aJo.getInteger("stages"));
+            se.setSparkUiTaskCnt(aJo.getInteger("stages"));
+            sb.append("{ \"inPutSum\":").append(aJo.getInteger("inPutSum"))
+                    .append(", \"inPutByte\":").append(aJo.getInteger("inPutByte"))
+                    .append(", \"outPutSum\":").append(aJo.getInteger("outPutSum"))
+                    .append(", \"outPutBtye\":").append(aJo.getInteger("outPutBtye")).append("}");
+            se.setExtraOpts(sb.toString());
+            se.setCreateTime(new Date(System.currentTimeMillis()));
+            scriptExeLogsList.add(se);
+        }
+
+        if (!groupID.equals(""))
+            scriptExeLogMapper.delByGroupID(groupID);
+
+        scriptExeLogMapper.batchInsert(scriptExeLogsList);
 
         return "success";
     }
@@ -96,17 +125,15 @@ public class ScriptLogServiceImpl implements ScriptLogService {
 
     private boolean checkJson(String json) {
         if (json == null || json.equals("") || json.equals("[]")) return false;
-        return  true ;
+        return true;
     }
 
-    private void postScript(String sql)  {
+    private void postScript(String sql) {
         Map<String, Object> paramMap = new ConcurrentHashMap<>();
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
         paramMap.put("skipConnect", "true");
         clusterService.runScript(paramMap);
     }
-
-
 
 }

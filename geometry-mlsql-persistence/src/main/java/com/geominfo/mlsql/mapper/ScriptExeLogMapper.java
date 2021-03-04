@@ -3,6 +3,8 @@ import com.geominfo.mlsql.domain.vo.ScriptExeLog;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * @program: geometry-mlsql
  * @description: 脚本执行log
@@ -15,5 +17,7 @@ import org.springframework.stereotype.Component;
 public interface ScriptExeLogMapper {
 
     void addLog(ScriptExeLog scriptExeLog) ;
-    void updateLog(ScriptExeLog scriptExeLog) ;
+    String findByGroupID(String groupID) ;
+    void batchInsert(List<ScriptExeLog> list) ;
+    void delByGroupID(String jobId) ;
 }

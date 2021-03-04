@@ -71,10 +71,18 @@ public class MlsqlJobController extends BaseController {
         } else {
             String jobName = JSONObject.parseObject(params.get("jobInfo")).getString("jobName");
 
+            //---------------保存groupID和执行计划-----------
+
            if( params.containsKey("jobInfo")){
-                String groupId = JSONObject.parseObject(params.get("jobInfo")).getString("groupId");
+               String groupId = JSONObject.parseObject(params.get("jobInfo")).getString("groupId");
                 if(!groupId.equals(""))
+                {
                     ParamsUtil.setParam("groupId" ,groupId);
+
+                    String executionPlan = JSONObject.parseObject(params.get("jobInfo")).getString("executionPlan");
+                    if(!executionPlan.equals("") && !executionPlan.isEmpty() )
+                        scriptLogService.addExecutionPlan(executionPlan,groupId) ;
+                }
             }
 
             Map<String, Object> map;

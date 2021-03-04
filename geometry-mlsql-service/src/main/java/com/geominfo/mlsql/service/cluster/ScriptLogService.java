@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 public interface ScriptLogService {
 
-    <T> T addLog(T t) throws ExecutionException, InterruptedException;
+    <T> T addLog(T t) ;
+    <T> T addExecutionPlan(String executionPlan ,String groupId) ;
 
 }

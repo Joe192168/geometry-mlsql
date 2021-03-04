@@ -138,6 +138,7 @@ public class AppFunctionServiceImpl extends BaseServiceImpl implements AppFuncti
                 vagueList.add(curStr);
 
     }
+
     private String postRequest(String sql) {
         paramMap.put("sql", sql);
         paramMap.put("owner", ParamsUtil.getParam("owner", "admin"));
