@@ -344,9 +344,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
         //save sql
         ParamsUtil.setParam("sql" ,runParamsMap.getFirst("sql"));
 
-
-        //ResponseEntity<String> response = clusterUrlService.synRunScript(runParamsMap);
-        ResponseEntity<String> response = null;
+        ResponseEntity<String> response ;
         try {
             response = clusterUrlService.synRunScript(runParamsMap);
         } catch (Exception e) {
@@ -355,7 +353,7 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
             return (T)errorData ;
         }
 
-        System.out.println("同步执行返回数据 = " + response.getBody());
+        logger.info("同步执行返回数据 = " + response.getBody());
 
         //请求失败情况
         if (response.getStatusCode().value() == -1) {
@@ -397,23 +395,14 @@ public class ClusterServiceImpl extends BaseServiceImpl implements ClusterServic
             mlsqlJobService.updateMlsqlJobByJonName(map);
         }
 
-        Map<Integer ,Object> errorData = new ConcurrentHashMap<>();
-        errorData.put(200, response.getBody()) ;
-        return (T)errorData ;
+        Map<Integer ,Object> resData = new ConcurrentHashMap<>();
+        resData.put(200, response.getBody()) ;
+        return (T)resData ;
 
     }
 
     //private -------------------------------
     private static final String EXTRA_DEFAULT_BACKEND = "backend";
-
-    private String formatSQL(String sql)
-    {
-        if(sql.equals("")) return "" ;
-
-
-        return "" ;
-
-    }
 
     private String getBackendName(MlsqlUser mlsqlUser) {
         if (mlsqlUser.getBackendTags() != null && !mlsqlUser.getBackendTags().isEmpty()) {
