@@ -39,7 +39,7 @@ public class ScriptLogServiceImpl implements ScriptLogService {
 
     private static final String LOG_SCRIPT = "load _mlsql_.`jobs/v2/";
     private static final String ACTIVEJOBS = "activeJobs";
-    private static final String LOGICALEXECUTIONPLAN = "logicalExecutionPlan";
+    private static final String LOGICALEXECUTIONPLAN = "mLSQLScriptJobStage";
     private static final String JSON_IS_EMPTY = "json is empty!";
 
     @Override
@@ -60,7 +60,6 @@ public class ScriptLogServiceImpl implements ScriptLogService {
             e.printStackTrace();
             return (T) result.put(500, e.getMessage());
         }
-
         return (T) result.put(500, "error");
     }
 
@@ -86,37 +85,32 @@ public class ScriptLogServiceImpl implements ScriptLogService {
         JSONArray actionJsonArray = mainJo.getJSONArray("activeJobs");
         if (actionJsonArray.size() == 0) return JSON_IS_EMPTY;
 
+        String groupID = mainJo.getString("groupId");
+        if (groupID.isEmpty()) throw new IllegalArgumentException("groupId is empty!");
+
         List<ScriptExeLog> scriptExeLogsList = new ArrayList<>();
-        String groupID = "";
-        String exe_msg = "" ;
+        int stages = 0;
+        int tasks = 0;
+        ScriptExeLog se = new ScriptExeLog();
+        se.setJobId(groupID);
+        se.setExplainMsg(scriptExeLogMapper.findByGroupID(groupID));
+        int jobs = actionJsonArray.size();
+        se.setSparkUiJobCnt(jobs);
 
-        for (int i = 0; i < actionJsonArray.size(); i++) {
+        for (int i = 0; i < jobs; i++) {
             JSONObject aJo = actionJsonArray.getJSONObject(i);
-            ScriptExeLog se = new ScriptExeLog();
-            StringBuilder sb = new StringBuilder();
-            groupID = mainJo.getString("groupId");
-            if (!groupID.equals("")) {
-                if(exe_msg.equals(""))
-                    exe_msg= scriptExeLogMapper.findByGroupID(groupID);
-                se.setExplainMsg(exe_msg);
-            }
-
-            se.setJobId(groupID);
-            se.setSparkUiJobCnt(aJo.getInteger("job"));
-            se.setSparkUiStageCnt(aJo.getInteger("stages"));
-            se.setSparkUiTaskCnt(aJo.getInteger("stages"));
-            sb.append("{ \"inPutSum\":").append(aJo.getInteger("inPutSum"))
-                    .append(", \"inPutByte\":").append(aJo.getInteger("inPutByte"))
-                    .append(", \"outPutSum\":").append(aJo.getInteger("outPutSum"))
-                    .append(", \"outPutBtye\":").append(aJo.getInteger("outPutBtye")).append("}");
-            se.setExtraOpts(sb.toString());
-            se.setCreateTime(new Date(System.currentTimeMillis()));
-            scriptExeLogsList.add(se);
+            tasks += aJo.getInteger("numTasks");
+            JSONArray stageArray = aJo.getJSONArray("mLSQLScriptJobStage");
+            stages += stageArray.size();
         }
 
-        if (!groupID.equals(""))
-            scriptExeLogMapper.delByGroupID(groupID);
+        se.setSparkUiStageCnt(stages);
+        se.setSparkUiTaskCnt(tasks);
+        se.setExtraOpts(mainJo.toString());
 
+        scriptExeLogsList.add(se);
+
+        scriptExeLogMapper.delByGroupID(groupID);
         scriptExeLogMapper.batchInsert(scriptExeLogsList);
 
         return "success";

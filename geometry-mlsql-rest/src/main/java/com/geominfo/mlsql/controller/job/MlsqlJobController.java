@@ -80,7 +80,7 @@ public class MlsqlJobController extends BaseController {
                     ParamsUtil.setParam("groupId" ,groupId);
 
                     String executionPlan = JSONObject.parseObject(params.get("jobInfo")).getString("executionPlan");
-                    if(!executionPlan.equals("") && !executionPlan.isEmpty() )
+                    if(!executionPlan.isEmpty())
                         scriptLogService.addExecutionPlan(executionPlan,groupId) ;
                 }
             }
