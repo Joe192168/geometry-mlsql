@@ -4,7 +4,15 @@
 
 # IntelliJ project files
 .idea
+*.iws
 *.iml
-target
-out
-gen
+*.ipr
+target/
+logs/
+*.log
+*.class
+
+####other####
+*.jpg
+*.jpeg
+*.zip

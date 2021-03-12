@@ -1,9 +1,6 @@
 package com.geominfo.mlsql.domain.vo;
 
 import lombok.Data;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.sql.DataSource;
 
 /**
  * @program: MLSQL CONSOLE后端接口

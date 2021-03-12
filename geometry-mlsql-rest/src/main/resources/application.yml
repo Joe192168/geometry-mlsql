@@ -1,7 +1,99 @@
+# 设置使用哪个环境的配置
+# 默认的profile为dev，其他环境通过指定启动参数使用不同的profile，比如：
+#   测试环境：java -jar geometry-rest.jar --spring.profiles.active=test
+#   生产环境：java -jar geometry-rest.jar --spring.profiles.active=prod
+spring:
+  application:
+    name: geometry-mlsql
+  # 环境 dev:开发环境|test:测试环境|prod:生产环境
+  profiles:
+    active: dev  #激活的配置文件
+  #连接池配置
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    platform: mysql
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 下面为连接池的补充设置，应用到上面所有数据源中
+    # 初始化大小，最小，最大
+    # druid 配置: https://github.com/alibaba/druid/wiki/
+    initialSize: 1
+    minIdle: 1
+    maxActive: 20
+    # 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    removeAbandoned: true
+    removeAbandonedTimeout: 1800
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 50
+    # 配置监控统计拦截的filters，stat用于监控界面，'wall'用于防火墙防御sql注入, slf4j用于druid记录sql日志
+    filters: stat,slf4j,wall
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    # 合并多个DruidDataSource的监控数据
+    useGlobalDataSourceStat: false
+  jpa:
+    hibernate:
+      ddl-auto: update #ddl-auto:设为update表示每次都不会重新建表
+    show-sql: true
+  #热部署生效
+  devtools:
+    restart:
+      enabled: true
+      #设置重启的目录
+      additional-paths: src/main/java
+      #classpath目录下的WEB-INF文件夹内容修改不重启
+      exclude: WEB-INF/**
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+#端口
 server:
   port: 9002
   servlet:
     context-path: /
+  filepath: /home/ExcelDataFile
+  compression:
+    enabled: true
+    min-response-size: 10240
+    mime-types:
+      - image/png
+      - image/jpeg
+      - image/jpg
+      - text/html
+      - application/javascript
+      - text/css
+      - application/octet-stream
+      - application/json
+
+mybatis:
+  #这个是可以打印sql、参数、查询结果的
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    call-setters-on-nulls: true
+  # 指向实体类包路径
+  type-aliases-package: com.geominfo.mlsql.domain.vo
+  # mapper xml 文件地址
+  mapper-locations: classpath*:mappers/*.xml,classpath*:mapper/*.xml
+  # 检查 mybatis 配置是否存在，一般命名为 mybatis-config.xml
+  check-config-location: true
+  # 执行模式。默认是 SIMPLE
+  executor-type: simple
+
+#配置身份认证平台服务器地址
+auth:
+  server-url: http://biserver:9099/platform
+
 
 engine:
   url: http://192.168.0.47:9003
@@ -22,133 +114,62 @@ user:
   enable.auth.center: false
   auth.secret: mlsql
 
-
-logging:
-  config: classpath:log4j2.xml
-
-spring:
-  datasource:
-      driver-class-name: com.mysql.jdbc.Driver
-      platform: mysql
-      type: com.alibaba.druid.pool.DruidDataSource
-      # 下面为连接池的补充设置，应用到上面所有数据源中
-      # 初始化大小，最小，最大
-      # druid 配置: https://github.com/alibaba/druid/wiki/
-      initialSize: 1
-      minIdle: 1
-      maxActive: 20
-      # 配置获取连接等待超时的时间
-      maxWait: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      removeAbandoned: true
-      removeAbandonedTimeout: 1800
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: select 1
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      # 打开PSCache，并且指定每个连接上PSCache的大小
-      poolPreparedStatements: true
-      maxPoolPreparedStatementPerConnectionSize: 50
-      # 配置监控统计拦截的filters，stat用于监控界面，'wall'用于防火墙防御sql注入, slf4j用于druid记录sql日志
-      filters: stat,slf4j,wall
-      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
-      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-      # 合并多个DruidDataSource的监控数据
-      useGlobalDataSourceStat: false
-  profiles:
-    active: dev
-
-  # redis
-  redis:
-    # 数据库索引，默认0
-    database: 0
-#    # 服务器IP地址
-    host: 127.0.0.1
-#    # 连接端口
-    port: 6379
-#    # Redis服务器连接密码（默认为空）
-    password:
-  artemis:
-    embedded:
-      cluster-password:
-
-mybatis:
-  #这个是可以打印sql、参数、查询结果的
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    call-setters-on-nulls: true
-  # 指向实体类包路径
-  type-aliases-package: com.geominfo.mlsql.domain.vo
-  # mapper xml 文件地址
-  mapper-locations: classpath*:mappers/*.xml,classpath*:mapper/*.xml
-  # 检查 mybatis 配置是否存在，一般命名为 mybatis-config.xml
-  check-config-location: true
-  # 执行模式。默认是 SIMPLE
-  executor-type: simple
-
 #pagehelper分页插件
 #reasonable分页参数合理化，3.3.0以上版本可用，默认是false。 启用合理化时，如果pageNum<1会查询第一页，如果pageNum>pages会查询最后一页； 禁用合理化时，如果pageNum<1或pageNum>pages会返回空数据。
 pagehelper:
-    helperDialect: mysql
-    reasonable: false
-    supportMethodsArguments: true
-    params: count=countSql
+  helperDialect: mysql
+  reasonable: false
+  supportMethodsArguments: true
+  params: count=countSql
 
+#访问数据秘钥
 jasypt:
   encryptor:
-    password: swhdg
+    password: geometry-mlsql
 
----
-# 开发环境配置(配置项只包括环境不同项)
-spring:
-    profiles: dev
-    datasource:
-      #url: jdbc:mysql://192.168.2.237:3306/mlsql_console?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-      url: jdbc:mysql://192.168.0.47:3306/mlsql_console2?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-      username: root
-      password: 123456
+#log4j2日志配置
+logging:
+  config: classpath:log4j2.xml
 
-    redis:
-      # 服务器IP地址
-      host: 127.0.0.1
-      # 连接端口
-      port: 6379
-      # Redis服务器连接密码（默认为空）
-      password:
+#feign设置
+feign:
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true # 开启请求压缩
+      min-request-size: 2048 # 设置触发压缩的大小下限
+      mime-types: text/html,application/xml,application/json # 设置压缩的数据类型
+    response:
+      enabled: true # 开启响应压缩
+  client:
+    config:
+      default:
+        #连接超时时间
+        connectTimeout: 5000
+        #读取超时时间
+        readTimeout: 5000
 
----
-# 测试环境配置(配置项只包括不同项)
+#hystrix熔断设置
+hystrix:
+  command:
+    default:  #default全局有效，service id指定应用有效
+      execution:
+        timeout:
+          #如果enabled设置为false，则请求超时交给ribbon控制,为true,否则超时作为熔断根据
+          enabled: true
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            #如果Hystrix时长小于feign的超时时长，那feign的超时设置就不会生效
+            timeoutInMilliseconds: 12000 #断路器超时时间，默认1000ms
 
-spring:
-    profiles: test
-    datasource:
-      url: jdbc:mysql://192.168.3.69:3306/dev_mlsql_console
-      username: root
-      password: ENC(dDDdKbUfeKDH0ERliSO7Wg==)
-    redis:
-      # 服务器IP地址
-      host: 127.0.0.1
-      # 连接端口
-      port: 6379
-      # Redis服务器连接密码（默认为空）
-      password:
-
----
-# 生产环境配置(配置项只包括不同项)
-
-spring:
-    profiles: prod
-    datasource:
-      url: jdbc:mysql://192.168.3.69:3306/dev_mlsql_console
-      username: root
-      password: ENC(dDDdKbUfeKDH0ERliSO7Wg==)
-    redis:
-      # 服务器IP地址
-      host: 127.0.0.1
-      # 连接端口
-      port: 6379
-      # Redis服务器连接密码（默认为空）
-      password:
+#Ribbon负载均衡策略,默认轮换
+ribbon:
+  OkToRetryOnAllOperations: false #对所有操作请求都进行重试,默认false
+  ReadTimeout: 5000   #负载均衡超时时间，默认值5000
+  ConnectTimeout: 2000 #ribbon请求连接的超时时间，默认值2000
+  #对当前实例的重试次数，默认0 设置为1次 加上自身1次 总共2次请求  每次最大超时时间5000
+  #2*5000=10000  要小于hystrix的时间12000  要不然重试没完成就hystrix熔断了
+  MaxAutoRetries: 1     #对当前实例的重试次数，默认0
+  MaxAutoRetriesNextServer: 0 #对切换实例的重试次数，默认1

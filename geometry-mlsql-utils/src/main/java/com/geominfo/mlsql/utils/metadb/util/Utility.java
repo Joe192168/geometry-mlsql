@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class Utility {
-	private static Logger logger=LoggerFactory.getLogger(Utility.class);
-	
 	private static final Pattern isAllWhitespacePattern = Pattern.compile("^\\s*$");
 	
 	  /**

@@ -21,9 +21,7 @@
 		<module>geometry-mlsql-persistence</module>
 		<module>geometry-mlsql-service</module>
 		<module>geometry-mlsql-rest</module>
-		<module>geometry-mlsql-generator</module>
 	</modules>
-
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -51,7 +49,20 @@
 		<shiro.version>1.4.0</shiro.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
+		<spring-cloud.version>Hoxton.SR3</spring-cloud.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<plugins>
@@ -88,21 +99,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<!--<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-					<compilerArguments>
-						<extdirs>libs</extdirs>
-						<verbose />
-						<bootclasspath>C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/rt.jar;C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/jce.jar;C:/javaAndscala/Java/jdk1.8.0_201/jre/lib/lib/jsse.jar</bootclasspath>
-					</compilerArguments>
-				</configuration>
-			</plugin>-->
-
 		</plugins>
 	</build>
 
