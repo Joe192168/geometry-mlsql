@@ -32,7 +32,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -45,7 +44,6 @@
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -64,6 +62,35 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
 			<!--<scope>runtime</scope>-->
+		</dependency>
+		<!-- 加载postgresql驱动 -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
+		<!-- oracle11g驱动 -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc</artifactId>
+			<version>${ojdbc.version}</version>
+		</dependency>
+		<!-- sqlserver 2008驱动 -->
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>${mssql-jdbc.version}</version>
+		</dependency>
+		<!-- db2驱动 -->
+		<dependency>
+			<groupId>com.ibm.db2.jcc</groupId>
+			<artifactId>db2jcc</artifactId>
+			<version>${db2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.db2</groupId>
+			<artifactId>db2jcc_license_cu</artifactId>
+			<version>${db2jcc.version}</version>
 		</dependency>
 		<!--mybatis-->
 		<dependency>
@@ -157,14 +184,11 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
 			<version>1.18</version>
 		</dependency>
-
-
 		<!--明文配置密码加密解密-->
 		<dependency>
 			<groupId>com.github.ulisesbocchio</groupId>
@@ -182,13 +206,6 @@
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper</artifactId>
 			<version>${pagehelper.version}</version>
-			<!-- 该架包带的jsqlparser版本低，jsqlparser升级为2.1 -->
-			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<groupId>com.github.jsqlparser</groupId>-->
-					<!--<artifactId>jsqlparser</artifactId>-->
-				<!--</exclusion>-->
-			<!--</exclusions>-->
 		</dependency>
 		<dependency>
 			<groupId>com.github.pagehelper</groupId>
@@ -228,19 +245,6 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
         </dependency>
-
-		<dependency>
-			<groupId>com.oracle.ojdbc</groupId>
-			<artifactId>ojdbc8</artifactId>
-			<version>19.3.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.microsoft.sqlserver</groupId>
-			<artifactId>mssql-jdbc</artifactId>
-			<version>6.2.2.jre8</version>
-		</dependency>
-
 		<!--springBoot从hdfs上下载文件，需要导入以下三个包-->
 		<!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common -->
 		<dependency>
@@ -267,18 +271,19 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-
-
-
-
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-all</artifactId>
 			<version>5.1</version>
 		</dependency>
-
-
-
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
