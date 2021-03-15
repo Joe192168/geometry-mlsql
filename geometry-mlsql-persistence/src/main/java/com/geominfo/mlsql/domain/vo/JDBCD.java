@@ -23,4 +23,5 @@ public class JDBCD {
     private String format;
     private String family;
     private String collection;
+    private String schema;
 }

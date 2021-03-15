@@ -23,8 +23,5 @@ public class MlsqlUser implements Serializable{
     private String backendTags;
     private String role;
     private String status;
-    private List<MlsqlGroupUser> mlsqlGroupUsers;
-    private List<MlsqlRoleMember> mlsqlRoleMembers;
-    private List<ScriptUserRw> scriptUserRws;
 
 }

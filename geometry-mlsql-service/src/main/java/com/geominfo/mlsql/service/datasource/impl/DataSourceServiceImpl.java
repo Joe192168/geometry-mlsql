@@ -2,12 +2,10 @@ package com.geominfo.mlsql.service.datasource.impl;
 
 import com.geominfo.mlsql.domain.vo.JDBCD;
 import com.geominfo.mlsql.service.datasource.DataSourceService;
-import com.geominfo.mlsql.utils.metadb.meta.core.MetaLoader;
-import com.geominfo.mlsql.utils.metadb.meta.core.MetaLoaderImpl;
-import com.zaxxer.hikari.HikariDataSource;
+import com.geominfo.mlsql.service.metadb.meta.core.MetaLoader;
+import com.geominfo.mlsql.service.metadb.meta.core.MetaLoaderImpl;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +13,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -34,34 +31,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     public MetaLoader getMetaLoader(JDBCD jdbcd) {
         MetaLoader metaLoader = null;
         try {
-            HikariDataSource hikariDataSource = new HikariDataSource();
-            hikariDataSource.setJdbcUrl(jdbcd.getUrl());
-            hikariDataSource.setUsername(jdbcd.getUser());
-            hikariDataSource.setPassword(jdbcd.getPassword());
-            hikariDataSource.setDriverClassName(jdbcd.getDriver());
-            //解决oracle读取不到REMARKS表注解设置
-            if ("oracle".equals(jdbcd.getJType().toLowerCase())){
-                Properties properties = new Properties();
-                properties.setProperty("remarks", "true");
-                properties.setProperty("useInformationSchema", "true");
-                hikariDataSource.setDataSourceProperties(properties);
-            }
-            // 最小空闲连接数量
-            hikariDataSource.setMinimumIdle(5);
-            // 空闲连接存活最大时间，默认600000（10分钟）
-            hikariDataSource.setIdleTimeout(180000);
-            // 连接池最大连接数，默认是10
-            hikariDataSource.setMaximumPoolSize(50);
-            // 此属性控制从池返回的连接的默认自动提交行为,默认值：true
-            hikariDataSource.setAutoCommit(true);
-            // 连接池名称
-            hikariDataSource.setPoolName("MyHikariCP");
-            // 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
-            hikariDataSource.setMaxLifetime(1800000);
-            // 数据库连接超时时间,默认30秒，即30000
-            hikariDataSource.setConnectionTimeout(30000);
-
-            metaLoader = (MetaLoader) new MetaLoaderImpl(hikariDataSource);
+            metaLoader = new MetaLoaderImpl(jdbcd);
         } catch (Exception e) {
             log.error("获取数据源异常：[{}]", e);
             e.printStackTrace();

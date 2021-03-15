@@ -1,18 +1,13 @@
 package com.geominfo.mlsql.service.base;
 
-import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import com.geominfo.mlsql.service.proxy.ProxyService;
-import com.geominfo.mlsql.service.user.UserService;
 import com.geominfo.mlsql.utils.CommandUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @program: springboot_console_test

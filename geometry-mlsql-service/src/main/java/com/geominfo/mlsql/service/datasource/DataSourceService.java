@@ -1,12 +1,9 @@
 package com.geominfo.mlsql.service.datasource;
 
 import com.geominfo.mlsql.domain.vo.JDBCD;
-import com.geominfo.mlsql.utils.metadb.meta.core.MetaLoader;
-import com.geominfo.mlsql.utils.metadb.util.ResultSetExtractor;
+import com.geominfo.mlsql.service.metadb.meta.core.MetaLoader;
 
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

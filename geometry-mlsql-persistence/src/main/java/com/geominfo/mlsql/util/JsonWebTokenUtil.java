@@ -2,7 +2,6 @@ package com.geominfo.mlsql.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geominfo.mlsql.domain.vo.JwtAccount;
-import com.geominfo.mlsql.domain.vo.MlsqlUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultHeader;
 import io.jsonwebtoken.impl.DefaultJwsHeader;
