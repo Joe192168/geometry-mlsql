@@ -1,8 +1,8 @@
 package com.geominfo.mlsql.config;
 
 import com.geominfo.mlsql.encoder.LoginPasswordEncoder;
-import com.geominfo.mlsql.exception.JWTAccessDeniedHandler;
-import com.geominfo.mlsql.exception.JWTAuthenticationEntryPoint;
+import com.geominfo.mlsql.handler.JWTAccessDeniedHandler;
+import com.geominfo.mlsql.handler.JWTAuthenticationEntryPoint;
 import com.geominfo.mlsql.filter.JWTAuthenticationFilter;
 import com.geominfo.mlsql.filter.JWTAuthorizationFilter;
 import com.geominfo.mlsql.filter.TokenAuthenticationFilter;

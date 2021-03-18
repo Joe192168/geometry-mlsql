@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.exception;
+package com.geominfo.mlsql.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.geominfo.mlsql.commons.Result;
