@@ -6,17 +6,14 @@ import org.slf4j.LoggerFactory;
 import java.security.MessageDigest;
 
 /**
- * @program: geometry-bi
- * @description: MD5工具类
- * @author: 肖乔辉
- * @create: 2019-05-23 19:02
- * @version: 1.0.0
+ * MD5加密工具
+ *
  */
 public class MD5Util {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MD5Util.class);
 
-    public static String md5(String content) {
+    public static String encode(String content) {
         // 用于加密的字符
         char[] md5String = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
         try {

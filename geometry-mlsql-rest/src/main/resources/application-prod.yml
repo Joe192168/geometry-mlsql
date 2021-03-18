@@ -20,11 +20,6 @@ license:
   storePass: abc123456
   publicKeysStorePath: /publiccerts.store
 
-#白名单
+#配置不需要认证的接口(白名单)
 ignore:
-  urls:
-    /api/**,
-    /dealFilterChain/**,
-    /biApi/**,
-    /schema/**,
-    /dataSource/**
+  urls: /index/**,/login/**,/favicon.ico,*.html,/index,/perm/**

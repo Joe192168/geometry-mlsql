@@ -51,7 +51,6 @@
 		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
 		<fastjson.version>1.2.47</fastjson.version>
 		<jwt.version>0.9.1</jwt.version>
-		<shiro.version>1.4.0</shiro.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
 		<spring-cloud.version>Hoxton.SR3</spring-cloud.version>
@@ -89,20 +88,6 @@
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
-			</plugin>
-			<!--scala编译插件-->
-			<plugin>
-				<groupId>org.scala-tools</groupId>
-				<artifactId>maven-scala-plugin</artifactId>
-				<version>${maven-scala-plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
