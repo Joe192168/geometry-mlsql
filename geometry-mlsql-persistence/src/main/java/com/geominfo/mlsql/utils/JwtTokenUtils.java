@@ -23,7 +23,7 @@ public class JwtTokenUtils implements Serializable {
     private static String SECRET = "secret";
 
     // 过期时间是3600秒，既是1个小时
-    private static Long EXPIRATION = 3600000L;
+    private static Long EXPIRATION = 3600L;
 
     // 选择了记住我之后的过期时间为7天
     private static final Long EXPIRATION_REMEMBER = 604800L;

@@ -50,14 +50,14 @@ public class Message {
         this.addMeta("success",Boolean.TRUE);
         this.addMeta("code",statusCode);
         this.addMeta("msg",statusMsg);
-        this.addMeta("timestamp",new Timestamp(new Date().getTime()));
+        this.addMeta("timestamp",System.currentTimeMillis() / 1000);
         return this;
     }
     public Message error(int statusCode,String statusMsg) {
         this.addMeta("success",Boolean.FALSE);
         this.addMeta("code",statusCode);
         this.addMeta("msg",statusMsg);
-        this.addMeta("timestamp",new Timestamp(new Date().getTime()));
+        this.addMeta("timestamp",System.currentTimeMillis() / 1000);
         return this;
     }
 
@@ -65,7 +65,7 @@ public class Message {
         this.addMeta("success",Boolean.TRUE);
         this.addMeta("code",200);
         this.addMeta("msg","操作成功");
-        this.addMeta("timestamp",new Timestamp(new Date().getTime()));
+        this.addMeta("timestamp",System.currentTimeMillis() / 1000);
         return this;
     }
 
@@ -74,7 +74,7 @@ public class Message {
         this.addMeta("success",Boolean.FALSE);
         this.addMeta("code",500);
         this.addMeta("msg","操作失败");
-        this.addMeta("timestamp",new Timestamp(new Date().getTime()));
+        this.addMeta("timestamp",System.currentTimeMillis() / 1000);
         return this;
     }
 
@@ -82,7 +82,7 @@ public class Message {
         this.addMeta("success",Boolean.TRUE);
         this.addMeta("code", HttpStatus.SC_OK);
         this.addMeta("msg",statusMsg);
-        this.addMeta("timestamp",new Timestamp(new Date().getTime()));
+        this.addMeta("timestamp",System.currentTimeMillis() / 1000);
         return this;
     }
 
@@ -90,7 +90,7 @@ public class Message {
         this.addMeta("success",Boolean.FALSE);
         this.addMeta("code",HttpStatus.SC_INTERNAL_SERVER_ERROR);
         this.addMeta("msg",statusMsg);
-        this.addMeta("timestamp",new Timestamp(new Date().getTime()));
+        this.addMeta("timestamp",System.currentTimeMillis() / 1000);
         return this;
     }
 

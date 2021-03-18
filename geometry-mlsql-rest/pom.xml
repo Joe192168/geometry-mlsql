@@ -15,6 +15,15 @@
 	<name>geometry-mlsql-rest</name>
 	<description>Demo project for Spring Boot</description>
 
+	<properties>
+		<!-- docker镜像的前缀 -->
+		<docker.image.prefix>jhsz</docker.image.prefix>
+		<!-- docker私服地址,Harbor配置完默认地址就是80,默认不带端口号。这块地址是根据私服的数字证书注册的域名或ip -->
+		<docker.repostory>harbor.centos123.com</docker.repostory>
+		<!--项目名,需要和Harbor中的项目名称保持一致 -->
+		<docker.registry.name>test</docker.registry.name>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.geominfo.mlsql</groupId>
@@ -31,11 +40,58 @@
 
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
-			<!-- springboot maven插件-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!--使用docker-maven-plugin插件-->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<!--将插件绑定在某个phase执行-->
+				<executions>
+					<execution>
+						<id>build-image</id>
+						<!--用户只需执行mvn package ，就会自动执行mvn docker:build-->
+						<phase>package</phase>
+						<!--<goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>-->
+					</execution>
+				</executions>
+				<configuration>
+					<serverId>my-hub</serverId>
+					<!-- 指定 Dockerfile 路径-->
+					<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+					<registryUrl>http://${docker.repostory}</registryUrl>
+					<!--Building image 192.168.0.11/test-->
+					<imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:latest</imageName>
+					<!--必须配置dockerHost标签（除非配置系统环境变量DOCKER_HOST）-->
+					<dockerHost>http://${docker.repostory}:2375</dockerHost>
+					<rm>true</rm>
+					<!--指定标签-->
+					<imageTags>
+						<imageTag>latest</imageTag>
+					</imageTags>
+					<!-- 是否有push的功能 true代表有 -->
+					<pushImage>true</pushImage>
+					<!-- push后是否覆盖已存在的标签镜像 -->
+					<forceTags>true</forceTags>
+					<!-- 这里是复制 jar 包到 docker 容器指定目录配置 -->
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<!--jar 包所在的路径  此处配置的 即对应 target 目录-->
+							<directory>${project.build.directory}</directory>
+							<!-- 需要包含的 jar包 ，这里对应的是 Dockerfile中添加的文件名　-->
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
