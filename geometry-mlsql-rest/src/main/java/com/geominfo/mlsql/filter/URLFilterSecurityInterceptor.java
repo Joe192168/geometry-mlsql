@@ -23,6 +23,7 @@ public class URLFilterSecurityInterceptor extends AbstractSecurityInterceptor im
     @Autowired
     private FilterInvocationSecurityMetadataSource securityMetadataSource;
 
+    //权限管理决断器
     @Autowired
     public void setMyAccessDecisionManager(URLAccessDecisionManager urlAccessDecisionManager) {
         super.setAccessDecisionManager(urlAccessDecisionManager);
