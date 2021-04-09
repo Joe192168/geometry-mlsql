@@ -29,13 +29,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        httpServletResponse.setContentType("application/json");
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
         String authorization = httpServletRequest.getHeader("Authorization");
         // 放行GET请求
-        if (httpServletRequest.getMethod().equals(String.valueOf(RequestMethod.GET))) {
+        /*if (httpServletRequest.getMethod().equals(String.valueOf(RequestMethod.GET))) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
-        }
+        }*/
         if (StringUtils.isEmpty(authorization)) { // 未提供Token
             httpServletResponse.getWriter().write(JSON.toJSONString(new Result(ResultCode.UNAUTHORISE,"未提供令牌")));
             return;
