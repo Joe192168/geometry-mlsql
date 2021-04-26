@@ -23,16 +23,16 @@ import org.springframework.web.client.RestTemplate;
  */
 @Service
 public class MlsqlServiceImpl implements MlsqlService {
-    @Value("${my_url.mlsqlUrl}")
+    @Value(value = "${my_url.mlsqlUrl}")
     String url;
 
-    String runningJobUrl = url + "/runningjobs";
+    String runningJobUrl = "/runningjobs";
 
-    String engineUrl = url + "/health/liveness";
+    String engineUrl = "/health/liveness";
 
-    String executeUrl = url + "/run/script";
+    String executeUrl = "/run/script";
 
-    String killJobUrl = url + "/killjob";
+    String killJobUrl = "/killjob";
 
     @Autowired
     @Qualifier("RestTemplateBean")
@@ -68,7 +68,7 @@ public class MlsqlServiceImpl implements MlsqlService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<String> entity = restTemplate.postForEntity(executeUrl, request, String.class);
+        ResponseEntity<String> entity = restTemplate.postForEntity(url + executeUrl, request, String.class);
         if (entity.getStatusCode().is2xxSuccessful()) {
             if (mlsqlExecuteSqlVO.getAsync()) {
                 return null;
@@ -81,7 +81,7 @@ public class MlsqlServiceImpl implements MlsqlService {
 
     @Override
     public JSONObject getAllExecuteJobs() {
-        ResponseEntity<JSONObject> Entity = restTemplate.getForEntity(runningJobUrl,JSONObject.class);
+        ResponseEntity<JSONObject> Entity = restTemplate.getForEntity(url + runningJobUrl,JSONObject.class);
         if (Entity.getStatusCode().is2xxSuccessful()) {
             return Entity.getBody();
         }else {
@@ -102,7 +102,7 @@ public class MlsqlServiceImpl implements MlsqlService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<String> entity = restTemplate.postForEntity(killJobUrl, request, String.class);
+        ResponseEntity<String> entity = restTemplate.postForEntity(url + killJobUrl, request, String.class);
 
         if (entity.getStatusCode().is2xxSuccessful()) {
             return entity.getBody();
@@ -113,7 +113,7 @@ public class MlsqlServiceImpl implements MlsqlService {
 
     @Override
     public JSONObject getEngineState() {
-        ResponseEntity<JSONObject> Entity = restTemplate.getForEntity(engineUrl,JSONObject.class);
+        ResponseEntity<JSONObject> Entity = restTemplate.getForEntity(url + engineUrl,JSONObject.class);
         if (Entity.getStatusCode().is2xxSuccessful()) {
             return Entity.getBody();
         }else {
