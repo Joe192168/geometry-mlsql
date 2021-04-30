@@ -54,6 +54,7 @@
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
 		<spring-cloud.version>Hoxton.SR3</spring-cloud.version>
+		<hadoop-version>3.1.0</hadoop-version>
 	</properties>
 
 	<dependencyManagement>

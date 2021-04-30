@@ -104,6 +104,10 @@ cluster:
 my_url:
   url: http://192.168.20.209:9002
   url2: http://localhost:9002
+  mlsqlUrl: http://192.168.0.202:9003
+
+hdfs:
+  hdfsServer: hdfs://192.168.0.207:8020
 
 cloud:
   url:
