@@ -1,7 +1,7 @@
 package com.geominfo.mlsql.services;
 
 import com.alibaba.fastjson.JSONObject;
-import com.geominfo.mlsql.domain.VO.MlsqlExecuteSqlVO;
+import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
 
 /**
  * @Auther zrd

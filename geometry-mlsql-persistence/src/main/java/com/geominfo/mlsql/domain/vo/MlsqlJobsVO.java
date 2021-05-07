@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.domain.VO;
+package com.geominfo.mlsql.domain.vo;
 
 import lombok.Data;
 
@@ -16,11 +16,12 @@ public class MlsqlJobsVO {
     private String groupId;
     private Long startTime;
     private Long timeout;
+    private Progress progress;
 
-/*    @Data
-    public static class progress {
+    @Data
+    public static class Progress {
         private int totalJob;
         private int currentJobIndex;
         private String script;
-    }*/
+    }
 }

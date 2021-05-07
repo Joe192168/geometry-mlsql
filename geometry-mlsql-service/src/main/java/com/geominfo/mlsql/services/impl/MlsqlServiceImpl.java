@@ -2,7 +2,7 @@ package com.geominfo.mlsql.services.impl;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.geominfo.mlsql.domain.VO.MlsqlExecuteSqlVO;
+import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
 import com.geominfo.mlsql.services.MlsqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

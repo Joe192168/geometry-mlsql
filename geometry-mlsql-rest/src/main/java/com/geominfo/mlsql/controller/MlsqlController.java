@@ -3,14 +3,15 @@ package com.geominfo.mlsql.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.constant.ExceptionMsgConstant;
 import com.geominfo.mlsql.commons.Message;
-import com.geominfo.mlsql.domain.VO.MlsqlExecuteSqlVO;
+import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
+import com.geominfo.mlsql.domain.vo.MlsqlJobsVO;
 import com.geominfo.mlsql.services.MlsqlService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * @title: MlsqlController
@@ -68,5 +69,20 @@ public class MlsqlController {
             log.error("getEngineState : {}",e.getMessage());
             return new Message().error(ExceptionMsgConstant.MLSQL_NOT_RESPONSE);
         }
+    }
+
+    /***
+     * @Description: 异步回调接口
+     * @Author: zrd
+     * @Date: 2021/5/6 14:16
+     * @param
+     * @param
+     * @return com.geominfo.mlsql.commons.Message
+     */
+    @PostMapping("/asyncCallback")
+    public void asyncCallback(@RequestParam("jobInfo") String jobInfo){
+        MlsqlJobsVO mlsqlJobsVO = JSONObject.parseObject(jobInfo, MlsqlJobsVO.class);
+        System.out.println(mlsqlJobsVO.toString());
+        System.out.println(jobInfo);
     }
 }

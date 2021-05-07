@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.domain.VO;
+package com.geominfo.mlsql.domain.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
