@@ -19,7 +19,7 @@ public class JasyptTest {
         //加密所需的秘钥
         textEncryptor.setPassword("geometry-mlsql");
         //要加密的数据（数据库的用户名或密码）
-        String password = textEncryptor.encrypt("123456");
+        String password = textEncryptor.encrypt("jhsz0603");
         System.out.println("password:"+password);
     }
 }

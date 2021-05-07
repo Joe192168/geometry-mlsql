@@ -1,16 +1,16 @@
 # 开发环境配置(配置项只包括环境不同项)
 spring:
   datasource:
-    url: jdbc:mysql://192.168.0.47:3306/mlsql_console2?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-    username: root
-    password: ENC(NB2lV8hnECAOlNa5Dl+TVA==)
+    url: jdbc:postgresql://biserver:5432/mlsql_engine
+    username: postgres
+    password: ENC(jNMW0YbAdoH0eDWVEXxG+JnBpx24v9v6)
   redis:
     # 服务器IP地址
     host: biserver
     # 连接端口
     port: 6379
     # Redis服务器连接密码（默认为空）
-    password:
+    password: ENC(jNMW0YbAdoH0eDWVEXxG+JnBpx24v9v6)
 
 #配置不需要认证的接口(白名单)
 ignore:

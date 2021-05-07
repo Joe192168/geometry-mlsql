@@ -1,0 +1,14 @@
+package com.geominfo.mlsql;
+
+import com.geominfo.mlsql.utils.JwtTokenUtils;
+import io.jsonwebtoken.Claims;
+
+public class JwtTest {
+
+    public static void main(String[] args) {
+        String token = "eyJhbGciOiJIUzI1NiIsInppcCI6IkRFRiJ9.eNps1stqFGEUhdF3KRxm0P8-Vf_FVxEHnaTFgBrJBZSQd7fFoWtYm6L7fNRkvW0Pz8_bx-1osy7n3o-7L3M_3d6vc1t3-7pcbnvGavt2sz2_3l5fPN9_f_jxoV2fL79-bh9bb_04-injZrt7upxfLvf_xrbXzMjab7anx2-X6398etvOry9fH58eXn5ff6id2t6295v_13AtrjvXg2vnOrhOrkvrceLKtoNtB9sOth1sO9h2sO1g28G2zrbOts62zrbOts62zrbOts62zrbBtsG2wbbBtsG2wbbBtsG2wbbBtsm2ybbJtsm2ybbJtsm2ybbJtsm2xbbFtsW2xbbFtsW2xbbFtsW2pbacTlwb13AtrjvXg2vnOrhOrmxrbGtsa2xrbGtsa2xrbGtsa6wIK8J7w3vDe8N7w3vDe8NvEVYUK4rfothWbCu2FduKbcW2YluxbWcbrRFaI7RGaI3QGqE1QmuE1gitEVojtEZojdAaoTVCa4TWCK0RWiO0RmiN0BqhNUJrhNYIrRFaI7RGaI3QGqE1QmuE1gitEVojtEZojdAaoTVCa4TWCK0RWiO0RmiN0BqhNUJrhNYIrRFaI7RGaI3QGqE1QmuE1gitEVojtEbRGkVrFK1RtEbRGkVrFK1RtEbRGkVrFK1RtEbRGkVrFK1RtEbRGkVrVGMbBVIUSIVtdEnRJUWXFF1SdEnRJUWXFF1SdEnRJUWXFF1SdEnRJUWXFF1SdEnRJUWXFF1SdEnRJfXXJZ_f_wAAAP__.I6yTDrgG7sLuWm7WawHAVgzWJYKf3gHcljRxcAMKUJo";
+        Claims claims = JwtTokenUtils.getAllClaimsFromToken(token);
+        System.out.println(claims);
+    }
+
+}

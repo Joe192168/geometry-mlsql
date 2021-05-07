@@ -10,8 +10,8 @@ spring:
     active: dev  #激活的配置文件
   #连接池配置
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    platform: mysql
+    driver-class-name: org.postgresql.Driver
+    platform: postgres
     type: com.alibaba.druid.pool.DruidDataSource
     # 下面为连接池的补充设置，应用到上面所有数据源中
     # 初始化大小，最小，最大
@@ -121,7 +121,7 @@ user:
 #pagehelper分页插件
 #reasonable分页参数合理化，3.3.0以上版本可用，默认是false。 启用合理化时，如果pageNum<1会查询第一页，如果pageNum>pages会查询最后一页； 禁用合理化时，如果pageNum<1或pageNum>pages会返回空数据。
 pagehelper:
-  helperDialect: mysql
+  helperDialect: postgresql
   reasonable: false
   supportMethodsArguments: true
   params: count=countSql
