@@ -195,10 +195,10 @@ public class MlsqlServiceImpl implements MlsqlService {
             tScriptExecLog.setJobId(jobInfo.getGroupId());
             tScriptExecLog.setScriptContent(jobInfo.getJobContent());
             tScriptExecLog.setExecStatus(map.get("stat"));
-            tScriptExecLog.setOperatorTime(jobInfo.getStartTime());
             tScriptExecLog.setKeyMsg(map.get("msg"));
+            tScriptExecLog.setJobName(jobInfo.getJobName());
             tScriptExecLog.setJobType(jobInfo.getJobType());
-            tScriptExecLogDao.update(tScriptExecLog,new UpdateWrapper<TScriptExecLog>().eq("job_id",tScriptExecLog.getJobName()));
+            tScriptExecLogDao.update(tScriptExecLog,new UpdateWrapper<TScriptExecLog>().eq("job_name",tScriptExecLog.getJobName()));
 
         }
     }
