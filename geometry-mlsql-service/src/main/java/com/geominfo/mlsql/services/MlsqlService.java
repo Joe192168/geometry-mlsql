@@ -2,6 +2,9 @@ package com.geominfo.mlsql.services;
 
 import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
+import org.bouncycastle.asn1.cmc.BodyPartID;
+
+import java.util.Map;
 
 /**
  * @Auther zrd
@@ -45,4 +48,13 @@ public interface MlsqlService {
      * @return com.alibaba.fastjson.JSONObject
      */
     JSONObject getEngineState();
+
+    /***
+     * @Description: 处理异步回调接口入库
+     * @Author: zrd
+     * @Date: 2021/5/8 13:55
+     * @param map 异步回调返回值
+     * @return void
+     */
+    void dealAsyncCallback(Map<String,String> map);
 }

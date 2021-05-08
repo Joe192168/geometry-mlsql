@@ -4,14 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.geominfo.mlsql.constant.ExceptionMsgConstant;
 import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
-import com.geominfo.mlsql.domain.vo.MlsqlJobsVO;
 import com.geominfo.mlsql.services.MlsqlService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+
+import java.util.Map;
 
 /**
  * @title: MlsqlController
@@ -80,9 +79,8 @@ public class MlsqlController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @PostMapping("/asyncCallback")
-    public void asyncCallback(@RequestParam("jobInfo") String jobInfo){
-        MlsqlJobsVO mlsqlJobsVO = JSONObject.parseObject(jobInfo, MlsqlJobsVO.class);
-        System.out.println(mlsqlJobsVO.toString());
-        System.out.println(jobInfo);
+    public void asyncCallback(@RequestParam Map<String,String> map){
+        mlsqlService.dealAsyncCallback(map);
     }
+
 }

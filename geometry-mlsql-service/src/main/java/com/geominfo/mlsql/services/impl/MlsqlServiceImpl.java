@@ -1,8 +1,15 @@
 package com.geominfo.mlsql.services.impl;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.geominfo.mlsql.dao.TScriptExecLogDao;
+import com.geominfo.mlsql.dao.TScriptExecMetricLogDao;
+import com.geominfo.mlsql.domain.po.TScriptExecLog;
+import com.geominfo.mlsql.domain.po.TScriptExecMetricLog;
 import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
+import com.geominfo.mlsql.domain.vo.MlsqlJobsVO;
 import com.geominfo.mlsql.services.MlsqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,10 +19,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+import springfox.documentation.service.ApiListing;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * @title: MlsqlServiceImpl
@@ -37,6 +49,12 @@ public class MlsqlServiceImpl implements MlsqlService {
     @Autowired
     @Qualifier("RestTemplateBean")
     private RestTemplate restTemplate;
+
+    @Autowired
+    private TScriptExecLogDao tScriptExecLogDao;
+
+    @Autowired
+    private TScriptExecMetricLogDao tScriptExecMetricLogDao;
 
     @Override
     public String executeMlsql(MlsqlExecuteSqlVO mlsqlExecuteSqlVO) {
@@ -119,5 +137,75 @@ public class MlsqlServiceImpl implements MlsqlService {
         }else {
             return null;
         }
+    }
+
+    @Override
+    @Transactional
+    public void dealAsyncCallback(Map<String, String> map) {
+        String stat = map.get("stat");
+        if (stat.equals("succeeded")) {
+            TScriptExecLog tScriptExecLog = new TScriptExecLog();
+            tScriptExecLog.setExecResult(map.get("res"));
+            MlsqlJobsVO jobInfo = JSONObject.parseObject(map.get("jobInfo"), MlsqlJobsVO.class);
+            tScriptExecLog.setJobId(jobInfo.getGroupId());
+            tScriptExecLog.setScriptContent(jobInfo.getJobContent());
+            tScriptExecLog.setExecStatus(map.get("stat"));
+            tScriptExecLog.setJobType(jobInfo.getJobType());
+            tScriptExecLog.setFinishTime(new Date());
+            tScriptExecLog.setJobName(jobInfo.getJobName());
+            tScriptExecLogDao.update(tScriptExecLog,new UpdateWrapper<TScriptExecLog>().eq("job_name",tScriptExecLog.getJobName()));
+
+            //根据groupId再次请求获取activeJobs
+            JSONArray activeJobsByGroupId = getActiveJobsByGroupId(jobInfo.getGroupId());
+            JSONObject jsonObject = (JSONObject) activeJobsByGroupId.get(0);
+            Integer jobsCount = jsonObject.getJSONArray("activeJobs").size();
+            Integer taskCount = 0;
+            Integer stageCount = 0;
+            if (jobsCount > 1 ) {
+                JSONArray activeJobs = jsonObject.getJSONArray("activeJobs");
+                for (Object activeJob : activeJobs) {
+                    JSONObject activeJob1 = (JSONObject) activeJob;
+                    Integer numTasks = (Integer) activeJob1.get("numTasks");
+                    taskCount += numTasks;
+
+                    JSONArray jsonArray = (JSONArray) activeJob1.get("mLSQLScriptJobStage");
+                    stageCount += jsonArray.size();
+                }
+            }else {
+                JSONArray activeJobs = jsonObject.getJSONArray("activeJobs");
+                JSONObject jsonObject1 = (JSONObject) activeJobs.get(0);
+                taskCount =  (Integer)jsonObject1.get("numTasks");
+                JSONArray jsonArray = (JSONArray) jsonObject1.get("mLSQLScriptJobStage");
+                stageCount = jsonArray.size();
+            }
+
+
+            //插入运行指标表
+            TScriptExecMetricLog tScriptExecMetricLog = new TScriptExecMetricLog();
+            tScriptExecMetricLog.setJobId(jobInfo.getGroupId());
+            tScriptExecMetricLog.setExplainMsg(map.get("explainMsg"));
+            tScriptExecMetricLog.setCreateTime(jobInfo.getStartTime());
+            tScriptExecMetricLog.setSparkUiJobCnt(jobsCount);
+            tScriptExecMetricLog.setSparkUiStageCnt(stageCount);
+            tScriptExecMetricLog.setSparkUiTaskCnt(taskCount);
+            tScriptExecMetricLogDao.insert(tScriptExecMetricLog);
+        }else {
+            TScriptExecLog tScriptExecLog = new TScriptExecLog();
+            MlsqlJobsVO jobInfo = JSONObject.parseObject(map.get("jobInfo"), MlsqlJobsVO.class);
+            tScriptExecLog.setJobId(jobInfo.getGroupId());
+            tScriptExecLog.setScriptContent(jobInfo.getJobContent());
+            tScriptExecLog.setExecStatus(map.get("stat"));
+            tScriptExecLog.setOperatorTime(jobInfo.getStartTime());
+            tScriptExecLog.setKeyMsg(map.get("msg"));
+            tScriptExecLog.setJobType(jobInfo.getJobType());
+            tScriptExecLogDao.update(tScriptExecLog,new UpdateWrapper<TScriptExecLog>().eq("job_id",tScriptExecLog.getJobName()));
+
+        }
+    }
+
+    public JSONArray getActiveJobsByGroupId(String groupId) {
+        MlsqlExecuteSqlVO mlsqlExecuteSqlVO = new MlsqlExecuteSqlVO();
+        mlsqlExecuteSqlVO.setSql("load _mlsql_.`jobs/v3/"+groupId+"` as wow;");
+        return JSONObject.parseObject(executeMlsql(mlsqlExecuteSqlVO),JSONArray.class);
     }
 }
