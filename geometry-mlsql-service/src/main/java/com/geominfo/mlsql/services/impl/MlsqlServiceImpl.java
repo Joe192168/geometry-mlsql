@@ -3,14 +3,21 @@ package com.geominfo.mlsql.services.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.geominfo.mlsql.constant.systemidentification.SystemCustomIdentification;
 import com.geominfo.mlsql.dao.TScriptExecLogDao;
 import com.geominfo.mlsql.dao.TScriptExecMetricLogDao;
+import com.geominfo.mlsql.dao.TSystemResourcesDao;
 import com.geominfo.mlsql.domain.po.TScriptExecLog;
 import com.geominfo.mlsql.domain.po.TScriptExecMetricLog;
+import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
 import com.geominfo.mlsql.domain.vo.MlsqlJobsVO;
 import com.geominfo.mlsql.services.MlsqlService;
+import com.geominfo.mlsql.utils.TreeDataProcessor;
+import com.geominfo.mlsql.utils.TreeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +31,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import springfox.documentation.service.ApiListing;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +64,9 @@ public class MlsqlServiceImpl implements MlsqlService {
 
     @Autowired
     private TScriptExecMetricLogDao tScriptExecMetricLogDao;
+
+    @Autowired
+    private TSystemResourcesDao tSystemResourcesDao;
 
     @Override
     public String executeMlsql(MlsqlExecuteSqlVO mlsqlExecuteSqlVO) {
@@ -208,4 +220,31 @@ public class MlsqlServiceImpl implements MlsqlService {
         mlsqlExecuteSqlVO.setSql("load _mlsql_.`jobs/v3/"+groupId+"` as wow;");
         return JSONObject.parseObject(executeMlsql(mlsqlExecuteSqlVO),JSONArray.class);
     }
+
+    @Override
+    public List<TreeVo<TSystemResources>> listTreeByParentId(BigDecimal resourceTypeId) {
+        TSystemResources tSystemResources = tSystemResourcesDao.selectOne(new QueryWrapper<TSystemResources>().eq("resource_type_id", resourceTypeId).isNull("parentid"));
+        List<TSystemResources> tSystemResources1 = tSystemResourcesDao.listByParentId(tSystemResources.getId());
+        TreeDataProcessor t = TreeDataProcessor.getInstance();
+        //通过java进行树排序封装
+        List<TreeVo<TSystemResources>> treeList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(tSystemResources1)) {
+            treeList = t.getTreeVoList(tSystemResources1, SystemCustomIdentification.TREE_ID, SystemCustomIdentification.TREE_NAME, SystemCustomIdentification.TREE_PARENT_ID);
+        }
+        return treeList;
+    }
+
+    @Override
+    public TSystemResources getScriptByRoute(String scriptRoute) {
+        TSystemResources systemResources = tSystemResourcesDao.selectOne(new QueryWrapper<TSystemResources>().eq("description", scriptRoute));
+        return systemResources;
+    }
+
+    @Override
+    public TSystemResources getScriptById(BigDecimal id) {
+        TSystemResources systemResources = tSystemResourcesDao.selectOne(new QueryWrapper<TSystemResources>().eq("id", id));
+        return systemResources;
+    }
+
+
 }

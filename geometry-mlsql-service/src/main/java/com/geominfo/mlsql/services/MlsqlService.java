@@ -1,9 +1,13 @@
 package com.geominfo.mlsql.services;
 
 import com.alibaba.fastjson.JSONObject;
+import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
+import com.geominfo.mlsql.utils.TreeVo;
 import org.bouncycastle.asn1.cmc.BodyPartID;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,4 +61,31 @@ public interface MlsqlService {
      * @return void
      */
     void dealAsyncCallback(Map<String,String> map);
+
+    /***
+     * @Description: 根据父节点ID获取该父节点下所有资源
+     * @Author: zrd
+     * @Date: 2021/5/12 16:40
+     * @param
+     * @return java.util.List<com.geominfo.mlsql.utils.TreeVo<com.geominfo.mlsql.domain.po.TSystemResources>>
+     */
+    List<TreeVo<TSystemResources>> listTreeByParentId(BigDecimal resourceTypeId);
+
+    /***
+     * @Description: 根据脚本路径获取脚本内容
+     * @Author: zrd
+     * @Date: 2021/5/12 17:03
+     * @param scriptRoute 脚本路径
+     * @return com.geominfo.mlsql.domain.po.TSystemResources
+     */
+    TSystemResources getScriptByRoute(String scriptRoute);
+
+    /***
+     * @Description: 根据id获取脚本内容
+     * @Author: zrd
+     * @Date: 2021/5/12 17:19
+     * @param id
+     * @return com.geominfo.mlsql.domain.po.TSystemResources
+     */
+    TSystemResources getScriptById(BigDecimal id);
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geominfo.mlsql.dao.TSystemResourcesDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.TSystemResources">
+        <id column="id" property="id"/>
+        <result column="parentid" property="parentid"/>
+        <result column="resource_type_id" property="resourceTypeId"/>
+        <result column="resource_name" property="resourceName"/>
+        <result column="display_name" property="displayName"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="description" property="description"/>
+        <result column="display_img" property="displayImg"/>
+        <result column="resource_level" property="resourceLevel"/>
+        <result column="is_inner_resource" property="isInnerResource"/>
+        <result column="owner" property="owner"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="last_editor" property="lastEditor"/>
+        <result column="resource_state" property="resourceState"/>
+        <result column="external_app_info" property="externalAppInfo"/>
+        <result column="derive_resource_id" property="deriveResourceId"/>
+        <result column="content_info" property="contentInfo"/>
+    </resultMap>
+
+    <select id="listByParentId" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
+        select tt.* from (
+        with RECURSIVE t as
+        (
+        select a.* from t_system_resources a where a.id = #{parentId}
+        union all
+        select k.*  from t_system_resources k , t where t.id =k.parentid
+        )
+        select * from t
+        ) tt
+        where 1=1 order by tt.id
+    </select>
+
+
+</mapper>
