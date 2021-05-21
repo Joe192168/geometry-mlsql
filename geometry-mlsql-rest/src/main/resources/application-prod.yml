@@ -1,7 +1,7 @@
 #生产环境配置(配置项只包括不同项)
 spring:
   datasource:
-    url: jdbc:postgresql://biserver:5432/mlsql_engine
+    url: jdbc:postgresql://192.168.0.212:5432/mlsql_engine
     username: postgres
     password: ENC(jNMW0YbAdoH0eDWVEXxG+JnBpx24v9v6)
   redis:
@@ -22,4 +22,4 @@ license:
 
 #配置不需要认证的接口(白名单)
 ignore:
-  urls: /index/**,/login/**,/favicon.ico,*.html,/index,/perm/**
+  urls: /index/**,/login/**,/favicon.ico,*.html,/index,/perm/**,/dealFilterChain/reload
