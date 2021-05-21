@@ -1,7 +1,7 @@
 package com.geominfo.mlsql.services.impl;
 
 import com.geominfo.mlsql.domain.dto.RolePermRule;
-import com.geominfo.mlsql.services.feign.FeignRoleService;
+import com.geominfo.mlsql.services.AuthApiService;
 import com.geominfo.mlsql.services.dao.IRoleDao;
 import com.geominfo.mlsql.utils.FeignUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +12,15 @@ import java.util.List;
 public class RoleDaoImpl implements IRoleDao {
 
     @Autowired
-    private FeignRoleService feignRoleSystemService;
+    private AuthApiService authApiService;
 
     @Override
     public List<RolePermRule> queryRolePermRule(Integer systemId) {
-        return FeignUtils.parseArray(feignRoleSystemService.getSystemRoles(systemId),RolePermRule.class);
+        return FeignUtils.parseArray(authApiService.getSystemRoles(systemId),RolePermRule.class);
     }
 
     @Override
     public String getUserRole(String loginName) {
-        return FeignUtils.parseString(feignRoleSystemService.getUserRole(loginName));
+        return FeignUtils.parseString(authApiService.getUserRole(loginName));
     }
 }

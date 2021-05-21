@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import com.geominfo.mlsql.domain.dto.JwtUser;
 import com.geominfo.mlsql.domain.pojo.User;
+import com.geominfo.mlsql.services.AuthApiService;
 import com.geominfo.mlsql.services.dao.IRoleDao;
 import com.geominfo.mlsql.services.dao.IUserDao;
+import com.geominfo.mlsql.utils.FeignUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,14 +26,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private IRoleDao iRoleDao;
 
+    @Autowired
+    private AuthApiService authApiService;
+
     @Override
     public UserDetails loadUserByUsername(String loginName) throws UsernameNotFoundException {
         log.info(loginName);
-        User user = iUserDao.getUserByLoginName(loginName);
+        User user = FeignUtils.parseObject(authApiService.getUserByLoginName(loginName),User.class);
+//                iUserDao.getUserByLoginName(loginName);
         if (user != null) {
             List<String> permList = new ArrayList<>();
             //这块是获取用户权限，也可以改成RBAC（角色控制URL权限)
-            String roleStr = iRoleDao.getUserRole(user.getLoginName());
+            String roleStr = FeignUtils.parseString(authApiService.getUserRole(loginName));
+//                    iRoleDao.getUserRole(user.getLoginName());
             List<String> roleList = Arrays.asList(roleStr.split(","));
             for (String role:roleList){
                 permList.add(role);

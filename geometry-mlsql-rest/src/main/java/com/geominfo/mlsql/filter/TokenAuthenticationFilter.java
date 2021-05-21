@@ -3,9 +3,12 @@ package com.geominfo.mlsql.filter;
 import com.alibaba.fastjson.JSON;
 import com.geominfo.mlsql.commons.Result;
 import com.geominfo.mlsql.commons.ResultCode;
+
+import com.geominfo.mlsql.constant.systemidentification.SystemCustomIdentification;
 import com.geominfo.mlsql.utils.JwtTokenUtils;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
@@ -36,6 +39,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
         }*/
+
+        //TODO： 该处代码只是在开发阶段，跳过Toten校验
+        if (StringUtils.isNotBlank(SystemCustomIdentification.DEFAULT_USER)){
+            filterChain.doFilter(httpServletRequest,httpServletResponse);
+            return;
+        }
+
         if (StringUtils.isEmpty(authorization)) { // 未提供Token
             httpServletResponse.getWriter().write(JSON.toJSONString(new Result(ResultCode.UNAUTHORISE,"未提供令牌")));
             return;

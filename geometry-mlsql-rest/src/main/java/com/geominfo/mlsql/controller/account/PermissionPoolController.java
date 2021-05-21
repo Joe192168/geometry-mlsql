@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.controller;
+package com.geominfo.mlsql.controller.account;
 
 import com.geominfo.mlsql.commons.Result;
 import com.geominfo.mlsql.commons.ResultCode;
@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/account")
-@Api(value="用户账户controller",tags={"用户账户操作接口"})
-public class AccountController {
+@Api(value="权限池操作接口",tags={"权限池操作接口"})
+public class PermissionPoolController {
 
     @Autowired
     private URLFilterInvocationSecurityMetadataSourceImpl urlMetadataSource;
@@ -21,7 +20,7 @@ public class AccountController {
      * 刷新权限
      * @return
      */
-    @GetMapping(value = "/refresh")
+    @GetMapping(value = "/dealFilterChain/reload")
     public Result refresh(){
         urlMetadataSource.loadResourceDefine();
         return new Result(ResultCode.SUCCESS,"刷新权限成功");

@@ -2,7 +2,7 @@ package com.geominfo.mlsql.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.geominfo.mlsql.commons.Message;
-import com.geominfo.mlsql.commons.SystemCustomIdentification;
+import com.geominfo.mlsql.constant.systemidentification.SystemCustomIdentification;
 
 import java.util.List;
 

@@ -1,8 +1,11 @@
 package com.geominfo.mlsql.services.impl;
 
 import com.geominfo.authing.common.enums.EnumApplicationResource;
+import com.geominfo.mlsql.commons.SystemConstant;
 import com.geominfo.mlsql.domain.dto.RolePermRule;
+import com.geominfo.mlsql.services.AuthApiService;
 import com.geominfo.mlsql.services.dao.IRoleDao;
+import com.geominfo.mlsql.utils.FeignUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -26,6 +29,8 @@ public class URLFilterInvocationSecurityMetadataSourceImpl implements FilterInvo
 
     @Autowired
     private IRoleDao iRoleDao;
+    @Autowired
+    private AuthApiService authApiService;
 
     private HashMap<String, Collection<ConfigAttribute>> map =null;
 
@@ -36,7 +41,8 @@ public class URLFilterInvocationSecurityMetadataSourceImpl implements FilterInvo
         map = new HashMap<>();
         Collection<ConfigAttribute> array;
         ConfigAttribute cfg;
-        List<RolePermRule> permissions = iRoleDao.queryRolePermRule(EnumApplicationResource.BI.getResourceId());
+        List<RolePermRule> permissions = FeignUtils.parseArray(authApiService.getSystemRoles(SystemConstant.SYSTEM_ROOT),RolePermRule.class);
+//        iRoleDao.queryRolePermRule(EnumApplicationResource.BI.getResourceId());
         for(RolePermRule permission : permissions) {
             array = new ArrayList<>();
             if (StringUtils.isNoneBlank(permission.getNeedRoles())){

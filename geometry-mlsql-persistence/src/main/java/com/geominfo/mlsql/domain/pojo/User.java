@@ -18,7 +18,7 @@ public class User {
     //用户userId
     private Integer id;
     //用户的资源id
-    private Integer resourceid;
+    private Integer resourceId;
     //用户姓名
     private String userName;
     //用户拼音码

@@ -1,8 +1,8 @@
 package com.geominfo.mlsql.services.impl;
 
 import com.geominfo.mlsql.domain.pojo.User;
+import com.geominfo.mlsql.services.AuthApiService;
 import com.geominfo.mlsql.services.dao.IUserDao;
-import com.geominfo.mlsql.services.feign.FeignUserService;
 import com.geominfo.mlsql.utils.FeignUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements IUserDao {
 
     @Autowired
-    private FeignUserService feignUserService;
+    private AuthApiService authApiService;
 
     @Override
     public User getUserByLoginName(String loginName) {
-        return FeignUtils.parseObject(feignUserService.getUserByLoginName(loginName),User.class);
+        return FeignUtils.parseObject(authApiService.getUserByLoginName(loginName),User.class);
     }
 }
