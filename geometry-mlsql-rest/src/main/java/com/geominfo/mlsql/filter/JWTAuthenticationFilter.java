@@ -2,12 +2,17 @@ package com.geominfo.mlsql.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.geominfo.authing.common.utils.IdWorker;
+import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.commons.Result;
 import com.geominfo.mlsql.commons.ResultCode;
+import com.geominfo.mlsql.commons.SystemCustomIdentification;
 import com.geominfo.mlsql.domain.dto.JwtUser;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.utils.JwtTokenUtils;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -28,6 +34,11 @@ import java.io.IOException;
 */
 @Log4j2
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    @Autowired
+    private IdWorker idWorker;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     private AuthenticationManager authenticationManager;
 
@@ -83,7 +94,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 按照jwt的规定，最后请求的格式应该是 `Bearer token`
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        response.getWriter().write(JSON.toJSONString(new Result(ResultCode.SUCCESS,JwtTokenUtils.TOKEN_PREFIX + token)));
+        //获取token的唯一标识
+        String tokenId = idWorker.nextId()+"";
+        // 将签发的JWT存储到Redis： {JWT-SESSION-{appID} , jwt}
+        redisTemplate.opsForValue().set(SystemCustomIdentification.TOKEN_FOLDER+tokenId, JwtTokenUtils.TOKEN_PREFIX + token, 1800, TimeUnit.SECONDS);
+        response.getWriter().write(JSON.toJSONString(new Message().ok("登陆成功")
+                .addData("token",JwtTokenUtils.TOKEN_PREFIX + token)
+                .addData("tokenId",tokenId)));
     }
 
     /**
