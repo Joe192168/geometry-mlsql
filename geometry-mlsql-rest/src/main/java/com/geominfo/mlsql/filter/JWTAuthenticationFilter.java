@@ -3,13 +3,15 @@ package com.geominfo.mlsql.filter;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geominfo.authing.common.utils.IdWorker;
-import com.geominfo.mlsql.commons.Message;
-import com.geominfo.mlsql.commons.Result;
-import com.geominfo.mlsql.commons.ResultCode;
-import com.geominfo.mlsql.commons.SystemCustomIdentification;
+import com.geominfo.mlsql.commons.*;
 import com.geominfo.mlsql.domain.dto.JwtUser;
 import com.geominfo.mlsql.domain.pojo.User;
+import com.geominfo.mlsql.domain.vo.SystemResourceVo;
+import com.geominfo.mlsql.services.AuthApiService;
+import com.geominfo.mlsql.services.SystemPermissionService;
+import com.geominfo.mlsql.utils.FeignUtils;
 import com.geominfo.mlsql.utils.JwtTokenUtils;
+import com.geominfo.mlsql.utils.TreeVo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,6 +25,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -39,8 +43,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private IdWorker idWorker;
     @Autowired
     private StringRedisTemplate redisTemplate;
-
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private SystemPermissionService systemPermissionService;
 
     //自定义登陆路由，相当Controller里增加一个/login路由方法一样，就不需要实现登陆方法了
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -88,6 +93,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 所以就是JwtUser啦
         JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
         logger.info("jwtUser:"+jwtUser.toString());
+        //查询用户的权限树
+        List<TreeVo<SystemResourceVo>> allPermissionTrees = systemPermissionService.getAccountPermissions(jwtUser);
         String token = JwtTokenUtils.createToken(jwtUser, false);
         // 返回创建成功的token
         // 但是这里创建的token只是单纯的token
@@ -100,7 +107,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         redisTemplate.opsForValue().set(SystemCustomIdentification.TOKEN_FOLDER+tokenId, JwtTokenUtils.TOKEN_PREFIX + token, 1800, TimeUnit.SECONDS);
         response.getWriter().write(JSON.toJSONString(new Message().ok("登陆成功")
                 .addData("token",JwtTokenUtils.TOKEN_PREFIX + token)
-                .addData("tokenId",tokenId)));
+                .addData("tokenId",tokenId).addData("allPermissionTrees",allPermissionTrees)));
     }
 
     /**
