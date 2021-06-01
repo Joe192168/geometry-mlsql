@@ -36,14 +36,14 @@ public class AuthApiUrl {
     //查询人员列表分页
     public static final String USER_LIST_PAGE = "/auth_OpenApi/getUsersPage";
 
+    //操作日志记录接口url
+    public static final String OPERATION_LOG = "/auth_OpenApi/log/save";
+
+    //用户会话管理接口url
+    public static final String USER_SESSION = "/auth_OpenApi/session/save";
+
 //    //根据系统的clientId查询系统的系统标识
 //    public static final String CLIENT_ID = "/auth_OpenApi/getProductId/{clientId}";
-
-//    //操作日志记录接口url
-//    public static final String OPERATION_LOG = "/auth_OpenApi/log/save";
-//
-//    //用户会话管理接口url
-//    public static final String USER_SESSION = "/auth_OpenApi/session/save";
 //
 //    //发送消息接口
 //    public static final String SEND_MESSAGE = "/auth_OpenApi/saveSendMessage";

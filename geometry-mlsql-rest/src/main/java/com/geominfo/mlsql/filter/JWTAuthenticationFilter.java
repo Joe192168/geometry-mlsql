@@ -2,14 +2,15 @@ package com.geominfo.mlsql.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.geominfo.authing.common.enums.EnumOperateLogType;
 import com.geominfo.authing.common.utils.IdWorker;
+import com.geominfo.mlsql.aop.GeometryLogAnno;
 import com.geominfo.mlsql.commons.*;
 import com.geominfo.mlsql.domain.dto.JwtUser;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.domain.vo.SystemResourceVo;
-import com.geominfo.mlsql.services.AuthApiService;
+import com.geominfo.mlsql.domain.vo.UserPermissionInfosVo;
 import com.geominfo.mlsql.services.SystemPermissionService;
-import com.geominfo.mlsql.utils.FeignUtils;
 import com.geominfo.mlsql.utils.JwtTokenUtils;
 import com.geominfo.mlsql.utils.TreeVo;
 import lombok.extern.log4j.Log4j2;
@@ -25,7 +26,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -87,16 +87,33 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      * @throws ServletException
      */
     @Override
+    @GeometryLogAnno(operateType = EnumOperateLogType.MLSQL_LOGIN_OPERATE)
     protected void successfulAuthentication(HttpServletRequest request,HttpServletResponse response,FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
+                                            Authentication authResult) throws IOException, ServletException  {
         // 查看源代码会发现调用getPrincipal()方法会返回一个实现了`UserDetails`接口的对象
         // 所以就是JwtUser啦
         JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
         logger.info("jwtUser:"+jwtUser.toString());
-        //查询用户的权限树
-        List<TreeVo<SystemResourceVo>> allPermissionTrees = systemPermissionService.getAccountPermissions(jwtUser);
-        String token = JwtTokenUtils.createToken(jwtUser, false);
         // 返回创建成功的token
+        String token = JwtTokenUtils.createToken(jwtUser, false);
+        //获取人员的权限信息
+        UserPermissionInfosVo userPermissionInfosVos =
+                systemPermissionService.getUserPermissionInfos(token,jwtUser);
+        //用户的权限树
+        List<TreeVo<SystemResourceVo>> allPermissionTrees = null;
+        //用户信息
+        User user = userPermissionInfosVos.getUser();
+        String jwt = null;
+        if (null != userPermissionInfosVos){
+            //查询用户的权限树
+            allPermissionTrees = userPermissionInfosVos.getPermissionTrees();
+            //获取用户基本信息
+            user = userPermissionInfosVos.getUser();
+            //获取jwt
+            jwt = userPermissionInfosVos.getJwt();
+            //会话管理
+            systemPermissionService.userSession(user,jwt,token,request);
+        }
         // 但是这里创建的token只是单纯的token
         // 按照jwt的规定，最后请求的格式应该是 `Bearer token`
         response.setCharacterEncoding("UTF-8");
@@ -107,7 +124,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         redisTemplate.opsForValue().set(SystemCustomIdentification.TOKEN_FOLDER+tokenId, JwtTokenUtils.TOKEN_PREFIX + token, 1800, TimeUnit.SECONDS);
         response.getWriter().write(JSON.toJSONString(new Message().ok("登陆成功")
                 .addData("token",JwtTokenUtils.TOKEN_PREFIX + token)
-                .addData("tokenId",tokenId).addData("allPermissionTrees",allPermissionTrees)));
+                .addData("tokenId",tokenId).addData("allPermissionTrees",allPermissionTrees).addData("user",user)));
     }
 
     /**

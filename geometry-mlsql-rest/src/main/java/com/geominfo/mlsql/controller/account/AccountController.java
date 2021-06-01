@@ -1,12 +1,14 @@
 package com.geominfo.mlsql.controller.account;
 
+import com.geominfo.authing.common.enums.EnumOperateLogType;
+import com.geominfo.mlsql.aop.GeometryLogAnno;
 import com.geominfo.mlsql.base.BaseNewController;
 import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.commons.SystemCustomIdentification;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.domain.vo.QueryUserVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
-import com.geominfo.mlsql.services.AuthApiService;
+import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.utils.FeignUtils;
 import com.geominfo.mlsql.utils.RequestResponseUtil;
 import io.swagger.annotations.ApiImplicitParam;
@@ -36,15 +38,14 @@ public class AccountController extends BaseNewController {
 
 
     @Autowired
-    private AuthApiService authApiService;
+    private AuthQueryApiService authQueryApiService;
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    //    @GeometryLogAnno(operateType = EnumOperateLogType.BI_LOGOUT_OPERATE)
+    @GeometryLogAnno(operateType = EnumOperateLogType.MLSQL_EXIT_OPERATE)
     @ApiOperation(value = "用户登出", httpMethod = "POST")
     @PostMapping("/exit")
     public Message accountExit(HttpServletRequest request, HttpServletResponse response) {
-//        SecurityUtils.getSubject().logout();
         Map<String,String > bodyMap = RequestResponseUtil.getRequestBodyMap(request);
         String appId = bodyMap.get("appId");
         if (StringUtils.isEmpty(appId)) {
@@ -66,7 +67,7 @@ public class AccountController extends BaseNewController {
     public Message getUserById(@PathVariable BigDecimal id) {
         logger.info("人员id: {}",id);
         try {
-            return authApiService.getUserById(id);
+            return authQueryApiService.getUserById(id);
         }catch (Exception e){
             logger.error("查询人员信息时，发生异常！",e);
             return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
@@ -79,7 +80,7 @@ public class AccountController extends BaseNewController {
     public Message getUserByLoginName(@PathVariable String loginName) {
         logger.info("账户名称: {}",loginName);
         try {
-            return authApiService.getUserByLoginName(loginName);
+            return authQueryApiService.getUserByLoginName(loginName);
         }catch (Exception e){
             logger.error("查询人员信息时，发生异常！",e);
             return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
@@ -90,7 +91,7 @@ public class AccountController extends BaseNewController {
     @ApiOperation(value = "查询所有用户", httpMethod = "GET")
     public Message getAllUsers() {
         try {
-            List<User> users = FeignUtils.parseArray(authApiService.getUsers(),User.class);
+            List<User> users = FeignUtils.parseArray(authQueryApiService.getUsers(),User.class);
             return new Message().ok().addData("userList", users);
         } catch (Exception e) {
             logger.error("查询所有用户时发生异常！", e);
@@ -103,7 +104,7 @@ public class AccountController extends BaseNewController {
     public Message getUsersPage(@RequestBody QueryUserVo queryUserVo) {
         logger.info("查询人员列表(分页)，条件：{}", queryUserVo);
         try {
-            return authApiService.getUsersPage(queryUserVo);
+            return authQueryApiService.getUsersPage(queryUserVo);
         } catch (Exception e) {
             logger.error("查询人员列表(分页)时发生异常!", e);
             return new Message().error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "查询人员列表(分页)时发生异常，请稍后重试！");
