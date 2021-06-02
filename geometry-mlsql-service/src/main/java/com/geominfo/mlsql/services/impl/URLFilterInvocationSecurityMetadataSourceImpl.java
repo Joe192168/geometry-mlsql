@@ -1,6 +1,6 @@
 package com.geominfo.mlsql.services.impl;
 
-import com.geominfo.mlsql.commons.SystemConstant;
+import com.geominfo.authing.common.enums.EnumApplicationResource;
 import com.geominfo.mlsql.domain.dto.RolePermRule;
 import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.dao.IRoleDao;
@@ -40,7 +40,7 @@ public class URLFilterInvocationSecurityMetadataSourceImpl implements FilterInvo
         map = new HashMap<>();
         Collection<ConfigAttribute> array;
         ConfigAttribute cfg;
-        List<RolePermRule> permissions = FeignUtils.parseArray(authQueryApiService.getSystemRoles(SystemConstant.SYSTEM_ROOT),RolePermRule.class);
+        List<RolePermRule> permissions = FeignUtils.parseArray(authQueryApiService.getSystemRoles(EnumApplicationResource.MLSQL.getResourceId()),RolePermRule.class);
 //        iRoleDao.queryRolePermRule(EnumApplicationResource.BI.getResourceId());
         for(RolePermRule permission : permissions) {
             array = new ArrayList<>();

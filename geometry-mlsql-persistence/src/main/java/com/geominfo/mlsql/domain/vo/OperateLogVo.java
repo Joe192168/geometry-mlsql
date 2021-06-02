@@ -1,6 +1,6 @@
 package com.geominfo.mlsql.domain.vo;
 
-import com.geominfo.mlsql.commons.SystemConstant;
+import com.geominfo.authing.common.enums.EnumApplicationResource;
 
 import java.math.BigDecimal;
 
@@ -41,7 +41,7 @@ public class OperateLogVo {
     /**
      * 应用系统id
      */
-    private BigDecimal operateResourceId = new BigDecimal(SystemConstant.SYSTEM_ROOT);
+    private BigDecimal operateResourceId = new BigDecimal(EnumApplicationResource.MLSQL.getResourceId());
 
     public Integer getOperateUserId() {
         return operateUserId;
@@ -84,7 +84,7 @@ public class OperateLogVo {
     }
 
     public BigDecimal getOperateResourceId() {
-        return operateResourceId = new BigDecimal(SystemConstant.SYSTEM_ROOT);
+        return operateResourceId = new BigDecimal(EnumApplicationResource.MLSQL.getResourceId());
     }
 
     public void setOperateResourceId(BigDecimal operateResourceId) {

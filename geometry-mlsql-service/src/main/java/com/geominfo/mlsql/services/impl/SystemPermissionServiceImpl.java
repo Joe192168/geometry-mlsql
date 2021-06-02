@@ -1,6 +1,6 @@
 package com.geominfo.mlsql.services.impl;
 
-import com.geominfo.mlsql.commons.SystemConstant;
+import com.geominfo.authing.common.enums.EnumApplicationResource;
 import com.geominfo.mlsql.commons.SystemCustomIdentification;
 import com.geominfo.mlsql.domain.dto.JwtUser;
 import com.geominfo.mlsql.domain.pojo.User;
@@ -53,8 +53,8 @@ public class SystemPermissionServiceImpl implements SystemPermissionService {
                     user.setPassword(null);
                     user.setSalt(null);
                     //请求统一认证平台获取用户权限
-                    logger.info("getAccountPermissions request auth get permissions param userResourceId:{},appId:{}", user.getResourceId(), SystemConstant.SYSTEM_ROOT);
-                    List allPermissions = FeignUtils.parseArray(authQueryApiService.getUserPermissions(new BigDecimal(user.getResourceId()), new BigDecimal(SystemConstant.SYSTEM_ROOT)), SystemResourceVo.class);
+                    logger.info("getAccountPermissions request auth get permissions param userResourceId:{},appId:{}", user.getResourceId(), EnumApplicationResource.MLSQL);
+                    List allPermissions = FeignUtils.parseArray(authQueryApiService.getUserPermissions(new BigDecimal(user.getResourceId()), new BigDecimal(EnumApplicationResource.MLSQL.getResourceId())), SystemResourceVo.class);
                     logger.info("getAccountPermissions request auth get permissions resParam :{}", allPermissions);
                     if (allPermissions != null && allPermissions.size() > 0)
                         allPermissionTrees = t.getTreeVoList(allPermissions, SystemCustomIdentification.TREE_ID, SystemCustomIdentification.TREE_NAME, SystemCustomIdentification.TREE_PARENT_ID);

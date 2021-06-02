@@ -1,6 +1,6 @@
 package com.geominfo.mlsql.aop;
 
-import com.geominfo.mlsql.commons.SystemConstant;
+import com.geominfo.authing.common.enums.EnumApplicationResource;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.domain.vo.OperateLogVo;
 import com.geominfo.mlsql.services.AuthApiService;
@@ -90,7 +90,7 @@ public class LogAspect {
         }
         OperateLogVo operateLogVo = new OperateLogVo();
         if (geometryLogAnno != null) {
-            productId = SystemConstant.SYSTEM_ROOT.toString();
+            productId = EnumApplicationResource.MLSQL.getResourceId().toString();
         }
         operateLogVo.setOperateAppId(Integer.parseInt(productId));
         operateLogVo.setOperateIp(ipAddr);
