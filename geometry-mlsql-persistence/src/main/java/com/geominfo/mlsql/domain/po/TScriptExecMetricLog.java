@@ -31,9 +31,7 @@ public class TScriptExecMetricLog {
 
     private Date createTime;
 
-    public void setCreateTime(Long createTime) {
-        Date date = new Date();
-        date.setTime(createTime);
-        this.createTime = date;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

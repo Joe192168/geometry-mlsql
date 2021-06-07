@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geominfo.mlsql.dao.TEtFunctionInfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.TEtFunctionInfo">
+        <id column="id" property="id"/>
+        <id column="patent_id" property="parentId"/>
+        <id column="etfn_type" property="etfnType"/>
+        <id column="etfn_name" property="etfnName"/>
+        <id column="etfn_desc" property="etfnDesc"/>
+        <id column="record_state" property="recordState"/>
+
+    </resultMap>
+
+    <select id="listByParentId" resultType="com.geominfo.mlsql.domain.po.TEtFunctionInfo">
+        select tt.* from (
+        with RECURSIVE t as
+        (
+        select a.* from t_et_function_info a where a.id = #{parentId}
+        union all
+        select k.*  from t_et_function_info k , t where t.id =k.parent_id
+        )
+        select * from t
+        ) tt
+        where 1=1 order by tt.id
+    </select>
+
+
+    <select id="selectScriptByRoute" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
+        SELECT * FROM t_system_resources sr where  json_in_varchar(sr.content_info) ->> 'src' = #{scriptRoute} and resource_type_id = 66
+    </select>
+
+
+</mapper>

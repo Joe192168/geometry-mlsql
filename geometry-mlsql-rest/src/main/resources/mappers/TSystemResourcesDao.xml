@@ -25,7 +25,7 @@
     </resultMap>
 
     <select id="listByParentId" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
-        select tt.* from (
+        select tt.id,tt.parentId,tt.resource_name,tt.resource_type_id,tt.owner from (
         with RECURSIVE t as
         (
         select a.* from t_system_resources a where a.id = #{parentId}
@@ -34,7 +34,12 @@
         )
         select * from t
         ) tt
-        where 1=1 order by tt.id
+        where 1=1 and (tt.resource_state = 0 or tt.resource_state is null ) order by tt.id
+    </select>
+
+
+    <select id="selectScriptByRoute" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
+        SELECT * FROM t_system_resources sr where  json_in_varchar(sr.content_info) ->> 'src' = #{scriptRoute} and resource_type_id = #{resourceId}
     </select>
 
 

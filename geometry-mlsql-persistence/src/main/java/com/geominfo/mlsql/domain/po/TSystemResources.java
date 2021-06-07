@@ -1,6 +1,6 @@
 package com.geominfo.mlsql.domain.po;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,11 +13,13 @@ import java.util.Date;
  * @date 2021/5/1214:33
  */
 @Data
+@TableName("t_system_resources")
 public class TSystemResources {
 
     @ApiModelProperty(value = "ID", name="id", required = true)
+    @TableId(type = IdType.INPUT)
     private BigDecimal id;
-    @ApiModelProperty(value = "父资源ID", name="parentid")
+    @ApiModelProperty(value = "父资源ID", name="parentId")
     private BigDecimal parentid;
     @ApiModelProperty(value = "资源类型ID", name="resourceTypeId")
     private BigDecimal resourceTypeId;

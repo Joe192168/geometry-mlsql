@@ -49,9 +49,8 @@ public class TScriptExecLog {
             this.jobType = 1;
         }else if (jobType.equals("stream")) {
             this.jobType = 2;
-        }else {
+        }else
             this.jobType = 3;
-        }
     }
 
     public void setExecStatus(String exec_status) {
@@ -62,9 +61,7 @@ public class TScriptExecLog {
         }
     }
 
-    public void setOperatorTime(Long operatorTime) {
-        Date date = new Date();
-        date.setTime(operatorTime);
-        this.operatorTime = date;
+    public void setOperatorTime(Date operatorTime) {
+        this.operatorTime = operatorTime;
     }
 }

@@ -23,7 +23,12 @@
 			<artifactId>geometry-mlsql-persistence</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+        <dependency>
+            <groupId>com.geometry.authing</groupId>
+            <artifactId>geometry-authing-common</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 </project>
