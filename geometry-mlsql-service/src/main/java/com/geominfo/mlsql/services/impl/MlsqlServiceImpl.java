@@ -348,7 +348,7 @@ public class MlsqlServiceImpl implements MlsqlService {
 
         TSystemResources tSystemResources1 = tSystemResourcesDao.selectScriptByRoute(path+ "/" + scriptName,ResourceTypeConstants.JBGL);
         if (tSystemResources1 == null) {
-            BigDecimal maxmum = numberControlService.getMaxmum(SystemTableName.T_SYSTEM_RESOURCES);
+            BigDecimal maxmum = numberControlService.getMaxNum(SystemTableName.T_SYSTEM_RESOURCES);
             TSystemResources tSystemResources = new TSystemResources();
             tSystemResources.setCreateTime(new Date());
             tSystemResources.setOwner(owner);

@@ -32,7 +32,7 @@ public class ScriptServiceImpl implements ScriptService {
         if (resources == null) {
             TSystemResources tSystemResources = new TSystemResources();
             tSystemResources.setResourceTypeId(new BigDecimal(ResourceTypeConstants.FOLDER));
-            tSystemResources.setId(numberControlService.getMaxmum(SystemTableName.T_SYSTEM_RESOURCES));
+            tSystemResources.setId(numberControlService.getMaxNum(SystemTableName.T_SYSTEM_RESOURCES));
             tSystemResources.setParentid(parentId);
             tSystemResources.setOwner(owner);
             tSystemResources.setResourceName(dirName);

@@ -24,7 +24,7 @@ public class NumberControlServiceImpl implements NumberControlService {
 
     @Override
     @Transactional
-    public BigDecimal getMaxmum(String itemCode) throws DataAccessException {
+    public BigDecimal getMaxNum(String itemCode) throws DataAccessException {
         //先更新序列号
         numberMapper.updateMaxmum(itemCode);
         //获取最新序列号

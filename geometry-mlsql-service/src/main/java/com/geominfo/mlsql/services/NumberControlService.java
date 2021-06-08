@@ -11,5 +11,5 @@ public interface NumberControlService {
     *@Param [itemCode]
     *@return java.math.BigDecimal
     **/  
-    BigDecimal getMaxmum(String tableName);
+    BigDecimal getMaxNum(String tableName);
 }
