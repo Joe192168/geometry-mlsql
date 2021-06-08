@@ -41,6 +41,16 @@
     <select id="selectScriptByRoute" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
         SELECT * FROM t_system_resources sr where  json_in_varchar(sr.content_info) ->> 'src' = #{scriptRoute} and resource_type_id = #{resourceId}
     </select>
+    
+    <select id="checkSystemParamName" parameterType="com.geominfo.mlsql.domain.vo.CheckParamVo" resultType="com.geominfo.mlsql.domain.vo.SystemResourceVo">
+        select *
+        from t_system_resources sr
+        where resourceType = #{resourceId}
+              and resource_name = #{paramName}
+        <if test="parentId != null">
+              and parentid = #{parentId}
+        </if>
+    </select>
 
 
 </mapper>

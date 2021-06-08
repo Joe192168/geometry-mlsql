@@ -8,6 +8,8 @@ package com.geominfo.mlsql.dao;  /**
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.geominfo.mlsql.domain.po.TSystemResources;
+import com.geominfo.mlsql.domain.vo.CheckParamVo;
+import com.geominfo.mlsql.domain.vo.SystemResourceVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -39,4 +41,13 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
      * @return com.geominfo.mlsql.domain.po.TSystemResources
      */
     TSystemResources selectScriptByRoute(String scriptRoute,int resourceId);
+
+    /**
+     * @description: 查询满足条件的实体
+     * @author: LF
+     * @date: 2021/6/8
+     * @param checkParamVo
+     * @return java.util.List<com.geominfo.mlsql.domain.vo.SystemResourceVo>
+     */
+    List<SystemResourceVo> checkSystemParamName(CheckParamVo checkParamVo);
 }
