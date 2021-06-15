@@ -6,17 +6,13 @@ import com.geominfo.mlsql.domain.vo.CheckParamVo;
 import com.geominfo.mlsql.domain.vo.SystemResourceVo;
 import com.geominfo.mlsql.services.CheckDatesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-/**
- * @program: geometry-bi
- * @description:
- * @author: LF
- * @create: 2021/6/8 11:26
- * @version: 1.0.0
- */
+
+@Service
 public class CheckDatesServiceImpl implements CheckDatesService {
     @Autowired
     private TSystemResourcesDao systemResourcesDao;

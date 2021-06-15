@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.domain.vo.CheckParamVo;
 import com.geominfo.mlsql.domain.vo.SystemResourceVo;
+import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -50,4 +51,13 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
      * @return java.util.List<com.geominfo.mlsql.domain.vo.SystemResourceVo>
      */
     List<SystemResourceVo> checkSystemParamName(CheckParamVo checkParamVo);
+
+    /**
+     * @description: 查询工作空间列表
+     * @author: LF
+     * @date: 2021/6/11
+     * @param userId
+     * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
+     */
+    List<WorkSpaceInfoVo> getWorkSpaceLists(BigDecimal userId);
 }

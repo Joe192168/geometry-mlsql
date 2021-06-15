@@ -3,6 +3,8 @@ package com.geominfo.mlsql.services;
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.domain.po.TSystemResources;
 
+import java.math.BigDecimal;
+
 /**
  * @program: geometry-bi
  * @description: 资源类常用接口
@@ -37,7 +39,7 @@ public interface SystemResourceService {
      * @param id
      * @return java.lang.Boolean
      */
-    Boolean deleteResourceById(Integer id);
+    Boolean deleteResourceById(BigDecimal id);
 
 
 }

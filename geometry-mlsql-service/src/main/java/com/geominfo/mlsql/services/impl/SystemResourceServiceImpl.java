@@ -1,25 +1,20 @@
 package com.geominfo.mlsql.services.impl;
 
+import com.geominfo.authing.common.constants.SystemTableConstants;
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.dao.TSystemResourcesDao;
 import com.geominfo.mlsql.domain.po.TSystemResources;
-import com.geominfo.mlsql.domain.systemidentification.SystemTableName;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.CheckDatesService;
 import com.geominfo.mlsql.services.NumberControlService;
 import com.geominfo.mlsql.services.SystemResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * @program: geometry-bi
- * @description:
- * @author: LF
- * @create: 2021/6/8 11:08
- * @version: 1.0.0
- */
+@Service
 public class SystemResourceServiceImpl implements SystemResourceService {
 
     @Autowired
@@ -39,7 +34,7 @@ public class SystemResourceServiceImpl implements SystemResourceService {
                 baseResultVo.setReturnMsg(InterfaceMsg.RESOURCE_NAME_EXIT.getMsg());
                 return baseResultVo;
             }
-            BigDecimal id = numberControlService.getMaxNum(SystemTableName.T_SYSTEM_RESOURCES);
+            BigDecimal id = numberControlService.getMaxNum(SystemTableConstants.T_SYSTEM_RESOURCES);
             resourceVo.setId(id);
             resourceVo.setCreateTime(new Date());
             resourceVo.setUpdateTime(new Date());
@@ -78,11 +73,18 @@ public class SystemResourceServiceImpl implements SystemResourceService {
     }
 
     @Override
-    public Boolean deleteResourceById(Integer id) {
-        int i = systemResourcesDao.deleteById(id);
-        if (i > 0)
-            return true;
-        else
+    public Boolean deleteResourceById(BigDecimal id) {
+        TSystemResources systemResources = systemResourcesDao.selectById(id);
+        if (systemResources !=null ){
+            int i = systemResourcesDao.deleteById(id);
+            if (i > 0)
+                return true;
+            else
+                return false;
+        }else {
             return false;
+        }
+
     }
+
 }

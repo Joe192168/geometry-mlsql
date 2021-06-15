@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geominfo.mlsql.dao.WorkSpaceMembersMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.WorkSpaceMember">
+        <id column="id" property="id" />
+        <result column="workspace_id" property="workSpaceId" />
+        <result column="space_owner_id" property="spaceOwnerId" />
+        <result column="space_member_id" property="spaceMemberId" />
+        <result column="state" property="state" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <select id="getUserDefaultSpace" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.WorkSpaceMember">
+        select *
+        from t_workspace_member_infos
+        where state = '1'
+            and space_member_id = #{userId}
+    </select>
+
+    <update id="updateSpaceInfoByUserId" parameterType="java.math.BigDecimal">
+    update t_workspace_member_infos
+    set state = '0'
+    where space_member_id = #{userId}
+    </update>
+
+    <update id="setDefaultSpace">
+        update t_workspace_member_infos
+        set state = '1'
+        where space_member_id = #{userId}
+             and  workspace_id = #{spaceId}
+    </update>
+
+    <select id="getWorkSpaceBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.WorkSpaceMember">
+        select *
+        from t_workspace_member_infos
+        where space_member_id = space_owner_id
+             and  workspace_id = #{spaceId}
+    </select>
+
+    <delete id="deleteSpaceMember">
+        delete from t_workspace_member_infos
+        where space_member_id = #{userId}
+             and  workspace_id = #{spaceId}
+    </delete>
+
+    <select id="getSpaceMemberBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.vo.SpaceMemberVo">
+        select workspace_id spaceId,
+               space_owner_id ownerId,
+               space_member_id memberId,
+               create_time createTime
+        from t_workspace_member_infos
+        where  workspace_id = #{spaceId}
+    </select>
+
+</mapper>
