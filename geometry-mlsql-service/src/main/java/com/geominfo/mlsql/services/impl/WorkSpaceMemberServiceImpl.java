@@ -6,7 +6,6 @@ import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.dao.WorkSpaceMembersMapper;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
 import com.geominfo.mlsql.domain.pojo.User;
-import com.geominfo.mlsql.domain.vo.QueryWorkSpaceVo;
 import com.geominfo.mlsql.domain.vo.SpaceMemberVo;
 import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
@@ -43,6 +42,7 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
         workSpaceMember.setSpaceOwnerId(workSpaceInfoVo.getSpaceOwnerId());
         workSpaceMember.setCreateTime(new Date());
         if (StringUtils.isBlank(workSpaceInfoVo.getState()))
+            //默认为普通空间
             workSpaceMember.setState(CommonConstants.DEFAULT_STR_VAL);
         else
             workSpaceMember.setState(workSpaceInfoVo.getState());

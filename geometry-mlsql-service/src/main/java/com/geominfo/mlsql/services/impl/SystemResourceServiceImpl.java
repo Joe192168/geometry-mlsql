@@ -39,6 +39,7 @@ public class SystemResourceServiceImpl implements SystemResourceService {
             resourceVo.setCreateTime(new Date());
             resourceVo.setUpdateTime(new Date());
             systemResourcesDao.insert(resourceVo);
+            baseResultVo.setId(id);
             baseResultVo.setSuccess(Boolean.TRUE);
             baseResultVo.setReturnMsg(InterfaceMsg.INSERT_SUCCESS.getMsg());
             return baseResultVo;

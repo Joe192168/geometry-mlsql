@@ -54,6 +54,8 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
         systemResources.setContentInfo(workSpaceInfoVo.getDescribe());
         baseResultVo = systemResourceService.insertResource(systemResources);
         if (baseResultVo.isSuccess()) {
+            BigDecimal spaceId = baseResultVo.getId();
+            workSpaceInfoVo.setSpaceId(spaceId.toString());
             baseResultVo = workSpaceMemberService.insertSpaceMember(workSpaceInfoVo);
             if (baseResultVo.isSuccess()) {
                 return baseResultVo;
@@ -147,13 +149,31 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
     @Override
     public List<WorkSpaceInfoVo> getWorkSpaceLists(BigDecimal userId) {
         List<WorkSpaceInfoVo> workSpaceInfoVos = systemResourcesDao.getWorkSpaceLists(userId);
-        if (!CollectionUtils.isEmpty(workSpaceInfoVos)) {
+        BaseResultVo baseResultVo = new BaseResultVo();
+        //查询用户工作空间，若无工作空间，则初始化默认空间
+        if (CollectionUtils.isEmpty(workSpaceInfoVos)){
+            WorkSpaceInfoVo workSpaceInfoVo = new WorkSpaceInfoVo();
+            workSpaceInfoVo.setSpaceOwnerId(userId);
+            workSpaceInfoVo.setSpaceMemberId(userId);
+            workSpaceInfoVo.setWorkSpaceName(CommonConstants.DEFAULT_SPACE_NAME);
+            workSpaceInfoVo.setDescribe(CommonConstants.INIT_DATA_SUCCESS);
+            workSpaceInfoVo.setState("1");
+            baseResultVo = insertWorkSpace(workSpaceInfoVo);
+            if (baseResultVo.isSuccess()){
+                workSpaceInfoVos = systemResourcesDao.getWorkSpaceLists(userId);
+                for (WorkSpaceInfoVo vo : workSpaceInfoVos) {
+                    getWorkSpaceInfo(vo);
+                }
+                return workSpaceInfoVos;
+            }else {
+                throw new RuntimeException(InterfaceMsg.QUERY_ERROR.getMsg());
+            }
+        }else {
+            //默认查询用户所有的工作空间
             for (WorkSpaceInfoVo vo : workSpaceInfoVos) {
                 getWorkSpaceInfo(vo);
             }
             return workSpaceInfoVos;
-        } else {
-            throw new RuntimeException(InterfaceMsg.QUERY_ERROR.getMsg());
         }
     }
 
