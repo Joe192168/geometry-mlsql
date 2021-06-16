@@ -28,7 +28,6 @@ public enum InterfaceMsg {
     SPACE_NOT_TRANSFER("默认空间不能转让！"),
     TRANSFER_SPACE_SUCCESS("转让工作空间成功！"),
     TRANSFER_SPACE_FAIL("转让工作空间失败！"),
-    AUTH_ERROR("调用身份服务平台出现异常，请稍后再试！"),
     ;
 
     private String msg;

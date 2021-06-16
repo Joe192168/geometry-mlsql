@@ -7,8 +7,6 @@ import com.geominfo.mlsql.dao.TSystemResourcesDao;
 import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
 import com.geominfo.mlsql.domain.pojo.User;
-import com.geominfo.mlsql.domain.vo.QueryWorkSpaceVo;
-import com.geominfo.mlsql.domain.vo.SystemResourceVo;
 import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.AuthQueryApiService;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -188,7 +185,7 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
                 vo.setOwnerName(user.getUserName());
             }
         }else {
-            throw new RuntimeException(InterfaceMsg.AUTH_ERROR.getMsg());
+            throw new RuntimeException(CommonConstants.AUTH_ERROR);
         }
     }
 }

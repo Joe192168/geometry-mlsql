@@ -127,7 +127,7 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
                vo.setUserName(user.getUserName());
            }
         }else {
-            throw new RuntimeException(InterfaceMsg.AUTH_ERROR.getMsg());
+            throw new RuntimeException(CommonConstants.AUTH_ERROR);
         }
     }
 
