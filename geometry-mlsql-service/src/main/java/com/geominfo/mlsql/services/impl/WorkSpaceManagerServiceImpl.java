@@ -70,7 +70,7 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
         TSystemResources systemResources = new TSystemResources();
         if (StringUtils.isBlank(workSpaceInfoVo.getSpaceId())) {
             baseResultVo.setSuccess(Boolean.FALSE);
-            baseResultVo.setReturnMsg(InterfaceMsg.PARAM_ERROR.getMsg());
+            baseResultVo.setReturnMsg(CommonConstants.PARAM_ERROR);
             return baseResultVo;
         }
         systemResources.setId(new BigDecimal(workSpaceInfoVo.getSpaceId()));

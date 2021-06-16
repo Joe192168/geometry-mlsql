@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geominfo.mlsql.dao.EngineInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.EngineInfo">
+        <id column="id" property="id" />
+        <result column="engine_name" property="engineName" />
+        <result column="engine_uri" property="engineUri" />
+        <result column="home_prefix" property="homePrefix" />
+        <result column="result_uri" property="resultUri" />
+        <result column="file_service_uri" property="fileServiceUri" />
+        <result column="auth_service_uri" property="authServiceUri" />
+        <result column="skip_auth" property="skipAuth" />
+        <result column="extra_opts" property="extraOpts" />
+        <result column="operator_id" property="operatorId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="record_state" property="recordState" />
+    </resultMap>
+
+    <select id="getEngineInfos"  resultType="com.geominfo.mlsql.domain.po.EngineInfo">
+        select *
+        from t_engine_info
+    </select>
+
+    <select id="getEngineInfoByNameAndUri" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
+        select *
+        from t_engine_info
+        where engine_name = #{engineName}
+              and engine_uri = #{engineUri}
+    </select>
+
+
+
+</mapper>

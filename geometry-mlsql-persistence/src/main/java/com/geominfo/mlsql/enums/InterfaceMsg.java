@@ -21,13 +21,16 @@ public enum InterfaceMsg {
     DELETE_SUCCESS("删除成功！"),
     INSERT_SPACE_MEMBER_FAIL("新增工作空间成员失败！"),
     INSERT_SPACE_MEMBER_SUCCESS("新增工作空间成员成功！"),
-    PARAM_ERROR("参数错误！"),
     SET_DEFAULT_SPACE_SUCCESS("设置默认工作空间成功！"),
     SET_DEFAULT_SPACE_FAIL("设置默认工作空间失败！"),
     SET_DEFAULT_SPACE_ERROR("设置默认工作空间时发生异常！"),
     SPACE_NOT_TRANSFER("默认空间不能转让！"),
     TRANSFER_SPACE_SUCCESS("转让工作空间成功！"),
     TRANSFER_SPACE_FAIL("转让工作空间失败！"),
+    INSERT_ENGINE_SUCCESS("新增引擎成功！"),
+    INSERT_ENGINE_FAIL("新增引擎失败！"),
+    UPDATE_ENGINE_SUCCESS("编辑引擎成功！"),
+    UPDATE_ENGINE_FAIL("编辑引擎失败！"),
     ;
 
     private String msg;

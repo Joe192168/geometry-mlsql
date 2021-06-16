@@ -1,5 +1,6 @@
 package com.geominfo.mlsql.services.impl;
 
+import com.geominfo.authing.common.constants.CommonConstants;
 import com.geominfo.authing.common.constants.SystemTableConstants;
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.dao.TSystemResourcesDao;
@@ -31,7 +32,7 @@ public class SystemResourceServiceImpl implements SystemResourceService {
         try {
             if (!checkDatesService.CheckResourceDate(resourceVo)) {
                 baseResultVo.setSuccess(Boolean.FALSE);
-                baseResultVo.setReturnMsg(InterfaceMsg.RESOURCE_NAME_EXIT.getMsg());
+                baseResultVo.setReturnMsg(CommonConstants.NAME_EXIT);
                 return baseResultVo;
             }
             BigDecimal id = numberControlService.getMaxNum(SystemTableConstants.T_SYSTEM_RESOURCES);
@@ -57,7 +58,7 @@ public class SystemResourceServiceImpl implements SystemResourceService {
         try {
             if (!checkDatesService.CheckResourceDate(resourceVo)) {
                 baseResultVo.setSuccess(Boolean.FALSE);
-                baseResultVo.setReturnMsg(InterfaceMsg.RESOURCE_NAME_EXIT.getMsg());
+                baseResultVo.setReturnMsg(CommonConstants.NAME_EXIT);
                 return baseResultVo;
             }
             resourceVo.setUpdateTime(new Date());
