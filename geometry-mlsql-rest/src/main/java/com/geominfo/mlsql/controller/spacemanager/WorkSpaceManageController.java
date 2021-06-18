@@ -6,9 +6,12 @@ import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.aop.GeometryLogAnno;
 import com.geominfo.mlsql.base.BaseNewController;
 import com.geominfo.mlsql.commons.Message;
+import com.geominfo.mlsql.domain.po.EngineInfo;
+import com.geominfo.mlsql.domain.po.WorkSpaceEngine;
 import com.geominfo.mlsql.domain.vo.SpaceMemberVo;
 import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
+import com.geominfo.mlsql.services.EngineInfoService;
 import com.geominfo.mlsql.services.WorkSpaceManagerService;
 import com.geominfo.mlsql.services.WorkSpaceMemberService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,6 +38,8 @@ public class WorkSpaceManageController extends BaseNewController {
     private WorkSpaceManagerService workSpaceManagerService;
     @Autowired
     private WorkSpaceMemberService workSpaceMemberService;
+    @Autowired
+    private EngineInfoService engineInfoService;
 
     @ApiOperation(value="新增工作空间", httpMethod = "POST")
     @PostMapping("/insert")
@@ -52,6 +57,7 @@ public class WorkSpaceManageController extends BaseNewController {
             return new Message().error(InterfaceMsg.INSERT_ERROR.getMsg());
         }
     }
+
     @ApiOperation(value="修改工作空间", httpMethod = "PUT")
     @PutMapping("/update")
     public Message updateWorkSpace(@RequestBody WorkSpaceInfoVo workSpaceInfoVo) {
@@ -191,5 +197,88 @@ public class WorkSpaceManageController extends BaseNewController {
         }
     }
 
+    @ApiOperation(value="根据名称查询工作空间列表",httpMethod = "GET")
+    @GetMapping("/getWorkSpaceListsByName/{userId}/{spaceName}")
+    public Message getWorkSpaceListsByName( @PathVariable BigDecimal userId,@PathVariable String spaceName){
+        try {
+            logger.info("getWorkSpaceListsByName userId{},spaceName{} ",userId,spaceName);
+            List<WorkSpaceInfoVo> workSpaceInfoVos = workSpaceManagerService.getWorkSpaceLists(userId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,workSpaceInfoVos);
+        }catch (Exception e){
+            logger.error("method # getWorkSpaceListsByName exception", e);
+            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value = "查询可添加的引擎配置",httpMethod = "GET")
+    @GetMapping("/getEnginesBySpaceId/{spaceId}")
+    public Message getEnginesBySpaceId(@PathVariable BigDecimal spaceId){
+        try {
+            logger.info("getEnginesBySpaceId spaceId:{}",spaceId);
+            List<EngineInfo> engineInfos = engineInfoService.getEnginesBySpaceId(spaceId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,engineInfos);
+        }catch (Exception e){
+            logger.error("method # getEnginesBySpaceId exception", e);
+            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value = "根据工作空间id，查询所有的配置引擎列表",httpMethod = "GET")
+    @GetMapping("/getEngineLists/{spaceId}")
+    public Message getEngineLists(@PathVariable BigDecimal spaceId){
+        try {
+            logger.info("getEngineLists spaceId:{}",spaceId);
+            List<EngineInfo> engineInfos = engineInfoService.getEngineLists(spaceId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,engineInfos);
+        }catch (Exception e){
+            logger.error("method # getEngineLists exception", e);
+            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value="删除工作空间引擎配置", httpMethod = "DELETE")
+    @DeleteMapping("/delete/{engineId}/{spaceId}")
+    public Message deleteWorkSpace(@PathVariable BigDecimal engineId,@PathVariable BigDecimal spaceId) {
+        try {
+            workSpaceManagerService.deleteEngine(engineId,spaceId);
+            return new Message().ok(InterfaceMsg.DELETE_SUCCESS.getMsg());
+        }catch (Exception e){
+            return new Message().error(InterfaceMsg.DELETE_SUCCESS.getMsg());
+        }
+
+    }
+
+    @ApiOperation(value="给工作空间新增引擎配置", httpMethod = "POST")
+    @PostMapping("/insertWorkSpaceEngine")
+    @GeometryLogAnno(operateType = EnumOperateLogType.WORKSPACE_OPERATE)
+    public Message insertWorkSpaceEngine(@RequestBody WorkSpaceEngine workSpaceEngine) {
+        BaseResultVo baseResultVo = new BaseResultVo();
+        logger.info("insertWorkSpaceEngine param:{}", workSpaceEngine);
+        try {
+            baseResultVo = workSpaceManagerService.insertWorkSpaceEngine(workSpaceEngine);
+            return baseResultVo.isSuccess()
+                    ? new Message().ok(baseResultVo.getReturnMsg())
+                    : new Message().error(baseResultVo.getReturnMsg());
+        } catch (Exception e) {
+            logger.error("insertWorkSpaceEngine Exception", e);
+            return new Message().error(InterfaceMsg.INSERT_ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value="设置工作空间默认引擎", httpMethod = "PUT")
+    @PutMapping("/setDefaultEngine/{engineId}/{spaceId}")
+    public Message setDefaultEngine(@PathVariable BigDecimal engineId,@PathVariable BigDecimal spaceId) {
+        BaseResultVo baseResultVo = new BaseResultVo();
+        logger.info("setDefaultEngine param:{}", engineId,spaceId);
+        try {
+            baseResultVo = workSpaceManagerService.setDefaultEngine(engineId,spaceId);
+            return baseResultVo.isSuccess()
+                    ? new Message().ok(baseResultVo.getReturnMsg())
+                    : new Message().error(baseResultVo.getReturnMsg());
+        } catch (Exception e) {
+            logger.error("setDefaultEngine Exception", e);
+            return new Message().error(InterfaceMsg.INSERT_ERROR.getMsg());
+        }
+    }
 
 }

@@ -31,6 +31,26 @@
               and engine_uri = #{engineUri}
     </select>
 
+    <select id="getEnginesBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
+        select *
+        from t_engine_info
+        where id not in (
+            select engine_id
+            from t_workspace_engines
+            where workspace_id = #{spaceId}
+          )
+    </select>
+
+    <select id="getEngineLists" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
+        select *
+        from t_engine_info
+        where id in (
+            select engine_id
+            from t_workspace_engines
+            where workspace_id = #{spaceId}
+          )
+    </select>
+
 
 
 </mapper>

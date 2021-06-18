@@ -31,6 +31,10 @@ public enum InterfaceMsg {
     INSERT_ENGINE_FAIL("新增引擎失败！"),
     UPDATE_ENGINE_SUCCESS("编辑引擎成功！"),
     UPDATE_ENGINE_FAIL("编辑引擎失败！"),
+    INSERT_SPACE_ENGINE_SUCCESS("添加工作空间引擎成功！"),
+    INSERT_SPACE_ENGINE_FAIL("添加工作空间引擎失败！"),
+    SET_DEFAULT_ENGINE_SUCCESS("设置工作空间默认引擎成功！"),
+    SET_DEFAULT_ENGINE_FAIL("设置工作空间默认引擎失败！"),
     ;
 
     private String msg;

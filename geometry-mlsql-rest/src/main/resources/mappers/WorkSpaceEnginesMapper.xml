@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geominfo.mlsql.dao.WorkSpaceEnginesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.WorkSpaceEngine">
+        <id column="id" property="id"/>
+        <result column="workspace_id" property="workspaceId"/>
+        <result column="engine_id" property="engineId"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="operator_time" property="operatorTime"/>
+    </resultMap>
+
+    <delete id="deleteEngine">
+            delete from t_workspace_engines
+            where engine_id = #{engineId}
+                   and  workspace_id = #{spaceId}
+    </delete>
+
+    <update id="setDefaultEngine" >
+        UPDATE public.t_workspace_engines
+        SET  is_default=0
+        where engine_id = #{engineId}
+                   and  workspace_id = #{spaceId}
+    </update>
+
+    <select id="getSpaceEngineBySpaceIdAndEngineId" resultType="com.geominfo.mlsql.domain.po.WorkSpaceEngine">
+        select *
+        from t_workspace_engines
+        where engine_id = #{engineId}
+                   and  workspace_id = #{spaceId}
+    </select>
+
+
+</mapper>

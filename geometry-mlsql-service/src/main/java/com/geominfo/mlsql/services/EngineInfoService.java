@@ -59,4 +59,22 @@ public interface EngineInfoService {
      * @return java.util.List<com.geominfo.mlsql.domain.po.EngineInfo>
      */
     List<EngineInfo> getEngineInfos();
+
+    /**
+     * @description: 获取工作空间可配置的引擎
+     * @author: LF
+     * @date: 2021/6/17
+     * @param spaceId
+     * @return java.util.List<com.geominfo.mlsql.domain.po.EngineInfo>
+     */
+    List<EngineInfo> getEnginesBySpaceId(BigDecimal spaceId);
+
+    /**
+     * @description: 根据工作空间id，查询所有的配置引擎
+     * @author: LF
+     * @date: 2021/6/17
+     * @param spaceId
+     * @return java.util.List<com.geominfo.mlsql.domain.po.EngineInfo>
+     */
+    List<EngineInfo> getEngineLists(BigDecimal spaceId);
 }

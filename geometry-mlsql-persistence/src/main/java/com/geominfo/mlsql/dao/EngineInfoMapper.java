@@ -2,9 +2,10 @@ package com.geominfo.mlsql.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.geominfo.mlsql.domain.po.EngineInfo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.mapstruct.Mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -36,5 +37,21 @@ public interface EngineInfoMapper extends BaseMapper<EngineInfo> {
      */
     List<EngineInfo> getEngineInfoByNameAndUri(@Param("engineName") String engineName,@Param("engineUri") String engineUri);
 
+    /**
+     * @description: 查询可配置的引擎
+     * @author: LF
+     * @date: 2021/6/17
+     * @param spaceId
+     * @return java.util.List<com.geominfo.mlsql.domain.po.EngineInfo>
+     */
+    List<EngineInfo> getEnginesBySpaceId(BigDecimal spaceId);
 
+    /**
+     * @description: 根据空间id查询引擎
+     * @author: LF
+     * @date: 2021/6/17
+     * @param spaceId
+     * @return java.util.List<com.geominfo.mlsql.domain.po.EngineInfo>
+     */
+    List<EngineInfo> getEngineLists(BigDecimal spaceId);
 }

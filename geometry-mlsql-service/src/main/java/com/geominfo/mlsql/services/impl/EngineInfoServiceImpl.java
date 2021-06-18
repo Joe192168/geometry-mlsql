@@ -9,6 +9,7 @@ import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.EngineInfoService;
 import com.geominfo.mlsql.services.NumberControlService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ import java.util.List;
  * @create: 2021/6/16 11:22
  * @version: 1.0.0
  */
+@Service
 public class EngineInfoServiceImpl implements EngineInfoService {
     @Autowired
     private NumberControlService numberControlService;
@@ -124,5 +126,15 @@ public class EngineInfoServiceImpl implements EngineInfoService {
     @Override
     public List<EngineInfo> getEngineInfos() {
         return engineInfoMapper.getEngineInfos();
+    }
+
+    @Override
+    public List<EngineInfo> getEnginesBySpaceId(BigDecimal spaceId) {
+        return engineInfoMapper.getEnginesBySpaceId(spaceId);
+    }
+
+    @Override
+    public List<EngineInfo> getEngineLists(BigDecimal spaceId) {
+        return engineInfoMapper.getEngineLists(spaceId);
     }
 }

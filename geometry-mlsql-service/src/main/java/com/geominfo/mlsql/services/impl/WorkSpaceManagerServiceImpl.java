@@ -4,7 +4,9 @@ import com.geominfo.authing.common.constants.CommonConstants;
 import com.geominfo.authing.common.constants.ResourceTypeConstants;
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.dao.TSystemResourcesDao;
+import com.geominfo.mlsql.dao.WorkSpaceEnginesMapper;
 import com.geominfo.mlsql.domain.po.TSystemResources;
+import com.geominfo.mlsql.domain.po.WorkSpaceEngine;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
@@ -39,6 +41,8 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
     private TSystemResourcesDao systemResourcesDao;
     @Autowired
     private AuthQueryApiService authQueryApiService;
+    @Autowired
+    private WorkSpaceEnginesMapper workSpaceEnginesMapper;
 
     @Override
     public BaseResultVo insertWorkSpace(WorkSpaceInfoVo workSpaceInfoVo) {
@@ -171,6 +175,56 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
                 getWorkSpaceInfo(vo);
             }
             return workSpaceInfoVos;
+        }
+    }
+
+    @Override
+    public List<WorkSpaceInfoVo> getWorkSpaceListsByName(BigDecimal userId, String spaceName) {
+        return null;
+    }
+
+    @Override
+    public void deleteEngine(BigDecimal engineId, BigDecimal spaceId) {
+        workSpaceEnginesMapper.deleteEngine(engineId,spaceId);
+    }
+
+    @Override
+    public BaseResultVo insertWorkSpaceEngine(WorkSpaceEngine workSpaceEngine) {
+        BaseResultVo baseResultVo = new BaseResultVo();
+        List<WorkSpaceEngine> workSpaceEngines = workSpaceEnginesMapper.getSpaceEngineBySpaceIdAndEngineId(workSpaceEngine.getEngineId(),workSpaceEngine.getWorkspaceId());
+        if (CollectionUtils.isEmpty(workSpaceEngines)){
+            int i = workSpaceEnginesMapper.insert(workSpaceEngine);
+            if (i > 0){
+                baseResultVo.setSuccess(Boolean.TRUE);
+                baseResultVo.setReturnMsg(InterfaceMsg.INSERT_SPACE_ENGINE_SUCCESS.getMsg());
+                return baseResultVo;
+            }else {
+                baseResultVo.setSuccess(Boolean.FALSE);
+                baseResultVo.setReturnMsg(InterfaceMsg.INSERT_SPACE_ENGINE_FAIL.getMsg());
+                return baseResultVo;
+            }
+        }else {
+            baseResultVo.setSuccess(Boolean.FALSE);
+            baseResultVo.setReturnMsg(CommonConstants.PARAM_ERROR);
+            return baseResultVo;
+        }
+
+
+    }
+
+    @Override
+    public BaseResultVo setDefaultEngine(BigDecimal engineId, BigDecimal spaceId) {
+        BaseResultVo baseResultVo = new BaseResultVo();
+        int i = workSpaceEnginesMapper.setDefaultEngine(engineId,spaceId);
+        if (i > 0){
+            baseResultVo.setSuccess(Boolean.TRUE);
+            baseResultVo.setReturnMsg(InterfaceMsg.SET_DEFAULT_ENGINE_SUCCESS.getMsg());
+            return baseResultVo;
+        }else {
+            baseResultVo.setSuccess(Boolean.FALSE);
+            baseResultVo.setReturnMsg(InterfaceMsg.SET_DEFAULT_ENGINE_FAIL.getMsg());
+            return baseResultVo;
+
         }
     }
 
