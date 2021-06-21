@@ -1,10 +1,8 @@
 # 设置使用哪个环境的配置
 # 默认的profile为dev，其他环境通过指定启动参数使用不同的profile，比如：
-#   测试环境：java -jar geometry-rest.jar --spring.profiles.active=test
-#   生产环境：java -jar geometry-rest.jar --spring.profiles.active=prod
+#   测试环境：java -jar geometry-mlsql-rest.jar --spring.profiles.active=test
+#   生产环境：java -jar geometry-mlsql-rest.jar --spring.profiles.active=prod
 spring:
-  application:
-    name: geometry-mlsql
   # 环境 dev:开发环境|test:测试环境|prod:生产环境
   profiles:
     active: dev  #激活的配置文件
