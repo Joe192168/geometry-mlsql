@@ -20,15 +20,15 @@
     </sql>
 
     <!-- 查询序列表自增的主键id -->
-    <select id="selectMaxmum" parameterType="java.lang.String" resultType="java.math.BigDecimal">
+    <select id="selectMaxNum" parameterType="java.lang.String" resultType="java.math.BigDecimal">
         SELECT maximum from t_number_control
         where itemcode = upper(#{itemCode}) for update
     </select>
 
     <!-- 更新序列表最大值 -->
-    <update id="updateMaxmum" parameterType="java.lang.String">
+    <update id="updateMaxNum" parameterType="java.lang.String">
         update t_number_control
-        set maximum = maximum+1
+        set maximun = maximum+1
         where itemcode = upper(#{itemCode})
     </update>
 

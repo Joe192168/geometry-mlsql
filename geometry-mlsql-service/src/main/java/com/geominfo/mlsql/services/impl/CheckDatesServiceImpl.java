@@ -22,9 +22,12 @@ public class CheckDatesServiceImpl implements CheckDatesService {
         CheckParamVo paramVo = new CheckParamVo();
         paramVo.setParamName(resourceVo.getResourceName());
         paramVo.setResourceType(resourceVo.getResourceTypeId().intValue());
-        paramVo.setParentId(resourceVo.getParentid().intValue());
+        if (resourceVo.getParentid() != null)
+            paramVo.setParentId(resourceVo.getParentid().intValue());
+        else
+            paramVo.setParentId(null);
         List<SystemResourceVo> resourceVoList = systemResourcesDao.checkSystemParamName(paramVo);
-        if (paramVo.getId() == null) {
+        if (resourceVo.getId() == null) {
             if (CollectionUtils.isEmpty(resourceVoList))
                 return true;
             else

@@ -50,6 +50,7 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
         TSystemResources systemResources = new TSystemResources();
         systemResources.setResourceName(workSpaceInfoVo.getWorkSpaceName());
         systemResources.setDisplayName(workSpaceInfoVo.getWorkSpaceName());
+        systemResources.setParentid(workSpaceInfoVo.getSpaceOwnerId());
         systemResources.setResourceTypeId(new BigDecimal(ResourceTypeConstants.GZKJ_ML));
         systemResources.setOwner(workSpaceInfoVo.getSpaceOwnerId());
         systemResources.setContentInfo(workSpaceInfoVo.getDescribe());
@@ -180,7 +181,9 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
 
     @Override
     public List<WorkSpaceInfoVo> getWorkSpaceListsByName(BigDecimal userId, String spaceName) {
-        return null;
+        if (StringUtils.isBlank(spaceName))
+            spaceName = null;
+        return systemResourcesDao.getWorkSpaceListsByName(userId,spaceName);
     }
 
     @Override

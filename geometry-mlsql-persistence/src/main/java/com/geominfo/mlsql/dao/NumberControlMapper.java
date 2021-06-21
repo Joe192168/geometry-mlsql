@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 public interface NumberControlMapper {
 
     //查询maxmum
-    BigDecimal selectMaxmum(String itemCode);
+    BigDecimal selectMaxNum(String itemCode);
 
     //更新maxmum
-    int updateMaxmum(String itemCode);
+    void updateMaxNum(String itemCode);
 
 }

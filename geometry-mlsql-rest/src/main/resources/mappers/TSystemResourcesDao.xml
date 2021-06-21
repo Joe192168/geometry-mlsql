@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.TSystemResources">
         <id column="id" property="id"/>
-        <result column="parentid" property="parentid"/>
+        <result column="parentid" property="parentId"/>
         <result column="resource_type_id" property="resourceTypeId"/>
         <result column="resource_name" property="resourceName"/>
         <result column="display_name" property="displayName"/>
@@ -44,8 +44,8 @@
     
     <select id="checkSystemParamName" parameterType="com.geominfo.mlsql.domain.vo.CheckParamVo" resultType="com.geominfo.mlsql.domain.vo.SystemResourceVo">
         select *
-        from t_system_resources sr
-        where resourceType = #{resourceId}
+        from t_system_resources
+        where resource_type_id = #{resourceType}
               and resource_name = #{paramName}
         <if test="parentId != null">
               and parentid = #{parentId}
@@ -60,7 +60,8 @@
                twmi.state,
                tsr.content_info  describe,
                tsr.create_time createTime,
-               tsr.update_time  updateTime
+               tsr.update_time  updateTime,
+              (select count(*) from t_workspace_member_infos where workspace_id = tsr.id and space_member_id = #{userId}) spaceMemberNum
         from t_system_resources tsr
         left join t_workspace_member_infos twmi on tsr.id = twmi.workspace_id
         where tsr.resource_type_id = 42

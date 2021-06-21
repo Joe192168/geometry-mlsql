@@ -30,6 +30,8 @@ public class WorkSpaceInfoVo {
 
     private Date updateTime;
 
+    private Integer spaceMemberNum;
+
     public String getSpaceId() {
         return spaceId;
     }
@@ -100,6 +102,14 @@ public class WorkSpaceInfoVo {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getSpaceMemberNum() {
+        return spaceMemberNum;
+    }
+
+    public void setSpaceMemberNum(Integer spaceMemberNum) {
+        this.spaceMemberNum = spaceMemberNum;
     }
 
     @Override

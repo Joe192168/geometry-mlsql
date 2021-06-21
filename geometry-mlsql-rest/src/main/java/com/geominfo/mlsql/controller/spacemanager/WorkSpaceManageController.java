@@ -43,7 +43,7 @@ public class WorkSpaceManageController extends BaseNewController {
 
     @ApiOperation(value="新增工作空间", httpMethod = "POST")
     @PostMapping("/insert")
-    @GeometryLogAnno(operateType = EnumOperateLogType.WORKSPACE_OPERATE)
+//    @GeometryLogAnno(operateType = EnumOperateLogType.WORKSPACE_OPERATE)
     public Message insertWorkSpace(@RequestBody WorkSpaceInfoVo workSpaceInfoVo) {
         BaseResultVo baseResultVo = new BaseResultVo();
         logger.info("insertWorkSpace param:{}", workSpaceInfoVo);
@@ -127,7 +127,7 @@ public class WorkSpaceManageController extends BaseNewController {
 
     @ApiOperation(value="新增空间成员", httpMethod = "POST")
     @PostMapping("/insertSpaceMember")
-    @GeometryLogAnno(operateType = EnumOperateLogType.WORKSPACE_OPERATE)
+//    @GeometryLogAnno(operateType = EnumOperateLogType.WORKSPACE_OPERATE)
     public Message insertSpaceMember(@RequestBody WorkSpaceInfoVo workSpaceInfoVo) {
         BaseResultVo baseResultVo = new BaseResultVo();
         logger.info("insertSpaceMember param:{}", workSpaceInfoVo);
@@ -202,7 +202,7 @@ public class WorkSpaceManageController extends BaseNewController {
     public Message getWorkSpaceListsByName( @PathVariable BigDecimal userId,@PathVariable String spaceName){
         try {
             logger.info("getWorkSpaceListsByName userId{},spaceName{} ",userId,spaceName);
-            List<WorkSpaceInfoVo> workSpaceInfoVos = workSpaceManagerService.getWorkSpaceLists(userId);
+            List<WorkSpaceInfoVo> workSpaceInfoVos = workSpaceManagerService.getWorkSpaceListsByName(userId,spaceName);
             return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,workSpaceInfoVos);
         }catch (Exception e){
             logger.error("method # getWorkSpaceListsByName exception", e);
@@ -278,6 +278,19 @@ public class WorkSpaceManageController extends BaseNewController {
         } catch (Exception e) {
             logger.error("setDefaultEngine Exception", e);
             return new Message().error(InterfaceMsg.INSERT_ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value="获取首页工作空间卡片",httpMethod = "GET")
+    @GetMapping("/getWorkSpaceListCards/{userId}")
+    public Message getWorkSpaceListCards( @PathVariable BigDecimal userId){
+        try {
+            logger.info("getWorkSpaceListCards userId{} ",userId);
+            List<WorkSpaceInfoVo> workSpaceInfoVos = workSpaceManagerService.getWorkSpaceLists(userId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,workSpaceInfoVos);
+        }catch (Exception e){
+            logger.error("method # getWorkSpaceListCards exception", e);
+            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
         }
     }
 

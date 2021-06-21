@@ -16,7 +16,7 @@ public interface CheckDatesService {
      * @description: 校验资源参数接口
      * @author: LF
      * @date: 2021/6/8
-     * @param paramVo
+     * @param resourceVo
      * @return java.lang.Boolean
      */
     Boolean CheckResourceDate(TSystemResources resourceVo);
