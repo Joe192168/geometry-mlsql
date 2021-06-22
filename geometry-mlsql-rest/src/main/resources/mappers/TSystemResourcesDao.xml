@@ -94,5 +94,18 @@
         </if>
     </select>
 
+    <select id="getAllRecoverResources" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
+                select tt.id,tt.parentId,tt.resource_name,tt.resource_type_id,tt.owner,tt.create_time,tt.update_time,tt.content_info from (
+        with RECURSIVE t as
+        (
+        select a.* from t_system_resources a where a.id = #{workSpaceId}
+        union all
+        select k.*  from t_system_resources k , t where t.id =k.parentid
+        )
+        select * from t
+        ) tt
+        where 1=1 and tt.resource_state = 1 and owner = #{userId} order by tt.id
+    </select>
+
 
 </mapper>

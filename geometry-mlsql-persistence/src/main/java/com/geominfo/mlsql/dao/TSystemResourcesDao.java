@@ -69,4 +69,6 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
      * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
      */
     List<WorkSpaceInfoVo> getWorkSpaceListsByName(@Param("userId") BigDecimal userId,@Param("spaceName") String spaceName);
+
+    List<TSystemResources> getAllRecoverResources(BigDecimal workSpaceId, BigDecimal userId);
 }

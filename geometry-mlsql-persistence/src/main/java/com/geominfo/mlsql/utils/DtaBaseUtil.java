@@ -20,7 +20,7 @@ import com.geominfo.mlsql.domain.dto.DataBaseDTO;
        *  
        */  
       public static enum DATABASETYPE {  
-          ORACLE, MYSQL, SQLSERVER, SQLSERVER2005, DB2, INFORMIX, SYBASE, OTHER, EMPTY  
+          ORACLE, MYSQL, SQLSERVER, SQLSERVER2005, DB2, INFORMIX, SYBASE, OTHER, EMPTY  ,POSTGRESQL
       }  
     
       /** 
@@ -83,8 +83,15 @@ import com.geominfo.mlsql.domain.dto.DataBaseDTO;
           if (databasetype.contains("SYBASE")) {  
               //  
               return DATABASETYPE.SYBASE;  
-          }  
-    
+          }
+
+          if (databasetype.contains("POSTGRESQL")) {
+              //
+              return DATABASETYPE.POSTGRESQL;
+          }
+
+
+
           // 默认,返回其他  
           return DATABASETYPE.OTHER;  
       }
@@ -154,7 +161,11 @@ import com.geominfo.mlsql.domain.dto.DataBaseDTO;
                   // SqlServer  
                   tableNamePattern = "%";  
                   rs = meta.getTables(catalog, schemaPattern, tableNamePattern, types);  
-              }  else {  
+              } else if (DATABASETYPE.POSTGRESQL.equals(dbtype)) {
+                  // POSTGRESQL
+                  tableNamePattern = "%";
+                  rs = meta.getTables(catalog, schemaPattern, tableNamePattern, types);
+              } else {
                   throw new RuntimeException("不认识的数据库类型!");  
               }  
               //  
@@ -202,20 +213,21 @@ import com.geominfo.mlsql.domain.dto.DataBaseDTO;
               // 表名  
               String tableNamePattern = tableName;
               // 转换为大写  
-              if (null != tableNamePattern) {  
-                  tableNamePattern = tableNamePattern.toUpperCase();  
-              }  
-              //   
-              String columnNamePattern = null;  
-              // Oracle  
-              if (DATABASETYPE.ORACLE.equals(dbtype)) {  
-                  // 查询  
+              //
+              String columnNamePattern = null;
+              // Oracle
+              if (DATABASETYPE.ORACLE.equals(dbtype)) {
+                  if (null != tableNamePattern) {
+                      tableNamePattern = tableNamePattern.toUpperCase();
+                  }
+                  // 查询
                   schemaPattern = username;  
                   if (null != schemaPattern) {  
                       schemaPattern = schemaPattern.toUpperCase();  
                   }  
-              } else {  
+              } else if (DATABASETYPE.POSTGRESQL.equals(dbtype)){
                   //其它数据库根据实际情况处理
+
               }  
     
               rs = meta.getColumns(catalog, schemaPattern, tableNamePattern, columnNamePattern);  
@@ -248,7 +260,7 @@ import com.geominfo.mlsql.domain.dto.DataBaseDTO;
           // Oracle数据库  
           if (DATABASETYPE.ORACLE.equals(dbtype)) {  
               //  
-              url += "jdbc:oracle:thin:@";  
+              url += "jdbc:oracle:thin:@";
               url += ip.trim();  
               url += ":" + port.trim();  
               url += ":" + dbname;
@@ -287,7 +299,12 @@ import com.geominfo.mlsql.domain.dto.DataBaseDTO;
               url += ip.trim();  
               url += ":" + port.trim();  
               url += "/" + dbname;  
-          } else {  
+          } else if (DATABASETYPE.POSTGRESQL.equals(dbtype)) {
+              url += "jdbc:postgresql://";
+              url += ip.trim();
+              url += ":" + port.trim();
+              url += "/" + dbname;
+          }else {
               throw new RuntimeException("不认识的数据库类型!");  
           }  
           //  

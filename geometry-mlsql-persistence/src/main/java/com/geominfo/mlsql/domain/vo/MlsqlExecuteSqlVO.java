@@ -80,4 +80,6 @@ public class MlsqlExecuteSqlVO {
 
     @ApiModelProperty(name = "authSecret",value = "engine回访请求服务器的秘钥。比如console调用了engine，需要传递这个参数， 然后engine要回调console,那么需要将这个参数带回")
     private String authSecret;
+
+    private Boolean refuseConnect;
 }

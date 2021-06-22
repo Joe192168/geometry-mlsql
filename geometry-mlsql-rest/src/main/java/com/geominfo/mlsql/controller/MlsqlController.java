@@ -53,7 +53,7 @@ public class MlsqlController {
             return new Message().ok().addData("data",result);
         } catch (Exception e) {
             log.error("executeSql : {}",e.getMessage());
-            return new Message().error(ExceptionMsgConstant.MLSQL_NOT_RESPONSE);
+            return new Message().error(e.getMessage());
         }
     }
 

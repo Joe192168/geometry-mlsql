@@ -85,6 +85,7 @@ public class MlsqlServiceImpl implements MlsqlService {
 
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         map.add("sql", mlsqlExecuteSqlVO.getSql());
+        map.add("refuseConnect",mlsqlExecuteSqlVO.getRefuseConnect());
         map.add("owner", mlsqlExecuteSqlVO.getOwner());
         map.add("jobType", mlsqlExecuteSqlVO.getJobType());
         map.add("executeMode", mlsqlExecuteSqlVO.getExecuteMode());
@@ -116,7 +117,6 @@ public class MlsqlServiceImpl implements MlsqlService {
                 return null;
             }
             return entity.getBody();
-
         }
         return null;
     }
@@ -225,8 +225,6 @@ public class MlsqlServiceImpl implements MlsqlService {
             tScriptExecLog.setJobName(jobInfo.getJobName());
             tScriptExecLog.setJobType(jobInfo.getJobType());
             tScriptExecLogDao.insert(tScriptExecLog);
-
-
         }
     }
 
