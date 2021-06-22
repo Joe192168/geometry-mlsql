@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.controller;
+package com.geominfo.mlsql.controller.dataSource;
 
 import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.domain.dto.DataBaseDTO;

@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.controller;
+package com.geominfo.mlsql.controller.script;
 
 import com.geominfo.authing.common.constants.ResourceTypeConstants;
 import com.geominfo.mlsql.commons.Message;
