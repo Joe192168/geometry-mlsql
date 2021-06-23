@@ -41,14 +41,13 @@
     <select id="selectScriptByRoute" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
         SELECT * FROM t_system_resources sr where  json_in_varchar(sr.content_info) ->> 'src' = #{scriptRoute} and resource_type_id = #{resourceId}
     </select>
-    
     <select id="checkSystemParamName" parameterType="com.geominfo.mlsql.domain.vo.CheckParamVo" resultType="com.geominfo.mlsql.domain.vo.SystemResourceVo">
         select *
         from t_system_resources
         where resource_type_id = #{resourceType}
-              and resource_name = #{paramName}
+        and resource_name = #{paramName}
         <if test="parentId != null">
-              and parentid = #{parentId}
+            and parentid = #{parentId}
         </if>
     </select>
 
@@ -61,12 +60,12 @@
                tsr.content_info  describe,
                tsr.create_time createTime,
                tsr.update_time  updateTime,
-              (select count(*) from t_workspace_member_infos where workspace_id = tsr.id and space_member_id = #{userId}) spaceMemberNum
+              (select count(*) from t_workspace_member_infos where space_id = tsr.id and space_member_id = #{userId}) spaceMemberNum
         from t_system_resources tsr
-        left join t_workspace_member_infos twmi on tsr.id = twmi.workspace_id
+        left join t_workspace_member_infos twmi on tsr.id = twmi.space_id
         where tsr.resource_type_id = 42
               and tsr.id in (
-                select twmi.workspace_id
+                select twmi.space_id
                 from t_workspace_member_infos twmi
                 where twmi.space_member_id = #{userId}
               )
@@ -74,23 +73,23 @@
 
     <select id="getWorkSpaceListsByName" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo">
         select tsr.id spaceId,
-               tsr.resource_name workSpaceName,
-               twmi.space_owner_id spaceOwnerId,
-               twmi.space_member_id spaceMemberId,
-               twmi.state,
-               tsr.content_info  describe,
-               tsr.create_time createTime,
-               tsr.update_time  updateTime
+        tsr.resource_name workSpaceName,
+        twmi.space_owner_id spaceOwnerId,
+        twmi.space_member_id spaceMemberId,
+        twmi.state,
+        tsr.content_info  describe,
+        tsr.create_time createTime,
+        tsr.update_time  updateTime
         from t_system_resources tsr
-        left join t_workspace_member_infos twmi on tsr.id = twmi.workspace_id
+        left join t_workspace_member_infos twmi on tsr.id = twmi.space_id
         where tsr.resource_type_id = 42
-              and tsr.id in (
-                select twmi.workspace_id
-                from t_workspace_member_infos twmi
-                where twmi.space_member_id = #{userId}
-              )
+        and tsr.id in (
+        select distinct (twmi.space_id)
+        from t_workspace_member_infos twmi
+        where twmi.space_member_id = #{userId}
+        )
         <if test="spaceName != null">
-            and resource_name = #{spaceName}
+            and LOWER (resource_name) LIKE '%'||#{spaceName}||'%'
         </if>
     </select>
 

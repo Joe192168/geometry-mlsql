@@ -28,7 +28,7 @@
     <!-- 更新序列表最大值 -->
     <update id="updateMaxNum" parameterType="java.lang.String">
         update t_number_control
-        set maximun = maximum+1
+        set maximum = maximum+1
         where itemcode = upper(#{itemCode})
     </update>
 

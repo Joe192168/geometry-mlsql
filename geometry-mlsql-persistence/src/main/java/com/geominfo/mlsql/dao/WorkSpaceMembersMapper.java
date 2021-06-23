@@ -68,4 +68,15 @@ public interface WorkSpaceMembersMapper extends BaseMapper<WorkSpaceMember> {
      */
     List<SpaceMemberVo> getSpaceMemberBySpaceId(BigDecimal spaceId);
 
+    List<Integer> getSpaceMemberIdsBySpaceId(BigDecimal spaceId);
+
+    /**
+     * @description: 根据空间id和成员id，查询空间成员信息
+     * @author: LF
+     * @date: 2021/6/22
+     * @param spaceId, MemberId
+     * @return java.util.List<com.geominfo.mlsql.domain.vo.SpaceMemberVo>
+     */
+    List<SpaceMemberVo> getSpaceMember(@Param("spaceId") BigDecimal spaceId,@Param("memberId")BigDecimal memberId);
+
 }

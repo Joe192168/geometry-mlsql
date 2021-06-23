@@ -16,8 +16,10 @@ import com.geominfo.mlsql.utils.FeignUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,10 +36,16 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
     @Override
     public BaseResultVo insertSpaceMember(WorkSpaceInfoVo workSpaceInfoVo) {
         BaseResultVo baseResultVo = new BaseResultVo();
+        List<SpaceMemberVo> spaceMemberVos = workSpaceMembersMapper.getSpaceMember(new BigDecimal(workSpaceInfoVo.getSpaceId()),workSpaceInfoVo.getSpaceMemberId());
+        if (!CollectionUtils.isEmpty(spaceMemberVos)){
+            baseResultVo.setSuccess(Boolean.FALSE);
+            baseResultVo.setReturnMsg(CommonConstants.PARAM_ERROR);
+            return baseResultVo;
+        }
         WorkSpaceMember workSpaceMember = new WorkSpaceMember();
         BigDecimal id = numberControlService.getMaxNum(SystemTableConstants.T_WORKSPACE_MEMBER_INFOS);
         workSpaceMember.setId(id);
-        workSpaceMember.setWorkSpaceId(new BigDecimal(workSpaceInfoVo.getSpaceId()));
+        workSpaceMember.setSpaceId(new BigDecimal(workSpaceInfoVo.getSpaceId()));
         workSpaceMember.setSpaceMemberId(workSpaceInfoVo.getSpaceMemberId());
         workSpaceMember.setSpaceOwnerId(workSpaceInfoVo.getSpaceOwnerId());
         workSpaceMember.setCreateTime(new Date());
@@ -104,15 +112,26 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
 
     @Override
     public List<SpaceMemberVo> getTransferMemberBySpaceId(BigDecimal spaceId) {
-        List<SpaceMemberVo> spaceMemberVos = workSpaceMembersMapper.getSpaceMemberBySpaceId(spaceId);
-        for (SpaceMemberVo vo : spaceMemberVos){
-            //去掉工作原空间所有者
-            if (vo.getOwnerId().equals(vo.getSpaceId())){
-                continue;
+        List<SpaceMemberVo> spaceMemberVoList = new ArrayList<>();
+        List<User> userLists = FeignUtils.parseArray(authQueryApiService.getUsers(),User.class);
+        List<Integer> spaceMemberIds = workSpaceMembersMapper.getSpaceMemberIdsBySpaceId(spaceId);
+       //过滤已分配的人员
+        for (Integer id :spaceMemberIds){
+            for (int i = 0;i < userLists.size();i++) {
+                if (id.equals(userLists.get(i).getId())) {
+                    userLists.remove(i);
+                }
             }
-            getSpaceMemberInfo(vo);
         }
-        return spaceMemberVos;
+
+        for (User user :userLists){
+            SpaceMemberVo spaceMemberVo = new SpaceMemberVo();
+            spaceMemberVo.setLoginName(user.getLoginName());
+            spaceMemberVo.setUserName(user.getUserName());
+            spaceMemberVo.setMemberId(BigDecimal.valueOf(user.getId()));
+            spaceMemberVoList.add(spaceMemberVo);
+        }
+        return spaceMemberVoList;
     }
 
     private void getSpaceMemberInfo(SpaceMemberVo vo){

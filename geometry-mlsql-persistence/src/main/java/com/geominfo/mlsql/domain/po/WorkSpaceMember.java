@@ -24,7 +24,7 @@ public class WorkSpaceMember {
     private BigDecimal id;
 
     @ApiModelProperty(value = "工作空间id", name="workSpaceId")
-    private BigDecimal workSpaceId;
+    private BigDecimal spaceId;
 
     @ApiModelProperty(value = "空间所属者ID", name="spaceOwnerId")
     private BigDecimal spaceOwnerId;
@@ -47,12 +47,12 @@ public class WorkSpaceMember {
         this.id = id;
     }
 
-    public BigDecimal getWorkSpaceId() {
-        return workSpaceId;
+    public BigDecimal getSpaceId() {
+        return spaceId;
     }
 
-    public void setWorkSpaceId(BigDecimal workSpaceId) {
-        this.workSpaceId = workSpaceId;
+    public void setSpaceId(BigDecimal spaceId) {
+        this.spaceId = spaceId;
     }
 
     public BigDecimal getSpaceOwnerId() {

@@ -34,15 +34,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         String authorization = httpServletRequest.getHeader("Authorization");
-        // 放行GET请求
-        /*if (httpServletRequest.getMethod().equals(String.valueOf(RequestMethod.GET))) {
+        // TODO:开发阶段,放行GET请求和POST请求
+        if (httpServletRequest.getMethod().equals(String.valueOf(RequestMethod.GET))  || httpServletRequest.getMethod().equals(String.valueOf(RequestMethod.POST))) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
-            return;
-        }*/
-
-        //TODO： 该处代码只是在开发阶段，跳过Toten校验
-        if (StringUtils.isNotBlank(SystemCustomIdentification.DEFAULT_USER)){
-            filterChain.doFilter(httpServletRequest,httpServletResponse);
             return;
         }
 

@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.WorkSpaceMember">
         <id column="id" property="id" />
-        <result column="workspace_id" property="workSpaceId" />
+        <result column="space_id" property="spaceId" />
         <result column="space_owner_id" property="spaceOwnerId" />
         <result column="space_member_id" property="spaceMemberId" />
         <result column="state" property="state" />
@@ -29,29 +29,42 @@
         update t_workspace_member_infos
         set state = '1'
         where space_member_id = #{userId}
-             and  workspace_id = #{spaceId}
+             and  space_id = #{spaceId}
     </update>
 
     <select id="getWorkSpaceBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.WorkSpaceMember">
         select *
         from t_workspace_member_infos
         where space_member_id = space_owner_id
-             and  workspace_id = #{spaceId}
+             and  space_id = #{spaceId}
     </select>
 
     <delete id="deleteSpaceMember">
         delete from t_workspace_member_infos
         where space_member_id = #{userId}
-             and  workspace_id = #{spaceId}
+             and  space_id = #{spaceId}
     </delete>
 
     <select id="getSpaceMemberBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.vo.SpaceMemberVo">
-        select workspace_id spaceId,
+        select space_id spaceId,
                space_owner_id ownerId,
                space_member_id memberId,
                create_time createTime
         from t_workspace_member_infos
-        where  workspace_id = #{spaceId}
+        where  space_id = #{spaceId}
+    </select>
+
+    <select id="getSpaceMemberIdsBySpaceId" parameterType="java.math.BigDecimal" resultType="java.lang.Integer">
+        select distinct(space_member_id)
+        from t_workspace_member_infos
+        where  space_id = #{spaceId}
+    </select>
+
+    <select id="getSpaceMember" resultType="com.geominfo.mlsql.domain.vo.SpaceMemberVo">
+        select *
+        from t_workspace_member_infos
+        where space_member_id = #{memberId}
+             and  space_id = #{spaceId}
     </select>
 
 </mapper>

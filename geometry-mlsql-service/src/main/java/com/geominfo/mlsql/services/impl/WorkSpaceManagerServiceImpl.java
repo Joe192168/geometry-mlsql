@@ -102,7 +102,7 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
         if (!CollectionUtils.isEmpty(defaultSpaces)) {
             WorkSpaceMember defaultSpace = defaultSpaces.get(0);
             //默认空间不可重复设置
-            if (!defaultSpace.getWorkSpaceId().equals(spaceId)) {
+            if (!defaultSpace.getSpaceId().equals(spaceId)) {
                 //将原默认空间修改为普通空间
                 workSpaceMemberService.updateSpaceInfoByUserId(userId);
                 //设置默认空间
