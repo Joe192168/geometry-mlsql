@@ -42,6 +42,9 @@ public class AuthApiUrl {
     //用户会话管理接口url
     public static final String USER_SESSION = "/auth_OpenApi/session/save";
 
+    //用户会话管理接口url
+    public static final String UPDATE_ACCOUNT_PASSWORD = "/auth_OpenApi/updateAccountInfo";
+
 //    //根据系统的clientId查询系统的系统标识
 //    public static final String CLIENT_ID = "/auth_OpenApi/getProductId/{clientId}";
 //

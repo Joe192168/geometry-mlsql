@@ -5,9 +5,11 @@ import com.geominfo.mlsql.aop.GeometryLogAnno;
 import com.geominfo.mlsql.base.BaseNewController;
 import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.commons.SystemCustomIdentification;
+import com.geominfo.mlsql.domain.param.AccountParam;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.domain.vo.QueryUserVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
+import com.geominfo.mlsql.services.AuthApiService;
 import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.utils.FeignUtils;
 import com.geominfo.mlsql.utils.RequestResponseUtil;
@@ -43,6 +45,8 @@ public class AccountController extends BaseNewController {
     private AuthQueryApiService authQueryApiService;
     @Autowired
     private StringRedisTemplate redisTemplate;
+    @Autowired
+    private AuthApiService authApiService;
 
     @GeometryLogAnno(operateType = EnumOperateLogType.MLSQL_EXIT_OPERATE)
     @ApiOperation(value = "用户登出", httpMethod = "POST")
@@ -76,7 +80,7 @@ public class AccountController extends BaseNewController {
         }
     }
 
-    @ApiOperation(value = "根据人员名称查询人员信息", httpMethod = "GET", notes = "查询人员信息。")
+    @ApiOperation(value = "根据人员名称查询人员信息", httpMethod = "GET", notes = "查询人员信息")
     @ApiImplicitParam(name = "loginName", value = "登录名", dataType = "String", paramType = "path")
     @GetMapping("/getUserByLoginName/{loginName}")
     public Message getUserByLoginName(@PathVariable String loginName) {
@@ -113,5 +117,10 @@ public class AccountController extends BaseNewController {
         }
     }
 
+    @ApiOperation(value = "修改账户、密码", httpMethod = "PUT", notes = "修改账户、密码" )
+    @PutMapping("/updateAccountInfo")
+    public Message updateAccountInfo(@RequestBody AccountParam accountParam){
+        return authApiService.updateAccountInfo(accountParam);
+    }
 
 }

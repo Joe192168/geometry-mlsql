@@ -2,6 +2,7 @@ package com.geominfo.mlsql.services;
 
 import com.geominfo.mlsql.commons.AuthApiUrl;
 import com.geominfo.mlsql.commons.Message;
+import com.geominfo.mlsql.domain.param.AccountParam;
 import com.geominfo.mlsql.domain.vo.OperateLogVo;
 import com.geominfo.mlsql.domain.vo.UserSessionVo;
 import com.geominfo.mlsql.services.impl.AuthApiServiceFactory;
@@ -39,6 +40,17 @@ public interface AuthApiService {
      */
     @PostMapping(value= AuthApiUrl.USER_SESSION)
     Message userSessionManager(@RequestBody UserSessionVo userSessionVo);
+
+    /**
+     * @description: 修改账户、密码
+     * @author: LF
+     * @date: 2021/6/23
+     * @param accountParam
+     * @return com.geominfo.mlsql.commons.Message
+     */
+    @PostMapping(value= AuthApiUrl.UPDATE_ACCOUNT_PASSWORD)
+    Message updateAccountInfo(@RequestBody AccountParam accountParam);
+
 
 
 
