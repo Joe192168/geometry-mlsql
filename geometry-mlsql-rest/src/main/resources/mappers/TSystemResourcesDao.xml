@@ -51,18 +51,16 @@
         </if>
     </select>
 
-    <select id="getWorkSpaceLists" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo">
+    <select id="getWorkSpaceLists" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.result.WorkSpaceInfoResult">
         select tsr.id spaceId,
-               tsr.resource_name workSpaceName,
-               twmi.space_owner_id spaceOwnerId,
-               twmi.space_member_id spaceMemberId,
-               twmi.state,
+               tsr.resource_name spaceName,
+               tsr.owner spaceOwnerId,
                tsr.content_info  describe,
                tsr.create_time createTime,
                tsr.update_time  updateTime,
-              (select count(*) from t_workspace_member_infos where space_id = tsr.id and space_member_id = #{userId}) spaceMemberNum
+              (select twmi.state  from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id = #{userId}) spaceState,
+              (select count(*) from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id = #{userId}) spaceMemberNum
         from t_system_resources tsr
-        left join t_workspace_member_infos twmi on tsr.id = twmi.space_id
         where tsr.resource_type_id = 42
               and tsr.id in (
                 select twmi.space_id
@@ -71,15 +69,15 @@
               )
     </select>
 
-    <select id="getWorkSpaceListsByName" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo">
+    <select id="getWorkSpaceListsByName" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.result.WorkSpaceInfoResult">
         select tsr.id spaceId,
-        tsr.resource_name workSpaceName,
-        twmi.space_owner_id spaceOwnerId,
-        twmi.space_member_id spaceMemberId,
-        twmi.state,
-        tsr.content_info  describe,
-        tsr.create_time createTime,
-        tsr.update_time  updateTime
+            tsr.resource_name spaceName,
+            tsr.owner spaceOwnerId,
+            tsr.content_info  describe,
+            tsr.create_time createTime,
+            tsr.update_time  updateTime,
+            (select twmi.state  from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id = #{userId}) spaceState,
+            (select count(*) from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id = #{userId}) spaceMemberNum
         from t_system_resources tsr
         left join t_workspace_member_infos twmi on tsr.id = twmi.space_id
         where tsr.resource_type_id = 42

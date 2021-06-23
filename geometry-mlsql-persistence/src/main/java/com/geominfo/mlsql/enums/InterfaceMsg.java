@@ -19,6 +19,8 @@ public enum InterfaceMsg {
     UPDATE_SUCCESS("修改成功！"),
     DELETE_ERROR("删除时发生异常！"),
     DELETE_SUCCESS("删除成功！"),
+    INSERT_SPACE_FAIL("新增工作空间失败！"),
+    INSERT_SPACE_SUCCESS("新增工作空间成功！"),
     INSERT_SPACE_MEMBER_FAIL("新增工作空间成员失败！"),
     INSERT_SPACE_MEMBER_SUCCESS("新增工作空间成员成功！"),
     SET_DEFAULT_SPACE_SUCCESS("设置默认工作空间成功！"),

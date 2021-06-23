@@ -8,6 +8,7 @@ package com.geominfo.mlsql.dao;  /**
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.geominfo.mlsql.domain.po.TSystemResources;
+import com.geominfo.mlsql.domain.result.WorkSpaceInfoResult;
 import com.geominfo.mlsql.domain.vo.CheckParamVo;
 import com.geominfo.mlsql.domain.vo.SystemResourceVo;
 import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
@@ -59,7 +60,7 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
      * @param userId
      * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
      */
-    List<WorkSpaceInfoVo> getWorkSpaceLists(BigDecimal userId);
+    List<WorkSpaceInfoResult> getWorkSpaceLists(BigDecimal userId);
 
     /**
      * @description: 根据名称查询工作空间列表
@@ -68,7 +69,7 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
      * @param userId, spaceName
      * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
      */
-    List<WorkSpaceInfoVo> getWorkSpaceListsByName(@Param("userId") BigDecimal userId,@Param("spaceName") String spaceName);
+    List<WorkSpaceInfoResult> getWorkSpaceListsByName(@Param("userId") BigDecimal userId,@Param("spaceName") String spaceName);
 
     List<TSystemResources> getAllRecoverResources(BigDecimal workSpaceId, BigDecimal userId);
 }

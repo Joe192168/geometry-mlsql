@@ -4,10 +4,11 @@ import com.geominfo.authing.common.constants.CommonConstants;
 import com.geominfo.authing.common.constants.SystemTableConstants;
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.dao.WorkSpaceMembersMapper;
+import com.geominfo.mlsql.domain.param.WorkSpaceMemberParam;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
 import com.geominfo.mlsql.domain.pojo.User;
+import com.geominfo.mlsql.domain.result.SpaceMemberResult;
 import com.geominfo.mlsql.domain.vo.SpaceMemberVo;
-import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.NumberControlService;
@@ -34,9 +35,9 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
     private AuthQueryApiService authQueryApiService;
 
     @Override
-    public BaseResultVo insertSpaceMember(WorkSpaceInfoVo workSpaceInfoVo) {
+    public BaseResultVo insertSpaceMember(WorkSpaceMemberParam workSpaceMemberParam) {
         BaseResultVo baseResultVo = new BaseResultVo();
-        List<SpaceMemberVo> spaceMemberVos = workSpaceMembersMapper.getSpaceMember(new BigDecimal(workSpaceInfoVo.getSpaceId()),workSpaceInfoVo.getSpaceMemberId());
+        List<SpaceMemberVo> spaceMemberVos = workSpaceMembersMapper.getSpaceMember(workSpaceMemberParam.getSpaceId(),workSpaceMemberParam.getSpaceMemberId());
         if (!CollectionUtils.isEmpty(spaceMemberVos)){
             baseResultVo.setSuccess(Boolean.FALSE);
             baseResultVo.setReturnMsg(CommonConstants.PARAM_ERROR);
@@ -45,15 +46,15 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
         WorkSpaceMember workSpaceMember = new WorkSpaceMember();
         BigDecimal id = numberControlService.getMaxNum(SystemTableConstants.T_WORKSPACE_MEMBER_INFOS);
         workSpaceMember.setId(id);
-        workSpaceMember.setSpaceId(new BigDecimal(workSpaceInfoVo.getSpaceId()));
-        workSpaceMember.setSpaceMemberId(workSpaceInfoVo.getSpaceMemberId());
-        workSpaceMember.setSpaceOwnerId(workSpaceInfoVo.getSpaceOwnerId());
+        workSpaceMember.setSpaceId(workSpaceMemberParam.getSpaceId());
+        workSpaceMember.setSpaceMemberId(workSpaceMemberParam.getSpaceMemberId());
+        workSpaceMember.setSpaceOwnerId(workSpaceMemberParam.getSpaceOwnerId());
         workSpaceMember.setCreateTime(new Date());
-        if (StringUtils.isBlank(workSpaceInfoVo.getState()))
+        if (StringUtils.isBlank(workSpaceMemberParam.getSpaceState()))
             //默认为普通空间
             workSpaceMember.setState(CommonConstants.DEFAULT_STR_VAL);
         else
-            workSpaceMember.setState(workSpaceInfoVo.getState());
+            workSpaceMember.setState(workSpaceMemberParam.getSpaceState());
         int i = workSpaceMembersMapper.insert(workSpaceMember);
         if (i>0){
             baseResultVo.setSuccess(Boolean.TRUE);
@@ -102,9 +103,9 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
     }
 
     @Override
-    public List<SpaceMemberVo> getSpaceMemberBySpaceId(BigDecimal spaceId) {
-        List<SpaceMemberVo> spaceMemberVos = workSpaceMembersMapper.getSpaceMemberBySpaceId(spaceId);
-        for (SpaceMemberVo vo : spaceMemberVos){
+    public List<SpaceMemberResult> getSpaceMemberBySpaceId(BigDecimal spaceId) {
+        List<SpaceMemberResult> spaceMemberVos = workSpaceMembersMapper.getSpaceMemberBySpaceId(spaceId);
+        for (SpaceMemberResult vo : spaceMemberVos){
             getSpaceMemberInfo(vo);
         }
         return spaceMemberVos;
@@ -123,7 +124,6 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
                 }
             }
         }
-
         for (User user :userLists){
             SpaceMemberVo spaceMemberVo = new SpaceMemberVo();
             spaceMemberVo.setLoginName(user.getLoginName());
@@ -134,7 +134,7 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
         return spaceMemberVoList;
     }
 
-    private void getSpaceMemberInfo(SpaceMemberVo vo){
+    private void getSpaceMemberInfo(SpaceMemberResult vo){
         BigDecimal ownerId = vo.getMemberId();
         User user = FeignUtils.parseObject(authQueryApiService.getUserById(ownerId), User.class);
         if (user != null) {

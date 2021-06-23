@@ -96,8 +96,7 @@ public class EngineInfoServiceImpl implements EngineInfoService {
 
     @Override
     public Boolean checkEngineName(EngineInfo engineInfo) {
-//        if (StringUtils.isNotBlank(engineInfo.getEngineName()) && StringUtils.isNotBlank(engineInfo.getEngineUri())) {
-        List<EngineInfo> engineInfos = engineInfoMapper.getEngineInfoByNameAndUri(engineInfo.getEngineName(),engineInfo.getEngineUri());
+        List<EngineInfo> engineInfos = engineInfoMapper.getEngineInfoByEngineUri(engineInfo.getEngineUri());
         if (engineInfo.getId() == null) {
             if (CollectionUtils.isEmpty(engineInfos)){
                 return false;
@@ -117,9 +116,6 @@ public class EngineInfoServiceImpl implements EngineInfoService {
             }
 
         }
-//        } else {
-//            return false;
-//        }
 
     }
 

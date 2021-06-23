@@ -2,6 +2,7 @@ package com.geominfo.mlsql.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
+import com.geominfo.mlsql.domain.result.SpaceMemberResult;
 import com.geominfo.mlsql.domain.vo.QueryWorkSpaceVo;
 import com.geominfo.mlsql.domain.vo.SpaceMemberVo;
 import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
@@ -66,7 +67,7 @@ public interface WorkSpaceMembersMapper extends BaseMapper<WorkSpaceMember> {
      * @param spaceId
      * @return java.util.List<com.geominfo.mlsql.domain.vo.SpaceMemberVo>
      */
-    List<SpaceMemberVo> getSpaceMemberBySpaceId(BigDecimal spaceId);
+    List<SpaceMemberResult> getSpaceMemberBySpaceId(BigDecimal spaceId);
 
     List<Integer> getSpaceMemberIdsBySpaceId(BigDecimal spaceId);
 

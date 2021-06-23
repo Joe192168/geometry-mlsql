@@ -24,11 +24,10 @@
         from t_engine_info
     </select>
 
-    <select id="getEngineInfoByNameAndUri" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
+    <select id="getEngineInfoByEngineUri" parameterType="java.lang.String" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
         select *
         from t_engine_info
-        where engine_name = #{engineName}
-              and engine_uri = #{engineUri}
+        where  engine_uri = #{engineUri}
     </select>
 
     <select id="getEnginesBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.EngineInfo">

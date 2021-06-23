@@ -1,4 +1,4 @@
-package com.geominfo.mlsql.controller;
+package com.geominfo.mlsql.controller.engine;
 
 import com.geominfo.authing.common.constants.CommonConstants;
 import com.geominfo.authing.common.enums.EnumOperateLogType;
@@ -9,6 +9,8 @@ import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.domain.po.EngineInfo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.EngineInfoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/engine")
+@Api(value="执行引擎接口管理",tags={"执行引擎接口管理"})
 public class EngineInfoController extends BaseNewController {
     @Autowired
     private EngineInfoService engineInfoService;
@@ -63,6 +66,7 @@ public class EngineInfoController extends BaseNewController {
     }
     @ApiOperation(value="删除引擎信息", httpMethod = "DELETE")
     @DeleteMapping("/delete/{id}")
+    @ApiImplicitParam(name="id",value = "引擎id", dataType = "Integer", paramType = "path",required = true)
     public Message deleteEngineInfo(@PathVariable BigDecimal id) {
         Boolean flag = engineInfoService.deleteEngineInfo(id);
         if (flag) {

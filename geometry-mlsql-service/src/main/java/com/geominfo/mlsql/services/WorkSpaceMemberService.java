@@ -1,9 +1,10 @@
 package com.geominfo.mlsql.services;
 
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
+import com.geominfo.mlsql.domain.param.WorkSpaceMemberParam;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
+import com.geominfo.mlsql.domain.result.SpaceMemberResult;
 import com.geominfo.mlsql.domain.vo.SpaceMemberVo;
-import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,10 +22,10 @@ public interface WorkSpaceMemberService {
      * @description: 新增工作空间成员信息
      * @author: LF
      * @date: 2021/6/9
-     * @param workSpaceInfoVo
+     * @param workSpaceMemberParam
      * @return com.geominfo.authing.common.pojo.base.BaseResultVo
      */
-    BaseResultVo insertSpaceMember(WorkSpaceInfoVo workSpaceInfoVo);
+    BaseResultVo insertSpaceMember(WorkSpaceMemberParam workSpaceMemberParam);
 
     /**
      * @description: 修改工作空间信息，根据ID修改
@@ -80,15 +81,14 @@ public interface WorkSpaceMemberService {
      */
     WorkSpaceMember getWorkSpaceBySpaceId(BigDecimal spaceId);
 
-
     /**
      * @description: 根据工作空间id查询空间成员
      * @author: LF
      * @date: 2021/6/15
      * @param spaceId
-     * @return java.util.List<com.geominfo.mlsql.domain.vo.SpaceMemberVo>
+     * @return java.util.List<com.geominfo.mlsql.domain.result.SpaceMemberResult>
      */
-    List<SpaceMemberVo> getSpaceMemberBySpaceId(BigDecimal spaceId);
+    List<SpaceMemberResult> getSpaceMemberBySpaceId(BigDecimal spaceId);
 
     /**
      * @description: 可转让的空间成员

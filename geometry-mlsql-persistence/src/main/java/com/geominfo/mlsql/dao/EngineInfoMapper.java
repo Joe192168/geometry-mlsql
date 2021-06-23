@@ -29,13 +29,13 @@ public interface EngineInfoMapper extends BaseMapper<EngineInfo> {
     List<EngineInfo> getEngineInfos();
 
     /**
-     * @description: 根据引擎名称和引擎服务器查询引擎信息
+     * @description: 根据引擎服务器查询引擎信息
      * @author: LF
-     * @date: 2021/6/16
-     * @param engineName, engineUri
+     * @date: 2021/6/23
+     * @param engineUri
      * @return java.util.List<com.geominfo.mlsql.domain.po.EngineInfo>
      */
-    List<EngineInfo> getEngineInfoByNameAndUri(@Param("engineName") String engineName,@Param("engineUri") String engineUri);
+    List<EngineInfo> getEngineInfoByEngineUri(String engineUri);
 
     /**
      * @description: 查询可配置的引擎

@@ -5,11 +5,13 @@ import com.geominfo.authing.common.constants.ResourceTypeConstants;
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.dao.TSystemResourcesDao;
 import com.geominfo.mlsql.dao.WorkSpaceEnginesMapper;
+import com.geominfo.mlsql.domain.param.WorkSpaceInfoParam;
+import com.geominfo.mlsql.domain.param.WorkSpaceMemberParam;
 import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.domain.po.WorkSpaceEngine;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
 import com.geominfo.mlsql.domain.pojo.User;
-import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
+import com.geominfo.mlsql.domain.result.WorkSpaceInfoResult;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.SystemResourceService;
@@ -45,45 +47,51 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
     private WorkSpaceEnginesMapper workSpaceEnginesMapper;
 
     @Override
-    public BaseResultVo insertWorkSpace(WorkSpaceInfoVo workSpaceInfoVo) {
+    public BaseResultVo insertWorkSpace(WorkSpaceInfoParam workSpaceInfoParam) {
         BaseResultVo baseResultVo = new BaseResultVo();
         TSystemResources systemResources = new TSystemResources();
-        systemResources.setResourceName(workSpaceInfoVo.getWorkSpaceName());
-        systemResources.setDisplayName(workSpaceInfoVo.getWorkSpaceName());
-        systemResources.setParentid(workSpaceInfoVo.getSpaceOwnerId());
+        systemResources.setResourceName(workSpaceInfoParam.getWorkSpaceName());
+        systemResources.setDisplayName(workSpaceInfoParam.getWorkSpaceName());
+        systemResources.setParentid(workSpaceInfoParam.getSpaceOwnerId());
         systemResources.setResourceTypeId(new BigDecimal(ResourceTypeConstants.GZKJ_ML));
-        systemResources.setOwner(workSpaceInfoVo.getSpaceOwnerId());
-        systemResources.setContentInfo(workSpaceInfoVo.getDescribe());
+        systemResources.setOwner(workSpaceInfoParam.getSpaceOwnerId());
+        systemResources.setContentInfo(workSpaceInfoParam.getDescribe());
         baseResultVo = systemResourceService.insertResource(systemResources);
         if (baseResultVo.isSuccess()) {
             BigDecimal spaceId = baseResultVo.getId();
-            workSpaceInfoVo.setSpaceId(spaceId.toString());
-            baseResultVo = workSpaceMemberService.insertSpaceMember(workSpaceInfoVo);
+            WorkSpaceMemberParam workSpaceMemberParam = new WorkSpaceMemberParam();
+            workSpaceMemberParam.setSpaceId(spaceId);
+            workSpaceMemberParam.setSpaceOwnerId(workSpaceInfoParam.getSpaceOwnerId());
+            workSpaceMemberParam.setSpaceMemberId(workSpaceInfoParam.getSpaceOwnerId());
+            baseResultVo = workSpaceMemberService.insertSpaceMember(workSpaceMemberParam);
             if (baseResultVo.isSuccess()) {
+                baseResultVo.setReturnMsg(InterfaceMsg.INSERT_SPACE_SUCCESS.getMsg());
                 return baseResultVo;
             } else {
+                baseResultVo.setReturnMsg(InterfaceMsg.INSERT_SPACE_FAIL.getMsg());
                 return baseResultVo;
             }
         } else {
+            baseResultVo.setReturnMsg(InterfaceMsg.INSERT_SPACE_FAIL.getMsg());
             return baseResultVo;
         }
     }
 
     @Override
-    public BaseResultVo updateWorkSpace(WorkSpaceInfoVo workSpaceInfoVo) {
+    public BaseResultVo updateWorkSpace(WorkSpaceInfoParam workSpaceInfoParam) {
         BaseResultVo baseResultVo = new BaseResultVo();
         TSystemResources systemResources = new TSystemResources();
-        if (StringUtils.isBlank(workSpaceInfoVo.getSpaceId())) {
+        if (workSpaceInfoParam.getSpaceId() == null) {
             baseResultVo.setSuccess(Boolean.FALSE);
             baseResultVo.setReturnMsg(CommonConstants.PARAM_ERROR);
             return baseResultVo;
         }
-        systemResources.setId(new BigDecimal(workSpaceInfoVo.getSpaceId()));
+        systemResources.setId(workSpaceInfoParam.getSpaceId());
         systemResources.setResourceTypeId(new BigDecimal(ResourceTypeConstants.GZKJ_ML));
-        if (StringUtils.isNotBlank(workSpaceInfoVo.getWorkSpaceName()))
-            systemResources.setResourceName(workSpaceInfoVo.getWorkSpaceName());
-        if (StringUtils.isNotBlank(workSpaceInfoVo.getDescribe()))
-            systemResources.setContentInfo(workSpaceInfoVo.getDescribe());
+        if (StringUtils.isNotBlank(workSpaceInfoParam.getWorkSpaceName()))
+            systemResources.setResourceName(workSpaceInfoParam.getWorkSpaceName());
+        if (StringUtils.isNotBlank(workSpaceInfoParam.getDescribe()))
+            systemResources.setContentInfo(workSpaceInfoParam.getDescribe());
         return systemResourceService.updateResource(systemResources);
 
     }
@@ -149,21 +157,14 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
     }
 
     @Override
-    public List<WorkSpaceInfoVo> getWorkSpaceLists(BigDecimal userId) {
-        List<WorkSpaceInfoVo> workSpaceInfoVos = systemResourcesDao.getWorkSpaceLists(userId);
+    public List<WorkSpaceInfoResult> getWorkSpaceLists(BigDecimal userId) {
+        List<WorkSpaceInfoResult> workSpaceInfoVos = systemResourcesDao.getWorkSpaceLists(userId);
         BaseResultVo baseResultVo = new BaseResultVo();
         //查询用户工作空间，若无工作空间，则初始化默认空间
         if (CollectionUtils.isEmpty(workSpaceInfoVos)){
-            WorkSpaceInfoVo workSpaceInfoVo = new WorkSpaceInfoVo();
-            workSpaceInfoVo.setSpaceOwnerId(userId);
-            workSpaceInfoVo.setSpaceMemberId(userId);
-            workSpaceInfoVo.setWorkSpaceName(CommonConstants.DEFAULT_SPACE_NAME);
-            workSpaceInfoVo.setDescribe(CommonConstants.INIT_DATA_SUCCESS);
-            workSpaceInfoVo.setState("1");
-            baseResultVo = insertWorkSpace(workSpaceInfoVo);
-            if (baseResultVo.isSuccess()){
+            if (initWorkSpace(userId)){
                 workSpaceInfoVos = systemResourcesDao.getWorkSpaceLists(userId);
-                for (WorkSpaceInfoVo vo : workSpaceInfoVos) {
+                for (WorkSpaceInfoResult vo : workSpaceInfoVos) {
                     getWorkSpaceInfo(vo);
                 }
                 return workSpaceInfoVos;
@@ -172,7 +173,7 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
             }
         }else {
             //默认查询用户所有的工作空间
-            for (WorkSpaceInfoVo vo : workSpaceInfoVos) {
+            for (WorkSpaceInfoResult vo : workSpaceInfoVos) {
                 getWorkSpaceInfo(vo);
             }
             return workSpaceInfoVos;
@@ -180,7 +181,7 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
     }
 
     @Override
-    public List<WorkSpaceInfoVo> getWorkSpaceListsByName(BigDecimal userId, String spaceName) {
+    public List<WorkSpaceInfoResult> getWorkSpaceListsByName(BigDecimal userId, String spaceName) {
         if (StringUtils.isBlank(spaceName))
             spaceName = null;
         return systemResourcesDao.getWorkSpaceListsByName(userId,spaceName);
@@ -231,7 +232,36 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
         }
     }
 
-    private void getWorkSpaceInfo(WorkSpaceInfoVo vo){
+    @Override
+    public Boolean initWorkSpace(BigDecimal userId) {
+        BaseResultVo baseResultVo = new BaseResultVo();
+        TSystemResources systemResources = new TSystemResources();
+        systemResources.setResourceName(CommonConstants.DEFAULT_SPACE_NAME);
+        systemResources.setDisplayName(CommonConstants.DEFAULT_SPACE_NAME);
+        systemResources.setParentid(userId);
+        systemResources.setResourceTypeId(new BigDecimal(ResourceTypeConstants.GZKJ_ML));
+        systemResources.setOwner(userId);
+        systemResources.setContentInfo(CommonConstants.INIT_DATA_SUCCESS);
+        baseResultVo = systemResourceService.insertResource(systemResources);
+        if (baseResultVo.isSuccess()) {
+            BigDecimal spaceId = baseResultVo.getId();
+            WorkSpaceMemberParam workSpaceMemberParam = new WorkSpaceMemberParam();
+            workSpaceMemberParam.setSpaceId(spaceId);
+            workSpaceMemberParam.setSpaceOwnerId(userId);
+            workSpaceMemberParam.setSpaceMemberId(userId);
+            workSpaceMemberParam.setSpaceState("1");
+            baseResultVo = workSpaceMemberService.insertSpaceMember(workSpaceMemberParam);
+            if (baseResultVo.isSuccess()) {
+               return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private void getWorkSpaceInfo(WorkSpaceInfoResult vo){
 
         BigDecimal ownerId = vo.getSpaceOwnerId();
         User user = FeignUtils.parseObject(authQueryApiService.getUserById(ownerId), User.class);

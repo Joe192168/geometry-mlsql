@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/hdfs")
-@Api(value="Hdfs文件系统接口",tags={"用户账户操作接口"})
+@Api(value="Hdfs文件系统接口",tags={"Hdfs文件系统接口"})
 @Slf4j
 public class HdfdController {
 

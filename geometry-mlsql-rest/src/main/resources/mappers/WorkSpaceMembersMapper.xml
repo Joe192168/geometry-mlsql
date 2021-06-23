@@ -45,7 +45,7 @@
              and  space_id = #{spaceId}
     </delete>
 
-    <select id="getSpaceMemberBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.vo.SpaceMemberVo">
+    <select id="getSpaceMemberBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.result.SpaceMemberResult">
         select space_id spaceId,
                space_owner_id ownerId,
                space_member_id memberId,

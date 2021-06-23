@@ -11,6 +11,7 @@ import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.utils.FeignUtils;
 import com.geominfo.mlsql.utils.RequestResponseUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/account")
+@Api(value="用户账户操作接口",tags={"用户账户操作接口"})
 public class AccountController extends BaseNewController {
 
 

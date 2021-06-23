@@ -1,8 +1,9 @@
 package com.geominfo.mlsql.services;
 
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
+import com.geominfo.mlsql.domain.param.WorkSpaceInfoParam;
 import com.geominfo.mlsql.domain.po.WorkSpaceEngine;
-import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
+import com.geominfo.mlsql.domain.result.WorkSpaceInfoResult;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,19 +21,19 @@ public interface WorkSpaceManagerService {
      * @description:新增工作空间信息
      * @author: LF
      * @date: 2021/6/10
-     * @param workSpaceInfoVo
+     * @param workSpaceInfoParam
      * @return com.geominfo.authing.common.pojo.base.BaseResultVo
      */
-    BaseResultVo insertWorkSpace(WorkSpaceInfoVo workSpaceInfoVo);
+    BaseResultVo insertWorkSpace(WorkSpaceInfoParam workSpaceInfoParam);
 
     /**
      * @description:修改工作空间信息
      * @author: LF
      * @date: 2021/6/10
-     * @param workSpaceInfoVo
+     * @param workSpaceInfoParam
      * @return com.geominfo.authing.common.pojo.base.BaseResultVo
      */
-    BaseResultVo updateWorkSpace(WorkSpaceInfoVo workSpaceInfoVo);
+    BaseResultVo updateWorkSpace(WorkSpaceInfoParam workSpaceInfoParam);
 
     /**
      * @description:删除工作空间
@@ -68,16 +69,16 @@ public interface WorkSpaceManagerService {
      * @param userId
      * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
      */
-    List<WorkSpaceInfoVo> getWorkSpaceLists(BigDecimal userId);
+    List<WorkSpaceInfoResult> getWorkSpaceLists(BigDecimal userId);
 
     /**
      * @description: 根据名称查询工作空间列表
      * @author: LF
      * @date: 2021/6/18
      * @param userId, spaceName
-     * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
+     * @return java.util.List<com.geominfo.mlsql.domain.result.WorkSpaceInfoResult>
      */
-    List<WorkSpaceInfoVo> getWorkSpaceListsByName(BigDecimal userId,String spaceName);
+    List<WorkSpaceInfoResult> getWorkSpaceListsByName(BigDecimal userId,String spaceName);
 
     /**
      * @description: 删除工作引擎配置
@@ -105,5 +106,14 @@ public interface WorkSpaceManagerService {
      * @return com.geominfo.authing.common.pojo.base.BaseResultVo
      */
     BaseResultVo setDefaultEngine(BigDecimal engineId,BigDecimal spaceId);
+
+    /**
+     * @description: 给某个账户初始化默认空间
+     * @author: LF
+     * @date: 2021/6/23
+     * @param userId
+     * @return java.lang.Boolean
+     */
+    Boolean initWorkSpace(BigDecimal userId);
 
 }
