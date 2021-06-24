@@ -3,6 +3,9 @@ package com.geominfo.mlsql.controller.hdfs;
 import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.services.impl.HdfsService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,16 +27,22 @@ public class HdfdController {
 
     @Autowired
     private HdfsService hdfsService;
-    
+
     /***
      * @Description: 上传文件接口
-     * @Author: zrd 
+     * @Author: zrd
      * @Date: 2021/4/28 14:11
      * @param souPath 本地文件路径
      * @param dstPath hdfs系统相对路径
      * @return com.geominfo.mlsql.commons.Message
      */
-    @GetMapping("/uploadFile")
+    @PostMapping("/uploadFile")
+    @ApiOperation(value = "上传文件",httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "souPath",value = "文件源路径",type = "String",paramType = "param",required = true),
+            @ApiImplicitParam(name = "dstPath",value = "hdfs目标路径",type = "String",paramType = "param",required = true)
+    }
+    )
     public Message uploadFile(@RequestParam String souPath,@RequestParam String dstPath) {
         try {
             hdfsService.uploadFileToHdfs(souPath,dstPath);
@@ -51,7 +60,9 @@ public class HdfdController {
      * @param route 所需列出文件目标路径
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "列出指定路径所有文件",httpMethod = "GET")
     @GetMapping("/listFilesByRoute")
+    @ApiImplicitParam(name = "route",value = "路径",type = "String",paramType = "param",required = true)
     public Message getAllFileByRoute(@RequestParam String route) {
         List<Map<String, Object>> maps = hdfsService.listFiles(route, null);
         return new Message().ok().addData("data",maps);
@@ -65,7 +76,12 @@ public class HdfdController {
      * @param dstPath 下载之后本地文件路径
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "从HDFS下载文件接口",httpMethod = "GET")
     @GetMapping("/downloadFile")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "souPath",value = "文件路径",type = "String",paramType = "param",required = true),
+            @ApiImplicitParam(name = "dstPath",value = "下载到目标路径",type = "String",paramType = "param",required = true)
+    })
     public Message downloadFile(@RequestParam String souPath,@RequestParam String dstPath) {
         try {
             hdfsService.downloadFileFromHdfs(souPath,dstPath);
@@ -82,7 +98,9 @@ public class HdfdController {
      * @param path 被删除文件路径
      * @return com.geominfo.mlsql.commons.Message
      */
-    @GetMapping("/deletetFile")
+    @ApiOperation(value = "删除文件",httpMethod = "DELETE")
+    @DeleteMapping("/deletetFile")
+    @ApiImplicitParam(name = "path",value = "被删除文件路径",type = "String",paramType = "param",required = true)
     public Message deleteFile(@RequestParam String path) {
         boolean delete = hdfsService.delete(path);
         if (delete) {
@@ -99,7 +117,9 @@ public class HdfdController {
      * @param path 文件夹路径
      * @return com.geominfo.mlsql.commons.Message
      */
-    @GetMapping("/mkdir")
+    @PostMapping("/mkdir")
+    @ApiOperation(value = "创建文件夹接口",httpMethod = "POST")
+    @ApiImplicitParam(name = "path",value = "文件夹路径",type = "String",paramType = "param",required = true)
     public Message mkdir(@RequestParam String path) {
         boolean mkdir = hdfsService.mkdir(path);
         if (mkdir) {

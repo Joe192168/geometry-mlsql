@@ -6,10 +6,7 @@ import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.services.DataSourceService;
 import com.geominfo.mlsql.services.TSystemResourceService;
 import com.geominfo.mlsql.utils.DtaBaseUtil;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +22,7 @@ import java.util.Map;
  */
 @RequestMapping("/dataSource")
 @RestController
+@Api(value = "数据源接口",tags = {"数据源接口"})
 public class DataSourceController {
 
     @Autowired
@@ -36,11 +34,12 @@ public class DataSourceController {
     @ApiOperation(value = "新增数据源", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "resourceId", value = "当前用户对应的工作空间id", dataType = "int", paramType = "path",required = true),
-            @ApiImplicitParam(name = "userId", value = "用户id", dataType = "int", paramType = "path",required = true)
+            @ApiImplicitParam(name = "userId", value = "用户id", dataType = "int", paramType = "path",required = true),
+            @ApiImplicitParam(name = "dataBaseDTO", value = "数据库连接传输对象", paramType = "body",required = true)
     })
     @PostMapping("/addDataSource/{resourceId}/{userId}")
-    public Message addDataSource(@RequestBody @ApiParam(value="数据源对象",required = true) DataBaseDTO dataBaseDTO, @PathVariable BigDecimal resourceId,
-                                 @PathVariable BigDecimal userId, HttpServletRequest request){
+    public Message addDataSource(@RequestBody DataBaseDTO dataBaseDTO, @PathVariable BigDecimal resourceId,
+                                 @PathVariable BigDecimal userId){
         try{
             Map<String,Object> map = dataSourceService.addDataSource(dataBaseDTO,resourceId,userId);
             if((Boolean) map.get("flag")){
@@ -58,7 +57,8 @@ public class DataSourceController {
     @ApiOperation(value = "修改数据源", httpMethod = "PUT")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "resourceId", value = "当前用户对应的工作空间id", dataType = "int", paramType = "path",required = true),
-            @ApiImplicitParam(name = "userId", value = "用户id", dataType = "int", paramType = "path",required = true)
+            @ApiImplicitParam(name = "parentId", value = "父节点id", dataType = "int", paramType = "path",required = true),
+            @ApiImplicitParam(name = "dataBaseDTO", value = "数据库连接传输对象", paramType = "body",required = true)
     })
     @PutMapping("/updateDataSourceById/{parentId}/{resourceId}")
     public Message updateDataSource(@RequestBody @ApiParam(value="数据源对象",required = true) DataBaseDTO dataBaseDTO, @PathVariable BigDecimal resourceId,@PathVariable BigDecimal parentId){
@@ -78,7 +78,7 @@ public class DataSourceController {
 
     @ApiOperation(value = "删除数据源", httpMethod = "DELETE")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "resourceId", value = "当前用户对应的工作空间id", dataType = "int", paramType = "path",required = true),
+            @ApiImplicitParam(name = "resourceId", value = "被删除资源id", dataType = "int", paramType = "path",required = true),
     })
     @DeleteMapping("/deleteDataSource/{resourceId}")
     public Message deleteDataSource(@PathVariable BigDecimal resourceId){
@@ -91,6 +91,9 @@ public class DataSourceController {
 
     @ApiOperation(value = "测试连接数据源", httpMethod = "POST")
     @PostMapping("/testConnect")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "baseDTO", value = "数据库连接传输对象", paramType = "body",required = true)
+    )
     public Message testConnect(@RequestBody DataBaseDTO baseDTO){
         boolean b = DtaBaseUtil.tryLink(baseDTO);
         if (b) {
@@ -101,6 +104,9 @@ public class DataSourceController {
 
     @ApiOperation(value = "搜索数据源", httpMethod = "GET")
     @GetMapping("/selectDataSource")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "dataSourceName", value = "数据源名字", type = "String" , paramType = "param",required = true)
+    )
     public Message selectDataSource(@RequestParam String dataSourceName){
         List<TSystemResources> dataSourceList = dataSourceService.selectDataSources(dataSourceName);
         if (dataSourceList.isEmpty()) {
@@ -111,8 +117,11 @@ public class DataSourceController {
 
     @ApiOperation(value = "获取数据源所有表", httpMethod = "POST")
     @PostMapping("/getTableInfo")
-    public Message getTableInfo(@RequestBody DataBaseDTO DataBaseDTO){
-        List<Map<String, Object>> maps = dataSourceService.listTablesByDataSource(DataBaseDTO);
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "dataBaseDTO", value = "数据库连接传输对象", paramType = "body",required = true)
+    )
+    public Message getTableInfo(@RequestBody DataBaseDTO dataBaseDTO){
+        List<Map<String, Object>> maps = dataSourceService.listTablesByDataSource(dataBaseDTO);
         if (maps.isEmpty()) {
             return new Message().error("数据库无表结构");
         }
@@ -121,8 +130,11 @@ public class DataSourceController {
 
     @ApiOperation(value = "获取表字段", httpMethod = "POST")
     @PostMapping("/getColumnsByTableName")
-    public Message getColumnsByTableName(@RequestBody DataBaseDTO DataBaseDTO){
-        List<Map<String, Object>> maps = dataSourceService.getColumnsByTableName(DataBaseDTO);
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "dataBaseDTO", value = "数据库连接传输对象", paramType = "body",required = true)
+    )
+    public Message getColumnsByTableName(@RequestBody DataBaseDTO dataBaseDTO){
+        List<Map<String, Object>> maps = dataSourceService.getColumnsByTableName(dataBaseDTO);
         if (maps.isEmpty()) {
             return new Message().error("数据表无字段信息");
         }
