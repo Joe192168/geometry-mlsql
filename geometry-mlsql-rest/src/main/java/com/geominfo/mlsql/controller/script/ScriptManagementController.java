@@ -7,6 +7,10 @@ import com.geominfo.mlsql.services.MlsqlService;
 import com.geominfo.mlsql.services.ScriptService;
 import com.geominfo.mlsql.utils.ExecuteShellUtil;
 import com.geominfo.mlsql.utils.TreeVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/script")
 @Slf4j
+@Api(tags = {"脚本管理接口"})
 public class ScriptManagementController {
 
     @Autowired
@@ -41,6 +46,7 @@ public class ScriptManagementController {
      * @param
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "执行shell脚本接口",httpMethod = "GET")
     @GetMapping("/executeShell")
     public Message executeShellScript() {
         try {
@@ -61,7 +67,9 @@ public class ScriptManagementController {
      * @param
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "获取所有脚本，树状展示",httpMethod = "GET")
     @GetMapping("/script/{workSpaceId}")
+    @ApiImplicitParam(name = "workSpaceId",value = "工作空间id",type = "BigDecimal",paramType = "path",required = true)
     public Message getAllScript(@PathVariable BigDecimal workSpaceId) {
         List<TreeVo<TSystemResources>> treeVos = mlsqlService.listTreeByParentId(new BigDecimal(ResourceTypeConstants.FOLDER),workSpaceId);
         return new Message().ok().addData("data",treeVos);
@@ -74,7 +82,9 @@ public class ScriptManagementController {
      * @param scriptRoute
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "根据路径路径获取脚本",httpMethod = "POST")
     @PostMapping("/script/getScriptByRoute")
+    @ApiImplicitParam(name = "scriptRoute",value = "脚本路径",type = "String",paramType = "param",required = true)
     public Message getScriptByRoute(@RequestParam String scriptRoute) {
         if (StringUtils.isNotEmpty(scriptRoute)) {
             TSystemResources scriptByRoute = mlsqlService.getScriptByRoute(scriptRoute);
@@ -92,13 +102,15 @@ public class ScriptManagementController {
      * @Description: 根据脚本id获取脚本
      * @Author: zrd
      * @Date: 2021/5/13 15:34
-     * @param id
+     * @param resourceId
      * @return com.geominfo.mlsql.commons.Message
      */
-    @PostMapping("/script/getScriptById")
-    public Message getScriptById(@RequestParam BigDecimal id) {
-        if (id != null) {
-            TSystemResources tSystemResources = mlsqlService.getScriptById(id);
+    @ApiOperation(value = "根据脚本id获取脚本",httpMethod = "GET")
+    @GetMapping("/script/getScriptById")
+    @ApiImplicitParam(name = "resourceId",value = "脚本资源id",type = "BigDecimal",paramType = "param",required = true)
+    public Message getScriptById(@RequestParam BigDecimal resourceId) {
+        if (resourceId != null) {
+            TSystemResources tSystemResources = mlsqlService.getScriptById(resourceId);
             if (tSystemResources != null) {
                 return new Message().ok().addData("data",tSystemResources);
             }else {
@@ -115,7 +127,9 @@ public class ScriptManagementController {
      * @param jobName 脚本名
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "根据脚本名获取脚本日志",httpMethod = "GET")
     @GetMapping("/getJobLog/{jobName}")
+    @ApiImplicitParam(name = "jobName",value = "脚本名",type = "String",paramType = "path",required = true)
     public Message getJobLogByJobName(@PathVariable String jobName) {
         Map<String, Object> jobLogByJobName = mlsqlService.getJobLogByJobName(jobName);
         if (jobLogByJobName != null) {
@@ -135,7 +149,15 @@ public class ScriptManagementController {
      * @param path
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "保存脚本接口",httpMethod = "POST")
     @PostMapping("/saveScript")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "parentId",value = "父节点id",type = "BigDecimal",paramType = "param",required = true),
+            @ApiImplicitParam(name = "owner",value = "脚本所有人",type = "BigDecimal",paramType = "param",required = true),
+            @ApiImplicitParam(name = "content",value = "脚本内容",type = "String",paramType = "param",required = true),
+            @ApiImplicitParam(name = "scriptName",value = "脚本名",type = "String",paramType = "param",required = true),
+            @ApiImplicitParam(name = "path",value = "脚本路径",type = "String",paramType = "param",required = true)
+    })
     public Message saveScript(@RequestParam BigDecimal parentId, @RequestParam BigDecimal owner,@RequestParam String content,
                               @RequestParam String scriptName,@RequestParam String path){
         boolean saveScript = mlsqlService.saveScript(parentId, owner, content, scriptName, path);
@@ -154,6 +176,12 @@ public class ScriptManagementController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @PostMapping("/mkdir")
+    @ApiOperation(value = "创建文件夹接口",httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "parentId",value = "父级资源id",type = "BigDecimal",paramType = "param",required = true),
+            @ApiImplicitParam(name = "owner",value = "文件夹所有人",type = "String",paramType = "param",required = true),
+            @ApiImplicitParam(name = "dirName",value = "文件夹名",type = "String",paramType = "param",required = true)
+    })
     public Message mkdir(@RequestParam BigDecimal parentId, @RequestParam BigDecimal owner,@RequestParam String dirName){
         boolean mkdir = scriptService.mkdir(parentId,owner,dirName);
         if (mkdir) {
@@ -169,7 +197,9 @@ public class ScriptManagementController {
      * @param resourceId 被删除文件夹资源id
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "删除文件夹",httpMethod = "DELETE")
     @DeleteMapping("/deleteDir/{resourceId}")
+    @ApiImplicitParam(name = "resourceId",value = "资源id",type = "BigDecimal",paramType = "path",required = true)
     public Message deleteDir(@PathVariable BigDecimal resourceId){
         boolean mkdir = scriptService.deleteDir(resourceId);
         if (mkdir) {
@@ -187,6 +217,12 @@ public class ScriptManagementController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @PutMapping("/modifyDir")
+    @ApiOperation(value = "修改文件夹名",httpMethod = "PUT")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name",value = "文件名",type = "String",paramType = "param",required = true),
+            @ApiImplicitParam(name = "resourceId",value = "文件夹资源id",type = "BigDecimal",paramType = "param",required = true),
+            @ApiImplicitParam(name = "parentId",value = "父目录id",type = "BigDecimal",paramType = "param",required = true)
+    })
     public Message deleteDir(@RequestParam String name,@RequestParam BigDecimal resourceId,@RequestParam BigDecimal parentId){
         boolean mkdir = scriptService.modifyDirName(name,resourceId,parentId);
         if (mkdir) {
@@ -202,7 +238,9 @@ public class ScriptManagementController {
      * @param resourceId 文件夹资源id
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "删除脚本",httpMethod = "DELETE")
     @DeleteMapping("/deleteScript/{resourceId}")
+    @ApiImplicitParam(name = "resourceId",value = "资源id",type = "BigDecimal",paramType = "path",required = true)
     public Message deleteScript(@PathVariable BigDecimal resourceId){
         boolean mkdir = scriptService.deleteScript(resourceId);
         if (mkdir) {

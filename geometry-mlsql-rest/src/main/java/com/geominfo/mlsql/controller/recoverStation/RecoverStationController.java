@@ -3,6 +3,10 @@ package com.geominfo.mlsql.controller.recoverStation;
 import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.services.RecoverStationService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @desc: 回收站controller
  * @date 2021/6/15 10:47
  */
+@Api(value = "回收站接口",tags = {"回收站接口"})
 @RestController
 @RequestMapping("/recoverStation")
 public class RecoverStationController {
@@ -31,7 +36,12 @@ public class RecoverStationController {
      * @param userId
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "获取回收站所有文件接口",httpMethod = "GET")
     @GetMapping("/getAllRecover/{workSpaceId}/{userId}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "workSpaceId",value = "工作空间id",type = "BigDecimal",paramType = "path",required = true),
+            @ApiImplicitParam(name = "userId",value = "用户id",type = "BigDecimal",paramType = "path",required = true),
+    })
     public Message getAllRecover(@PathVariable BigDecimal workSpaceId, @PathVariable BigDecimal userId) {
         List<TSystemResources> list = recoverStationService.getAllRecoverResources(workSpaceId, userId);
         return new Message().ok().addData("data", list);
@@ -45,6 +55,8 @@ public class RecoverStationController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @DeleteMapping("/deleteResource/{resourceId}")
+    @ApiOperation(value = "删除回收站资源接口")
+    @ApiImplicitParam(name = "resourceId",value = "被删除资源id",type = "BigDecimal",paramType = "path",required = true)
     public Message deleteResource(@PathVariable BigDecimal resourceId) {
         boolean delete = recoverStationService.deleteResource(resourceId);
         if (delete) {
@@ -60,7 +72,9 @@ public class RecoverStationController {
      * @param resourceId
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "还原文件接口")
     @PutMapping("/recoverResource/{resourceId}")
+    @ApiImplicitParam(name = "resourceId",value = "被还原文件资源id",type = "BigDecimal",paramType = "path",required = true)
     public Message recoverResource(@PathVariable BigDecimal resourceId) {
         boolean b = recoverStationService.recoverResource(resourceId);
         if (b) {
@@ -77,7 +91,13 @@ public class RecoverStationController {
      * @param parentId
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "重新选择删除文件父级目录接口")
     @PutMapping("reChooseParentDir/{resourceId}/{parentId}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "resourceId",value = "被还原文件资源id",type = "BigDecimal",paramType = "path",required = true),
+            @ApiImplicitParam(name = "parentId",value = "父级目录资源id",type = "BigDecimal",paramType = "path",required = true)
+    }
+    )
     public Message reChooseParentDir(@PathVariable BigDecimal resourceId, @PathVariable BigDecimal parentId) {
         boolean reChoose = recoverStationService.reChoosePatentDir(resourceId, parentId);
         if (reChoose) {
@@ -94,7 +114,12 @@ public class RecoverStationController {
      * @param userId
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "清空回收站接口")
     @DeleteMapping("deleteAll/{workSpaceId}/{userId}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "workSpaceId",value = "工作空间id",type = "BigDecimal",paramType = "path",required = true),
+            @ApiImplicitParam(name = "userId",value = "用户id",type = "BigDecimal",paramType = "path",required = true)
+    })
     public Message deleteAll(@PathVariable BigDecimal workSpaceId, @PathVariable BigDecimal userId) {
         boolean delete = recoverStationService.deleteAll(workSpaceId, userId);
         if (delete) {

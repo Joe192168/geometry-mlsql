@@ -12,6 +12,10 @@ import com.geominfo.mlsql.domain.vo.MlsqlExecuteSqlVO;
 import com.geominfo.mlsql.services.MlsqlService;
 import com.geominfo.mlsql.services.NumberControlService;
 import com.geominfo.mlsql.utils.TreeVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +29,7 @@ import java.util.Map;
  * @title: MlsqlController
  * @date 2021/4/6 14:40
  */
-
+@Api(tags = {"mlsql执行任务接口"})
 @RestController
 @RequestMapping("/mlsql")
 @Slf4j
@@ -46,8 +50,10 @@ public class MlsqlController {
      * @param mlsqlExecuteSqlVO
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "执行mlsql sql接口",httpMethod = "POST")
     @PostMapping("/executeSql")
-    public Message executeSql(@RequestBody( required = false) MlsqlExecuteSqlVO mlsqlExecuteSqlVO){
+    @ApiImplicitParam(name = "mlsqlExecuteSqlVO",value = "MlsqlExecuteSqlVO实体类",paramType = "body",required = true)
+    public Message executeSql(@RequestBody MlsqlExecuteSqlVO mlsqlExecuteSqlVO){
         try {
             String result = mlsqlService.executeMlsql(mlsqlExecuteSqlVO);
             return new Message().ok().addData("data",result);
@@ -64,6 +70,7 @@ public class MlsqlController {
      * @param
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "获取正在执行的所有任务",httpMethod = "GET")
     @GetMapping("/getAlljobs")
     public Message getRunningJobs(){
         try {
@@ -82,6 +89,7 @@ public class MlsqlController {
      * @param
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "获取引擎状态",httpMethod = "GET")
     @GetMapping("/getEngineState")
     public Message getEngineState(){
         try {
@@ -101,7 +109,12 @@ public class MlsqlController {
      * @param groupId id
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "杀死任务",httpMethod = "POST")
     @PostMapping("/killJob")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobName",value = "任务名",type = "String",paramType = "param"),
+            @ApiImplicitParam(name = "groupId",value = "id",type = "String",paramType = "param"),
+    })
     public Message killJob(@RequestParam(required = false) String jobName,@RequestParam(required = false) String groupId){
         try {
             String result = mlsqlService.killMlsqlJob(jobName, groupId);
@@ -120,6 +133,7 @@ public class MlsqlController {
      * @param
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "异步回调接口")
     @PostMapping("/asyncCallback")
     public void asyncCallback(@RequestParam Map<String,String> map){
         mlsqlService.dealAsyncCallback(map);
@@ -134,7 +148,9 @@ public class MlsqlController {
      * @param jobName 任务名
      * @return
      */
+    @ApiOperation(value = "检查作业是否完成")
     @GetMapping("/checkJobIsFinish/{jobName}")
+    @ApiImplicitParam(name = "jobName",value = "任务名",type = "String",paramType = "path",required = true)
     public Message checkJobIsFinish(@PathVariable String jobName) {
         JSONObject jsonObject = mlsqlService.checkJobIsFinish(jobName);
         return new Message().ok().addData("data",jsonObject);
@@ -156,6 +172,18 @@ public class MlsqlController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @PostMapping("/grammarCheck")
+    @ApiOperation(value = "语法检查接口",httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sql",value = "需要执行的MLSQL内容",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "owner",value = "当前发起请求的租户",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "jobType",value = "任务类型",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "executeMode",value = "如果是执行MLSQL则为query,如果是为了解析MLSQL则为analyze。很多插件会提供对应的executeMode从而使得用户可以通过HTTP接口访问插件功能",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "jobName",value = "任务名称，一般用uuid，方便查看任务进度条和日志，前端生成",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "sessionPerUser",value = "按用户创建sesison",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "skipInclude",value = "禁止使用include语法",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "skipGrammarValidate",value = "跳过语法验证",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "contextDefaultIncludeFetchUrl",value = "任务名",type = "String",paramType = "path")
+    })
     public Message GrammarCheck(@RequestParam String sql,@RequestParam String owner,@RequestParam String jobType,@RequestParam String executeMode,
                                 @RequestParam String jobName,@RequestParam Boolean sessionPerUser,@RequestParam Boolean skipInclude,
                                 @RequestParam Boolean skipGrammarValidate,@RequestParam String contextDefaultIncludeFetchUrl){
@@ -175,6 +203,7 @@ public class MlsqlController {
      * @param
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "获取所有函数，树状展示",httpMethod = "GET")
     @GetMapping("/function")
     public Message getFunction() {
         List<TreeVo<TEtFunctionInfo>> treeVos = mlsqlService.listFunctionTreeByParentId(new BigDecimal(2));
@@ -189,6 +218,7 @@ public class MlsqlController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @GetMapping("/plugin")
+    @ApiOperation(value ="获取所有插件，树状展示",httpMethod = "GET")
     public Message getPlugin() {
         List<TreeVo<TEtFunctionInfo>> treeVos = mlsqlService.listFunctionTreeByParentId(new BigDecimal(1));
         return new Message().ok().addData("data",treeVos);
@@ -206,7 +236,16 @@ public class MlsqlController {
      * @param sessionPerUser
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "获取任务执行进度接口",httpMethod = "POST")
     @PostMapping("/getScriptExecuteProgress")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sql",value = "需要执行的MLSQL内容",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "owner",value = "当前发起请求的租户",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "jobType",value = "任务类型",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "executeMode",value = "如果是执行MLSQL则为query,如果是为了解析MLSQL则为analyze。很多插件会提供对应的executeMode从而使得用户可以通过HTTP接口访问插件功能",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "jobName",value = "任务名称，一般用uuid，方便查看任务进度条和日志，前端生成",type = "String",paramType = "path"),
+            @ApiImplicitParam(name = "sessionPerUser",value = "按用户创建sesison",type = "String",paramType = "path")
+    })
     public Message getScriptExecuteProgress(@RequestParam(required = false) String sql,@RequestParam(required = false) String owner,@RequestParam(required = false) String jobType,
                                             @RequestParam(required = false) String executeMode,@RequestParam(required = false) String jobName,@RequestParam(required = false) Boolean sessionPerUser){
         String result = mlsqlService.getScriptExecuteProgress(sql, owner, jobType, executeMode, jobName, sessionPerUser);
@@ -221,6 +260,8 @@ public class MlsqlController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @GetMapping("/getAsyncJobResult/{jobId}")
+    @ApiOperation(value = "获取异步执行任务结果",httpMethod = "GET")
+    @ApiImplicitParam(name = "jobId",value = "任务id",type = "String",paramType = "path")
     public Message getAsyncLogResult(@PathVariable String jobId) {
        TScriptExecLog tScriptExecLog =  mlsqlService.getAsyncLogResult(jobId);
        if (tScriptExecLog != null) {
@@ -237,6 +278,8 @@ public class MlsqlController {
      * @return com.geominfo.mlsql.commons.Message
      */
     @GetMapping("/getRuntimeDetails/{jobId}")
+    @ApiOperation(value = "获取执行历史-运行时详情",httpMethod = "GET")
+    @ApiImplicitParam(name = "jobId",value = "任务id",type = "String",paramType = "path")
     public Message getRuntimeDeatils(@PathVariable String jobId) {
         TScriptExecMetricLog runtimeDetails = mlsqlService.getRuntimeDetails(jobId);
         if (runtimeDetails != null) {
@@ -253,7 +296,9 @@ public class MlsqlController {
      * @param jobId 任务id
      * @return com.geominfo.mlsql.commons.Message
      */
+    @ApiOperation(value = "删除任务历史记录",httpMethod = "DELETE")
     @DeleteMapping("/deleteJobHistory/{jobId}")
+    @ApiImplicitParam(name = "jobId",value = "任务id",type = "String",paramType = "path")
     public Message deleteJobHistory(@PathVariable String jobId) {
         Boolean flag = mlsqlService.deleteJobHistory(jobId);
         if (flag) {
