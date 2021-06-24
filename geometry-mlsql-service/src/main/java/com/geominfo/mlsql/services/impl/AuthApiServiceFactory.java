@@ -2,6 +2,7 @@ package com.geominfo.mlsql.services.impl;
 
 
 import com.geominfo.mlsql.commons.Message;
+import com.geominfo.mlsql.domain.param.AccountParam;
 import com.geominfo.mlsql.domain.vo.OperateLogVo;
 import com.geominfo.mlsql.domain.vo.UserSessionVo;
 import com.geominfo.mlsql.services.AuthApiService;
@@ -37,6 +38,13 @@ public class AuthApiServiceFactory implements FallbackFactory<AuthApiService> {
                 log.error("#userSessionManager param:{}",userSessionVo);
                 log.error("fallback 用户会话管理接口..." ,throwable);
                 return new Message().error("用户会话管理接口发生异常，请稍后再试！");
+            }
+
+            @Override
+            public Message updateAccountInfo(AccountParam accountParam) {
+                log.error("#updateAccountInfo param:{}",accountParam);
+                log.error("fallback 修改账户、密码接口..." ,throwable);
+                return new Message().error("修改账户、密码接口发生异常，请稍后再试！");
             }
         };
     }
