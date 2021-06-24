@@ -87,7 +87,7 @@ public class EngineInfoServiceImpl implements EngineInfoService {
     public Boolean deleteEngineInfo(BigDecimal id) {
         EngineInfo engineInfo = engineInfoMapper.selectById(id);
         if (engineInfo != null) {
-            engineInfoMapper.deleteById(id);
+            engineInfoMapper.deleteEngine(id);
             return Boolean.TRUE;
         } else {
             return Boolean.FALSE;

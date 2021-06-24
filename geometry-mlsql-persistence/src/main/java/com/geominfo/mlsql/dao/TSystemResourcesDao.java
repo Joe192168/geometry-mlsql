@@ -72,4 +72,13 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
     List<WorkSpaceInfoResult> getWorkSpaceListsByName(@Param("userId") BigDecimal userId,@Param("spaceName") String spaceName);
 
     List<TSystemResources> getAllRecoverResources(BigDecimal workSpaceId, BigDecimal userId);
+
+    /**
+     * @description: 获取首页查询最近相关脚本
+     * @author: LF
+     * @date: 2021/6/24
+     * @param userId
+     * @return java.util.List<com.geominfo.mlsql.domain.po.TSystemResources>
+     */
+    List<TSystemResources> getRecentlyScripts(BigDecimal userId);
 }

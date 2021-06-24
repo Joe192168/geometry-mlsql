@@ -4,6 +4,7 @@ import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.domain.po.TSystemResources;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @program: geometry-bi
@@ -40,6 +41,15 @@ public interface SystemResourceService {
      * @return java.lang.Boolean
      */
     Boolean deleteResourceById(BigDecimal id);
+
+    /**
+     * @description: 查询最近相关脚本
+     * @author: LF
+     * @date: 2021/6/24
+     * @param userId
+     * @return java.util.List<com.geominfo.mlsql.domain.po.TSystemResources>
+     */
+    List<TSystemResources> getRecentlyScripts(BigDecimal userId);
 
 
 }

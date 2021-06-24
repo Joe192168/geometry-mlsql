@@ -305,18 +305,4 @@ public class WorkSpaceManageController extends BaseNewController {
         }
     }
 
-    @ApiOperation(value="获取首页工作空间卡片",httpMethod = "GET")
-    @ApiImplicitParam(name="userId",value = "用户id", dataType = "Integer", paramType = "path",required = true)
-    @GetMapping("/getWorkSpaceListCards/{userId}")
-    public Message getWorkSpaceListCards( @PathVariable BigDecimal userId){
-        try {
-            logger.info("getWorkSpaceListCards userId{} ",userId);
-            List<WorkSpaceInfoResult> workSpaceInfoVos = workSpaceManagerService.getWorkSpaceLists(userId);
-            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,workSpaceInfoVos);
-        }catch (Exception e){
-            logger.error("method # getWorkSpaceListCards exception", e);
-            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
-        }
-    }
-
 }

@@ -22,13 +22,22 @@
     <select id="getEngineInfos"  resultType="com.geominfo.mlsql.domain.po.EngineInfo">
         select *
         from t_engine_info
+        where record_state = '1'
     </select>
 
     <select id="getEngineInfoByEngineUri" parameterType="java.lang.String" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
         select *
         from t_engine_info
         where  engine_uri = #{engineUri}
+                and record_state = '1'
     </select>
+
+    <update id="" parameterType="java.math.BigDecimal">
+        UPDATE public.t_engine_info
+        SET  record_state = '0'
+        WHERE id = #{id}
+
+    </update>
 
     <select id="getEnginesBySpaceId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
         select *
@@ -38,6 +47,7 @@
             from t_workspace_engines
             where workspace_id = #{spaceId}
           )
+          and record_state = '1'
     </select>
 
     <select id="getEngineLists" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.po.EngineInfo">
@@ -48,7 +58,10 @@
             from t_workspace_engines
             where workspace_id = #{spaceId}
           )
+          and record_state = '1'
     </select>
+
+
 
 
 

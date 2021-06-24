@@ -46,6 +46,15 @@ public interface EngineInfoMapper extends BaseMapper<EngineInfo> {
      */
     List<EngineInfo> getEnginesBySpaceId(BigDecimal spaceId);
 
+    /***
+     * @description: 删除引擎
+     * @author: LF
+     * @date: 2021/6/24
+     * @param id
+     * @return void
+     */
+    void deleteEngine(BigDecimal id);
+
     /**
      * @description: 根据空间id查询引擎
      * @author: LF

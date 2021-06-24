@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class SystemResourceServiceImpl implements SystemResourceService {
@@ -87,6 +88,11 @@ public class SystemResourceServiceImpl implements SystemResourceService {
             return false;
         }
 
+    }
+
+    @Override
+    public List<TSystemResources> getRecentlyScripts(BigDecimal userId) {
+        return systemResourcesDao.getRecentlyScripts(userId);
     }
 
 }
