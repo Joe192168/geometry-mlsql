@@ -3,9 +3,7 @@ package com.geominfo.mlsql.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.geominfo.mlsql.domain.po.WorkSpaceMember;
 import com.geominfo.mlsql.domain.result.SpaceMemberResult;
-import com.geominfo.mlsql.domain.vo.QueryWorkSpaceVo;
 import com.geominfo.mlsql.domain.vo.SpaceMemberVo;
-import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

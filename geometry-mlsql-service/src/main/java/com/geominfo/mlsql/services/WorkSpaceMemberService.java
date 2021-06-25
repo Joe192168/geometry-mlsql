@@ -95,8 +95,8 @@ public interface WorkSpaceMemberService {
      * @author: LF
      * @date: 2021/6/15
      * @param spaceId
-     * @return java.util.List<com.geominfo.mlsql.domain.vo.SpaceMemberVo>
+     * @return java.util.List<com.geominfo.mlsql.domain.vo.SpaceMemberResult>
      */
-    List<SpaceMemberVo> getTransferMemberBySpaceId(BigDecimal spaceId);
+    List<SpaceMemberResult> getTransferMemberBySpaceId(BigDecimal spaceId);
 
 }

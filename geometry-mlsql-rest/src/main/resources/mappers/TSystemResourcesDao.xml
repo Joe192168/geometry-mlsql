@@ -125,6 +125,7 @@
         and r.resource_state = 1
         order by update_time desc
         )
+        limit 10
     </select>
 
 

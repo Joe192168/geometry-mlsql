@@ -12,7 +12,6 @@ import com.geominfo.mlsql.domain.po.EngineInfo;
 import com.geominfo.mlsql.domain.po.WorkSpaceEngine;
 import com.geominfo.mlsql.domain.result.SpaceMemberResult;
 import com.geominfo.mlsql.domain.result.WorkSpaceInfoResult;
-import com.geominfo.mlsql.domain.vo.SpaceMemberVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.EngineInfoService;
 import com.geominfo.mlsql.services.WorkSpaceManagerService;
@@ -185,8 +184,8 @@ public class WorkSpaceManageController extends BaseNewController {
     public Message getSpaceMemberBySpaceId(@PathVariable BigDecimal spaceId){
         try {
             logger.info("getSpaceMemberBySpaceId spaceId:{} ",spaceId);
-            List<SpaceMemberResult> spaceMemberVos = workSpaceMemberService.getSpaceMemberBySpaceId(spaceId);
-            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,spaceMemberVos);
+            List<SpaceMemberResult> spaceMemberResults = workSpaceMemberService.getSpaceMemberBySpaceId(spaceId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,spaceMemberResults);
         }catch (Exception e){
             logger.error("method # getSpaceMemberBySpaceId exception", e);
             return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
@@ -199,8 +198,8 @@ public class WorkSpaceManageController extends BaseNewController {
     public Message getTransferMemberBySpaceId(@PathVariable BigDecimal spaceId){
         try {
             logger.info("getTransferMemberBySpaceId spaceId:{}",spaceId);
-            List<SpaceMemberVo> spaceMemberVos = workSpaceMemberService.getTransferMemberBySpaceId(spaceId);
-            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,spaceMemberVos);
+            List<SpaceMemberResult> spaceMemberResults = workSpaceMemberService.getTransferMemberBySpaceId(spaceId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA,spaceMemberResults);
         }catch (Exception e){
             logger.error("method # getTransferMemberBySpaceId exception", e);
             return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());

@@ -11,7 +11,6 @@ import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.domain.result.WorkSpaceInfoResult;
 import com.geominfo.mlsql.domain.vo.CheckParamVo;
 import com.geominfo.mlsql.domain.vo.SystemResourceVo;
-import com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -112,8 +112,8 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
     }
 
     @Override
-    public List<SpaceMemberVo> getTransferMemberBySpaceId(BigDecimal spaceId) {
-        List<SpaceMemberVo> spaceMemberVoList = new ArrayList<>();
+    public List<SpaceMemberResult> getTransferMemberBySpaceId(BigDecimal spaceId) {
+        List<SpaceMemberResult> spaceMemberResults = new ArrayList<>();
         List<User> userLists = FeignUtils.parseArray(authQueryApiService.getUsers(),User.class);
         List<Integer> spaceMemberIds = workSpaceMembersMapper.getSpaceMemberIdsBySpaceId(spaceId);
        //过滤已分配的人员
@@ -125,13 +125,13 @@ public class WorkSpaceMemberServiceImpl implements WorkSpaceMemberService {
             }
         }
         for (User user :userLists){
-            SpaceMemberVo spaceMemberVo = new SpaceMemberVo();
-            spaceMemberVo.setLoginName(user.getLoginName());
-            spaceMemberVo.setUserName(user.getUserName());
-            spaceMemberVo.setMemberId(BigDecimal.valueOf(user.getId()));
-            spaceMemberVoList.add(spaceMemberVo);
+            SpaceMemberResult spaceMemberResult = new SpaceMemberResult();
+            spaceMemberResult.setLoginName(user.getLoginName());
+            spaceMemberResult.setUserName(user.getUserName());
+            spaceMemberResult.setMemberId(BigDecimal.valueOf(user.getId()));
+            spaceMemberResults.add(spaceMemberResult);
         }
-        return spaceMemberVoList;
+        return spaceMemberResults;
     }
 
     private void getSpaceMemberInfo(SpaceMemberResult vo){
