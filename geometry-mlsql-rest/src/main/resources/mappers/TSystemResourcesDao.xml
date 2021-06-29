@@ -41,7 +41,8 @@
     <select id="selectScriptByRoute" resultType="com.geominfo.mlsql.domain.po.TSystemResources">
         SELECT * FROM t_system_resources sr where  json_in_varchar(sr.content_info) ->> 'src' = #{scriptRoute} and resource_type_id = #{resourceId}
     </select>
-    <select id="checkSystemParamName" parameterType="com.geominfo.mlsql.domain.vo.CheckParamVo" resultType="com.geominfo.mlsql.domain.vo.SystemResourceVo">
+    <select id="checkSystemParamName" parameterType="com.geominfo.mlsql.domain.vo.CheckParamVo"
+            resultType="com.geominfo.mlsql.domain.vo.SystemResourceVo">
         select *
         from t_system_resources
         where resource_type_id = #{resourceType}
@@ -51,7 +52,8 @@
         </if>
     </select>
 
-    <select id="getWorkSpaceLists" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.result.WorkSpaceInfoResult">
+    <select id="getWorkSpaceLists" parameterType="java.math.BigDecimal"
+            resultType="com.geominfo.mlsql.domain.result.WorkSpaceInfoResult">
         select tsr.id spaceId,
                tsr.resource_name spaceName,
                tsr.owner spaceOwnerId,
@@ -69,15 +71,18 @@
               )
     </select>
 
-    <select id="getWorkSpaceListsByName" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.result.WorkSpaceInfoResult">
+    <select id="getWorkSpaceListsByName" parameterType="java.math.BigDecimal"
+            resultType="com.geominfo.mlsql.domain.result.WorkSpaceInfoResult">
         select tsr.id spaceId,
-            tsr.resource_name spaceName,
-            tsr.owner spaceOwnerId,
-            tsr.content_info  describe,
-            tsr.create_time createTime,
-            tsr.update_time  updateTime,
-            (select twmi.state  from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id = #{userId}) spaceState,
-            (select count(*) from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id = #{userId}) spaceMemberNum
+        tsr.resource_name spaceName,
+        tsr.owner spaceOwnerId,
+        tsr.content_info describe,
+        tsr.create_time createTime,
+        tsr.update_time updateTime,
+        (select twmi.state from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id =
+        #{userId}) spaceState,
+        (select count(*) from t_workspace_member_infos twmi where tsr.id = twmi.space_id and twmi.space_member_id =
+        #{userId}) spaceMemberNum
         from t_system_resources tsr
         left join t_workspace_member_infos twmi on tsr.id = twmi.space_id
         where tsr.resource_type_id = 42
@@ -102,6 +107,25 @@
         select * from t
         ) tt
         where 1=1 and tt.resource_state = 1 and owner = #{userId} order by tt.id
+    </select>
+
+    <select id="getRecentlyScripts" parameterType="java.math.BigDecimal"
+            resultType="com.geominfo.mlsql.domain.po.TSystemResources">
+        select * FROM t_system_resources WHERE id in (
+        WITH RECURSIVE r AS (
+        SELECT * FROM t_system_resources WHERE id in (
+        select distinct(twmi.space_id) from t_workspace_member_infos twmi  where space_member_id = #{userId}
+        )
+        union ALL
+        SELECT ts.* FROM t_system_resources ts, r WHERE ts.parentid = r.id
+        )
+        SELECT r.id
+        FROM r
+        where r.resource_type_id = 41
+        and r.resource_state = 1
+        order by update_time desc
+        )
+        limit 10
     </select>
 
 

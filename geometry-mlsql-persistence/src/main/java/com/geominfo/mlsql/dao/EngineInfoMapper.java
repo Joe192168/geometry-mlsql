@@ -3,7 +3,6 @@ package com.geominfo.mlsql.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.geominfo.mlsql.domain.po.EngineInfo;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -45,6 +44,15 @@ public interface EngineInfoMapper extends BaseMapper<EngineInfo> {
      * @return java.util.List<com.geominfo.mlsql.domain.po.EngineInfo>
      */
     List<EngineInfo> getEnginesBySpaceId(BigDecimal spaceId);
+
+    /***
+     * @description: 删除引擎
+     * @author: LF
+     * @date: 2021/6/24
+     * @param id
+     * @return void
+     */
+    void deleteEngine(BigDecimal id);
 
     /**
      * @description: 根据空间id查询引擎
