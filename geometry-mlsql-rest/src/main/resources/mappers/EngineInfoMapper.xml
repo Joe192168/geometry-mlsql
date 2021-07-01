@@ -32,7 +32,7 @@
                 and record_state = '1'
     </select>
 
-    <update id="" parameterType="java.math.BigDecimal">
+    <update id="deleteEngine" parameterType="java.math.BigDecimal">
         UPDATE public.t_engine_info
         SET  record_state = '0'
         WHERE id = #{id}
