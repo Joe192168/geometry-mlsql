@@ -45,6 +45,9 @@ public class AuthApiUrl {
     //用户会话管理接口url
     public static final String UPDATE_ACCOUNT_PASSWORD = "/auth_OpenApi/updateAccountInfo";
 
+    //根据应用系统系统标识查询拥有该系统权限的人员
+    public static final String GET_USERS_APPID = "/auth_OpenApi/getUsersByAppId/{appId}";
+
 //    //根据系统的clientId查询系统的系统标识
 //    public static final String CLIENT_ID = "/auth_OpenApi/getProductId/{clientId}";
 //

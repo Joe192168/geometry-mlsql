@@ -123,4 +123,15 @@ public class AccountController extends BaseNewController {
         return authApiService.updateAccountInfo(accountParam);
     }
 
+    @ApiOperation(value = "根据应用系统系统标识查询拥有该系统权限的人员", httpMethod = "GET",notes = "根据应用系统系统标识查询拥有该系统权限的人员")
+    @GetMapping("/getUsersByAppId/{appId}")
+    public Message getUsersByAppId(@PathVariable Integer appId) {
+        try {
+            return authQueryApiService.getUsersByAppId(appId);
+        } catch (Exception e) {
+            logger.error("method # getUsersByAppId  exception: ", e);
+            return new Message().error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "根据应用系统系统标识查询拥有该系统权限的人员时发生异常，请稍后重试！");
+        }
+    }
+
 }

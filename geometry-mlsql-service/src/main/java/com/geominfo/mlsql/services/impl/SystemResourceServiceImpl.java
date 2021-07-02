@@ -95,4 +95,9 @@ public class SystemResourceServiceImpl implements SystemResourceService {
         return systemResourcesDao.getRecentlyScripts(userId);
     }
 
+    @Override
+    public TSystemResources getResourceById(BigDecimal id) {
+        return systemResourcesDao.selectById(id);
+    }
+
 }

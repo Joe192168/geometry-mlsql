@@ -4,8 +4,10 @@ import com.geominfo.authing.common.constants.CommonConstants;
 import com.geominfo.mlsql.base.BaseNewController;
 import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.domain.po.TSystemResources;
+import com.geominfo.mlsql.domain.result.SharedInfoResult;
 import com.geominfo.mlsql.domain.result.WorkSpaceInfoResult;
 import com.geominfo.mlsql.enums.InterfaceMsg;
+import com.geominfo.mlsql.services.ShareInfoService;
 import com.geominfo.mlsql.services.SystemResourceService;
 import com.geominfo.mlsql.services.WorkSpaceManagerService;
 import io.swagger.annotations.Api;
@@ -35,6 +37,8 @@ public class HomePageController extends BaseNewController {
     private WorkSpaceManagerService workSpaceManagerService;
     @Autowired
     private SystemResourceService systemResourceService;
+    @Autowired
+    private ShareInfoService shareInfoService;
 
     @ApiOperation(value = "获取首页工作空间卡片", httpMethod = "GET")
     @ApiImplicitParam(name = "userId", value = "用户id", dataType = "Integer", paramType = "path", required = true)
@@ -64,5 +68,32 @@ public class HomePageController extends BaseNewController {
         }
     }
 
+    @ApiOperation(value = "获取首页查询最近相关脚本", httpMethod = "GET")
+    @ApiImplicitParam(name = "userId", value = "用户id", dataType = "Integer", paramType = "path", required = true)
+    @GetMapping("/getShareScripts/{userId}")
+    public Message getShareScripts(@PathVariable BigDecimal userId) {
+        try {
+            logger.info("getShareScripts userId{} ", userId);
+            List<SharedInfoResult> sharedInfoResults = shareInfoService.getShareScriptsBySharedId(userId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA, sharedInfoResults);
+        } catch (Exception e) {
+            logger.error("method # getShareScripts exception", e);
+            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value = "查询分享脚本详情", httpMethod = "GET")
+    @ApiImplicitParam(name = "resourceId", value = "脚本资源id", dataType = "Integer", paramType = "path", required = true)
+    @GetMapping("/getShareScriptInfo/{resourceId}")
+    public Message getShareScriptInfo(@PathVariable BigDecimal resourceId) {
+        try {
+            logger.info("getShareScriptInfo userId{} ", resourceId);
+            TSystemResources systemResources = systemResourceService.getResourceById(resourceId);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA, systemResources);
+        } catch (Exception e) {
+            logger.error("method # getShareScriptInfo exception", e);
+            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
+        }
+    }
 
 }

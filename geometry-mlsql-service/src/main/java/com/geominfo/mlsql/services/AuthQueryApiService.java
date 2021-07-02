@@ -102,4 +102,7 @@ public interface AuthQueryApiService {
      */
     @PostMapping(value = AuthApiUrl.USER_LIST_PAGE)
     Message getUsersPage(@RequestBody QueryUserVo queryUserVo);
+
+    @GetMapping(value = AuthApiUrl.GET_USERS_APPID)
+    Message getUsersByAppId(@PathVariable(value = "appId") Integer appId);
 }

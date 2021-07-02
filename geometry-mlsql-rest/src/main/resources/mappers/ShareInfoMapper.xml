@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geominfo.mlsql.dao.ShareInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.ShareInfo">
+        <id column="id" property="id" />
+        <result column="resource_id" property="resourceId" />
+        <result column="shared_id" property="sharedId" />
+        <result column="share_end_time" property="shareEndTime" />
+        <result column="sharer_id" property="sharerId" />
+        <result column="share_remark" property="shareRemark" />
+        <result column="extra_opts" property="extraOpts" />
+        <result column="operator_time" property="operatorTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="share_state" property="shareState" />
+    </resultMap>
+
+    <select id="getShareScriptsBySharedId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.result.SharedInfoResult">
+        select  si.id,
+                sharer_id  shareId,
+                operator_time shareTime,
+                share_remark shareRemark,
+                resource_id resourceId,
+                sr.resource_name resourceName,
+                share_end_time shareEndTime
+        from t_share_info si
+        left join t_system_resources sr
+        on si.resource_id = sr.id
+        where
+            shared_id = #{userId}
+            and  share_end_time > CURRENT_DATE
+            and share_state = 1
+    </select>
+
+</mapper>

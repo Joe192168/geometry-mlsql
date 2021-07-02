@@ -76,6 +76,12 @@ public class AuthQueryApiServiceFactory implements FallbackFactory<AuthQueryApiS
                 return new Message().error("查询人员信息列表(分页)时发生异常，请稍后再试！");
             }
 
+            @Override
+            public Message getUsersByAppId(Integer appId) {
+                log.error("fallback 根据应用系统系统标识查询拥有该系统权限的人员..." ,throwable);
+                return new Message().error("根据应用系统系统标识查询拥有该系统权限的人员时发生异常，请稍后再试！");
+            }
+
         };
     }
 }

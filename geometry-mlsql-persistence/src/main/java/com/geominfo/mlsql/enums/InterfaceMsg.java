@@ -37,6 +37,8 @@ public enum InterfaceMsg {
     INSERT_SPACE_ENGINE_FAIL("添加工作空间引擎失败！"),
     SET_DEFAULT_ENGINE_SUCCESS("设置工作空间默认引擎成功！"),
     SET_DEFAULT_ENGINE_FAIL("设置工作空间默认引擎失败！"),
+    SHARE_SCRIPT_SUCCESS("分享脚本成功！"),
+    SHARE_SCRIPT_FAIL("分享脚本失败！"),
     ;
 
     private String msg;

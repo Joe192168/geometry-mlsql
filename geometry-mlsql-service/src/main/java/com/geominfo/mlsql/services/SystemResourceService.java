@@ -51,5 +51,14 @@ public interface SystemResourceService {
      */
     List<TSystemResources> getRecentlyScripts(BigDecimal userId);
 
+    /**
+     * @description: 根据资源id查询资源
+     * @author: LF
+     * @date: 2021/7/1
+     * @param id
+     * @return com.geominfo.mlsql.domain.po.TSystemResources
+     */
+    TSystemResources getResourceById(BigDecimal id);
+
 
 }
