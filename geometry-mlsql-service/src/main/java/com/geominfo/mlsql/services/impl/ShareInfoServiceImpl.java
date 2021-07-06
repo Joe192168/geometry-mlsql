@@ -8,6 +8,7 @@ import com.geominfo.mlsql.dao.ShareInfoMapper;
 import com.geominfo.mlsql.domain.po.ShareInfo;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.domain.result.SharedInfoResult;
+import com.geominfo.mlsql.domain.vo.QueryShareInfoVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.NumberControlService;
@@ -62,8 +63,17 @@ public class ShareInfoServiceImpl implements ShareInfoService {
     }
 
     @Override
-    public List<SharedInfoResult> getShareScriptsBySharedId(BigDecimal userId) {
+    public List<SharedInfoResult> getShareScriptsBySharedId(Integer userId) {
         List<SharedInfoResult> sharedInfoResults = shareInfoMapper.getShareScriptsBySharedId(userId);
+        for (SharedInfoResult vo :sharedInfoResults){
+            getShareName(vo);
+        }
+        return sharedInfoResults;
+    }
+
+    @Override
+    public List<SharedInfoResult> getShareScriptsByUserIdAndTime(QueryShareInfoVo queryShareInfoVo) {
+        List<SharedInfoResult> sharedInfoResults = shareInfoMapper.getShareScriptsByUserIdAndTime(queryShareInfoVo);
         for (SharedInfoResult vo :sharedInfoResults){
             getShareName(vo);
         }

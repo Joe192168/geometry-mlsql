@@ -79,7 +79,7 @@ public class WorkSpaceManageController extends BaseNewController {
     }
 
     @ApiOperation(value="删除工作空间", httpMethod = "DELETE")
-    @ApiImplicitParam(name="id",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
+//    @ApiImplicitParam(name="id",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
     @DeleteMapping("/delete/{id}")
     public Message deleteWorkSpace(@PathVariable BigDecimal id) {
         Boolean flag = workSpaceManagerService.deleteWorkSpace(id);
@@ -165,9 +165,9 @@ public class WorkSpaceManageController extends BaseNewController {
     }
 
     @ApiOperation(value="查询工作空间列表",httpMethod = "GET")
-    @ApiImplicitParam(name="userId",value = "用户id", dataType = "Integer", paramType = "path",required = true)
+//    @ApiImplicitParam(name="userId",value = "用户id", dataType = "Integer", paramType = "path",required = true)
     @GetMapping("/getWorkSpaceLists/{userId}")
-    public Message getWorkSpaceLists( @PathVariable BigDecimal userId){
+    public Message getWorkSpaceLists( @PathVariable Integer userId){
         try {
             logger.info("getWorkSpaceLists userId{} ",userId);
             List<WorkSpaceInfoResult> workSpaceInfoVos = workSpaceManagerService.getWorkSpaceLists(userId);
@@ -179,7 +179,7 @@ public class WorkSpaceManageController extends BaseNewController {
     }
 
     @ApiOperation(value = "查询空间成员列表",httpMethod = "GET")
-    @ApiImplicitParam(name="spaceId",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
+//    @ApiImplicitParam(name="spaceId",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
     @GetMapping("/getSpaceMemberBySpaceId/{spaceId}")
     public Message getSpaceMemberBySpaceId(@PathVariable BigDecimal spaceId){
         try {
@@ -193,7 +193,7 @@ public class WorkSpaceManageController extends BaseNewController {
     }
 
     @ApiOperation(value = "查询可转让的空间成员",httpMethod = "GET")
-    @ApiImplicitParam(name="spaceId",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
+//    @ApiImplicitParam(name="spaceId",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
     @GetMapping("/getTransferMemberBySpaceId/{spaceId}")
     public Message getTransferMemberBySpaceId(@PathVariable BigDecimal spaceId){
         try {
@@ -224,7 +224,6 @@ public class WorkSpaceManageController extends BaseNewController {
     }
 
     @ApiOperation(value = "查询可添加的引擎配置",httpMethod = "GET")
-    @ApiImplicitParam(name="spaceId",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
     @GetMapping("/getEnginesBySpaceId/{spaceId}")
     public Message getEnginesBySpaceId(@PathVariable BigDecimal spaceId){
         try {
@@ -291,7 +290,7 @@ public class WorkSpaceManageController extends BaseNewController {
     }
 
     @ApiOperation(value = "根据工作空间id，查询所有的配置引擎列表",httpMethod = "GET")
-    @ApiImplicitParam(name="spaceId",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
+//    @ApiImplicitParam(name="spaceId",value = "工作空间id", dataType = "Integer", paramType = "path",required = true)
     @GetMapping("/getEngineLists/{spaceId}")
     public Message getEngineLists(@PathVariable BigDecimal spaceId){
         try {

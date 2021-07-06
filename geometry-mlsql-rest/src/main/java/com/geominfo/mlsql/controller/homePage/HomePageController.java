@@ -6,6 +6,7 @@ import com.geominfo.mlsql.commons.Message;
 import com.geominfo.mlsql.domain.po.TSystemResources;
 import com.geominfo.mlsql.domain.result.SharedInfoResult;
 import com.geominfo.mlsql.domain.result.WorkSpaceInfoResult;
+import com.geominfo.mlsql.domain.vo.QueryShareInfoVo;
 import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.ShareInfoService;
 import com.geominfo.mlsql.services.SystemResourceService;
@@ -14,10 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -41,9 +39,8 @@ public class HomePageController extends BaseNewController {
     private ShareInfoService shareInfoService;
 
     @ApiOperation(value = "获取首页工作空间卡片", httpMethod = "GET")
-    @ApiImplicitParam(name = "userId", value = "用户id", dataType = "Integer", paramType = "path", required = true)
     @GetMapping("/getWorkSpaceListCards/{userId}")
-    public Message getWorkSpaceListCards(@PathVariable BigDecimal userId) {
+    public Message getWorkSpaceListCards(@PathVariable Integer userId) {
         try {
             logger.info("getWorkSpaceListCards userId{} ", userId);
             List<WorkSpaceInfoResult> workSpaceInfoVos = workSpaceManagerService.getWorkSpaceLists(userId);
@@ -55,9 +52,8 @@ public class HomePageController extends BaseNewController {
     }
 
     @ApiOperation(value = "获取首页查询最近相关脚本", httpMethod = "GET")
-    @ApiImplicitParam(name = "userId", value = "用户id", dataType = "Integer", paramType = "path", required = true)
     @GetMapping("/getRecentlyScripts/{userId}")
-    public Message getRecentlyScripts(@PathVariable BigDecimal userId) {
+    public Message getRecentlyScripts(@PathVariable Integer userId) {
         try {
             logger.info("getRecentlyScripts userId{} ", userId);
             List<TSystemResources> systemResources = systemResourceService.getRecentlyScripts(userId);
@@ -68,10 +64,9 @@ public class HomePageController extends BaseNewController {
         }
     }
 
-    @ApiOperation(value = "获取首页查询最近相关脚本", httpMethod = "GET")
-    @ApiImplicitParam(name = "userId", value = "用户id", dataType = "Integer", paramType = "path", required = true)
+    @ApiOperation(value = "获取首页查询最近分享脚本", httpMethod = "GET")
     @GetMapping("/getShareScripts/{userId}")
-    public Message getShareScripts(@PathVariable BigDecimal userId) {
+    public Message getShareScripts(@PathVariable Integer userId) {
         try {
             logger.info("getShareScripts userId{} ", userId);
             List<SharedInfoResult> sharedInfoResults = shareInfoService.getShareScriptsBySharedId(userId);
@@ -83,15 +78,27 @@ public class HomePageController extends BaseNewController {
     }
 
     @ApiOperation(value = "查询分享脚本详情", httpMethod = "GET")
-    @ApiImplicitParam(name = "resourceId", value = "脚本资源id", dataType = "Integer", paramType = "path", required = true)
     @GetMapping("/getShareScriptInfo/{resourceId}")
-    public Message getShareScriptInfo(@PathVariable BigDecimal resourceId) {
+    public Message getShareScriptInfo(@PathVariable Integer resourceId) {
         try {
             logger.info("getShareScriptInfo userId{} ", resourceId);
             TSystemResources systemResources = systemResourceService.getResourceById(resourceId);
             return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA, systemResources);
         } catch (Exception e) {
             logger.error("method # getShareScriptInfo exception", e);
+            return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value = "按条件首页查询最近分享脚本", httpMethod = "POST")
+    @PostMapping("/getShareScriptsByUserIdAndTime")
+    public Message getShareScriptsByUserIdAndTime(@RequestBody QueryShareInfoVo queryShareInfoVo) {
+        try {
+            logger.info("getShareScriptsByUserIdAndTime {}", queryShareInfoVo);
+            List<SharedInfoResult> sharedInfoResults = shareInfoService.getShareScriptsByUserIdAndTime(queryShareInfoVo);
+            return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA, sharedInfoResults);
+        } catch (Exception e) {
+            logger.error("method # getShareScriptsByUserIdAndTime exception", e);
             return new Message().error(InterfaceMsg.QUERY_ERROR.getMsg());
         }
     }

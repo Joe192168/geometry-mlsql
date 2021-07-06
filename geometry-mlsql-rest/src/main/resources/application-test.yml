@@ -14,4 +14,4 @@ spring:
 
 #配置不需要认证的接口(白名单)
 ignore:
-  urls: /index/**,/login/**,/favicon.ico,*.html,/index,/perm/**,/dealFilterChain/reload,/account/**
+  urls: /index/**,/login/**,/favicon.ico,*.html,/index,/perm/**,/dealFilterChain/reload,/account/**,/share/**,/index/**,/**

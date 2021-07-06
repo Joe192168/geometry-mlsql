@@ -157,12 +157,12 @@ public class WorkSpaceManagerServiceImpl implements WorkSpaceManagerService {
     }
 
     @Override
-    public List<WorkSpaceInfoResult> getWorkSpaceLists(BigDecimal userId) {
+    public List<WorkSpaceInfoResult> getWorkSpaceLists(Integer userId) {
         List<WorkSpaceInfoResult> workSpaceInfoVos = systemResourcesDao.getWorkSpaceLists(userId);
         BaseResultVo baseResultVo = new BaseResultVo();
         //查询用户工作空间，若无工作空间，则初始化默认空间
         if (CollectionUtils.isEmpty(workSpaceInfoVos)){
-            if (initWorkSpace(userId)){
+            if (initWorkSpace(BigDecimal.valueOf(userId))){
                 workSpaceInfoVos = systemResourcesDao.getWorkSpaceLists(userId);
                 for (WorkSpaceInfoResult vo : workSpaceInfoVos) {
                     getWorkSpaceInfo(vo);

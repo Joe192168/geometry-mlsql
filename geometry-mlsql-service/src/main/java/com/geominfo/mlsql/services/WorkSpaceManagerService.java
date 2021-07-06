@@ -69,7 +69,7 @@ public interface WorkSpaceManagerService {
      * @param userId
      * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
      */
-    List<WorkSpaceInfoResult> getWorkSpaceLists(BigDecimal userId);
+    List<WorkSpaceInfoResult> getWorkSpaceLists(Integer userId);
 
     /**
      * @description: 根据名称查询工作空间列表

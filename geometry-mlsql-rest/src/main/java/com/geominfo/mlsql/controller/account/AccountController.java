@@ -1,5 +1,7 @@
 package com.geominfo.mlsql.controller.account;
 
+import com.geominfo.authing.common.constants.CommonConstants;
+import com.geominfo.authing.common.enums.EnumApplicationResource;
 import com.geominfo.authing.common.enums.EnumOperateLogType;
 import com.geominfo.mlsql.aop.GeometryLogAnno;
 import com.geominfo.mlsql.base.BaseNewController;
@@ -123,11 +125,11 @@ public class AccountController extends BaseNewController {
         return authApiService.updateAccountInfo(accountParam);
     }
 
-    @ApiOperation(value = "根据应用系统系统标识查询拥有该系统权限的人员", httpMethod = "GET",notes = "根据应用系统系统标识查询拥有该系统权限的人员")
-    @GetMapping("/getUsersByAppId/{appId}")
-    public Message getUsersByAppId(@PathVariable Integer appId) {
+    @ApiOperation(value = "查询拥有数据开发平台权限的人员", httpMethod = "GET",notes = "查询拥有数据开发平台权限的人员")
+    @GetMapping("/getUsersByAppId")
+    public Message getUsersByAppId() {
         try {
-            return authQueryApiService.getUsersByAppId(appId);
+            return authQueryApiService.getUsersByAppId(EnumApplicationResource.MLSQL.getResourceId());
         } catch (Exception e) {
             logger.error("method # getUsersByAppId  exception: ", e);
             return new Message().error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "根据应用系统系统标识查询拥有该系统权限的人员时发生异常，请稍后重试！");

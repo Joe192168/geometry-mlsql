@@ -16,7 +16,7 @@
         <result column="share_state" property="shareState" />
     </resultMap>
 
-    <select id="getShareScriptsBySharedId" parameterType="java.math.BigDecimal" resultType="com.geominfo.mlsql.domain.result.SharedInfoResult">
+    <select id="getShareScriptsBySharedId" parameterType="java.lang.Integer" resultType="com.geominfo.mlsql.domain.result.SharedInfoResult">
         select  si.id,
                 sharer_id  shareId,
                 operator_time shareTime,
@@ -31,6 +31,30 @@
             shared_id = #{userId}
             and  share_end_time > CURRENT_DATE
             and share_state = 1
+    </select>
+
+    <select id="getShareScriptsByUserIdAndTime" parameterType="com.geominfo.mlsql.domain.vo.QueryShareInfoVo" resultType="com.geominfo.mlsql.domain.result.SharedInfoResult">
+        select  si.id,
+                sharer_id  shareId,
+                operator_time shareTime,
+                share_remark shareRemark,
+                resource_id resourceId,
+                sr.resource_name resourceName,
+                share_end_time shareEndTime
+        from t_share_info si
+        left join t_system_resources sr
+        on si.resource_id = sr.id
+        where
+            shared_id = #{sharedUserId}
+        <if test="shareStartTime != null">
+            and share_end_time > #{shareStartTime}
+        </if>
+        <if test="shareEndTime != null">
+            and share_end_time &lt; #{shareEndTime}
+        </if>
+        <if test="shareUserId != null">
+            and sharer_id = #{shareUserId}
+        </if>
     </select>
 
 </mapper>

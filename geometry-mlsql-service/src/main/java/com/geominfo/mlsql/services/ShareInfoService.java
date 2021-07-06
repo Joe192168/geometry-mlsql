@@ -3,6 +3,7 @@ package com.geominfo.mlsql.services;
 import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.domain.po.ShareInfo;
 import com.geominfo.mlsql.domain.result.SharedInfoResult;
+import com.geominfo.mlsql.domain.vo.QueryShareInfoVo;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,7 +33,14 @@ public interface ShareInfoService {
      * @param userId
      * @return java.util.List<com.geominfo.mlsql.domain.result.SharedInfoResult>
      */
-    List<SharedInfoResult> getShareScriptsBySharedId(BigDecimal userId);
+    List<SharedInfoResult> getShareScriptsBySharedId(Integer userId);
 
-
+    /**
+     * @description: 根据分享人和分享时间查询满足脚本
+     * @author: LF
+     * @date: 2021/7/5
+     * @param queryShareInfoVo
+     * @return java.util.List<com.geominfo.mlsql.domain.result.SharedInfoResult>
+     */
+    List<SharedInfoResult> getShareScriptsByUserIdAndTime(QueryShareInfoVo queryShareInfoVo);
 }

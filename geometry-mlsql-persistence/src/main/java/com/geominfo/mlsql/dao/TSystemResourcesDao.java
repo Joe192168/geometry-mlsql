@@ -59,7 +59,7 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
      * @param userId
      * @return java.util.List<com.geominfo.mlsql.domain.vo.WorkSpaceInfoVo>
      */
-    List<WorkSpaceInfoResult> getWorkSpaceLists(BigDecimal userId);
+    List<WorkSpaceInfoResult> getWorkSpaceLists(Integer userId);
 
     /**
      * @description: 根据名称查询工作空间列表
@@ -79,5 +79,5 @@ public interface TSystemResourcesDao extends BaseMapper<TSystemResources> {
      * @param userId
      * @return java.util.List<com.geominfo.mlsql.domain.po.TSystemResources>
      */
-    List<TSystemResources> getRecentlyScripts(BigDecimal userId);
+    List<TSystemResources> getRecentlyScripts(Integer userId);
 }

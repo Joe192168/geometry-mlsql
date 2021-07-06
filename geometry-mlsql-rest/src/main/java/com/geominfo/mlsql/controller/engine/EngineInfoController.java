@@ -35,7 +35,6 @@ public class EngineInfoController extends BaseNewController {
 
     @ApiOperation(value="新增引擎信息", httpMethod = "POST")
     @PostMapping("/insert")
-    @GeometryLogAnno(operateType = EnumOperateLogType.ENGINE_OPERATE)
     public Message insertEngineInfo(@RequestBody EngineInfo engineInfo) {
         BaseResultVo baseResultVo = new BaseResultVo();
         logger.info("insertEngineInfo param:{}", engineInfo);
@@ -66,7 +65,6 @@ public class EngineInfoController extends BaseNewController {
     }
     @ApiOperation(value="删除引擎信息", httpMethod = "DELETE")
     @DeleteMapping("/delete/{id}")
-    @ApiImplicitParam(name="id",value = "引擎id", dataType = "Integer", paramType = "path",required = true)
     public Message deleteEngineInfo(@PathVariable BigDecimal id) {
         Boolean flag = engineInfoService.deleteEngineInfo(id);
         if (flag) {

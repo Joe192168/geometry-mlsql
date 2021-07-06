@@ -49,7 +49,7 @@ public interface SystemResourceService {
      * @param userId
      * @return java.util.List<com.geominfo.mlsql.domain.po.TSystemResources>
      */
-    List<TSystemResources> getRecentlyScripts(BigDecimal userId);
+    List<TSystemResources> getRecentlyScripts(Integer userId);
 
     /**
      * @description: 根据资源id查询资源
@@ -58,7 +58,7 @@ public interface SystemResourceService {
      * @param id
      * @return com.geominfo.mlsql.domain.po.TSystemResources
      */
-    TSystemResources getResourceById(BigDecimal id);
+    TSystemResources getResourceById(Integer id);
 
 
 }
