@@ -14,6 +14,8 @@ import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.NumberControlService;
 import com.geominfo.mlsql.services.ShareInfoService;
 import com.geominfo.mlsql.utils.FeignUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,12 +74,13 @@ public class ShareInfoServiceImpl implements ShareInfoService {
     }
 
     @Override
-    public List<SharedInfoResult> getShareScriptsByUserIdAndTime(QueryShareInfoVo queryShareInfoVo) {
+    public PageInfo<List<SharedInfoResult>> getShareScriptsByUserIdAndTime(QueryShareInfoVo queryShareInfoVo) {
+        PageHelper.startPage(queryShareInfoVo.getCurrentPage(), queryShareInfoVo.getPageSize());
         List<SharedInfoResult> sharedInfoResults = shareInfoMapper.getShareScriptsByUserIdAndTime(queryShareInfoVo);
         for (SharedInfoResult vo :sharedInfoResults){
             getShareName(vo);
         }
-        return sharedInfoResults;
+        return new PageInfo(sharedInfoResults);
     }
 
     private void getShareName(SharedInfoResult vo){

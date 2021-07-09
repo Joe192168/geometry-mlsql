@@ -213,6 +213,19 @@
             <version>${json-lib.version}</version>
             <classifier>jdk13</classifier>
         </dependency>
+        
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <!--排除掉pageHelper的mybatis包 不然会和mybatis-plus的冲突-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 
 </project>

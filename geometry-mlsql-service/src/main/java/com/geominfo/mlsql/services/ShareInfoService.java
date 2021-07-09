@@ -4,6 +4,7 @@ import com.geominfo.authing.common.pojo.base.BaseResultVo;
 import com.geominfo.mlsql.domain.po.ShareInfo;
 import com.geominfo.mlsql.domain.result.SharedInfoResult;
 import com.geominfo.mlsql.domain.vo.QueryShareInfoVo;
+import com.github.pagehelper.PageInfo;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,5 +43,5 @@ public interface ShareInfoService {
      * @param queryShareInfoVo
      * @return java.util.List<com.geominfo.mlsql.domain.result.SharedInfoResult>
      */
-    List<SharedInfoResult> getShareScriptsByUserIdAndTime(QueryShareInfoVo queryShareInfoVo);
+    PageInfo<List<SharedInfoResult>> getShareScriptsByUserIdAndTime(QueryShareInfoVo queryShareInfoVo);
 }

@@ -1,5 +1,8 @@
 package com.geominfo.mlsql.domain.vo;
 
+import com.geominfo.mlsql.domain.vo.base.PageInfoVo;
+import com.github.pagehelper.PageInfo;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -10,7 +13,7 @@ import java.util.Date;
  * @create: 2021/7/2 17:06
  * @version: 1.0.0
  */
-public class QueryShareInfoVo {
+public class QueryShareInfoVo extends PageInfoVo {
     //分享人id
     private BigDecimal shareUserId;
     //分享开始时间

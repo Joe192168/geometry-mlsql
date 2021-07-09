@@ -11,6 +11,7 @@ import com.geominfo.mlsql.enums.InterfaceMsg;
 import com.geominfo.mlsql.services.ShareInfoService;
 import com.geominfo.mlsql.services.SystemResourceService;
 import com.geominfo.mlsql.services.WorkSpaceManagerService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -95,7 +96,7 @@ public class HomePageController extends BaseNewController {
     public Message getShareScriptsByUserIdAndTime(@RequestBody QueryShareInfoVo queryShareInfoVo) {
         try {
             logger.info("getShareScriptsByUserIdAndTime {}", queryShareInfoVo);
-            List<SharedInfoResult> sharedInfoResults = shareInfoService.getShareScriptsByUserIdAndTime(queryShareInfoVo);
+            PageInfo<List<SharedInfoResult>> sharedInfoResults = shareInfoService.getShareScriptsByUserIdAndTime(queryShareInfoVo);
             return new Message().ok(InterfaceMsg.QUERY_SUCCESS.getMsg()).addData(CommonConstants.DATA, sharedInfoResults);
         } catch (Exception e) {
             logger.error("method # getShareScriptsByUserIdAndTime exception", e);
