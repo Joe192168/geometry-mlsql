@@ -16,6 +16,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
@@ -42,8 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JWTAccessDeniedHandler jwtAccessDeniedHandler;
 
-    @Value("${ignore.urls}")
-    private String antMatchers;
+    @Autowired
+    private FilterIgnoreConfig filterIgnoreConfig;
 
     /**
      * 密码编码器
@@ -72,21 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
-                // 跨域预检请求
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // 不进行权限验证的请求或资源(从配置文件中读取)
-                .antMatchers(antMatchers.split(",")).permitAll()
-                // swagger 不用拦截
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/v2/**").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                // 其他的需要登陆后才能访问  其他url都需要验证
-                .anyRequest().authenticated()
-                .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))//认证
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))//授权
+
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
                 //不需要session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -94,7 +83,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)//配置未登录自定义处理类
                 .and()
-                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler);//添加无权限时的处理
+                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)//添加无权限时的处理
+                .and()
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))//认证
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))//授权
+                .cors().and().csrf().disable().authorizeRequests();//添加无权限时的处理
+
+        // 不进行权限验证的请求或资源(从配置文件中读取)
+        filterIgnoreConfig.getUrls().forEach(url->registry.antMatchers(url).permitAll());
+
+        registry.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()// 跨域预检请求
+                // 其他的需要登陆后才能访问  其他url都需要验证
+                .anyRequest().authenticated();
+
         // 拦截受保护的url
         http.addFilterBefore(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class);
         // 配置jwt验证过滤器，位于用户名密码验证过滤器之后
