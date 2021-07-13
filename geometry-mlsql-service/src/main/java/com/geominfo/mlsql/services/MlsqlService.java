@@ -55,7 +55,7 @@ public interface MlsqlService {
      * @Param []
      * @return com.alibaba.fastjson.JSONObject
      */
-    JSONObject getEngineState();
+    JSONObject getEngineState(String engineUrl);
 
     /***
      * @Description: 处理异步回调接口入库

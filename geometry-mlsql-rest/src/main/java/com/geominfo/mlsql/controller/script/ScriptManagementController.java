@@ -48,11 +48,11 @@ public class ScriptManagementController {
      */
     @ApiOperation(value = "执行shell脚本接口",httpMethod = "GET")
     @GetMapping("/executeShell")
-    public Message executeShellScript() {
+    public Message executeShellScript(String ip,Integer port,String username,String password,String shellCmd) {
         try {
             ExecuteShellUtil instance = ExecuteShellUtil.getInstance();
-            instance.init("192.186.0.1",22,"root","root");
-            instance.execCmd("test.sh");
+            instance.init(ip,port,username,password);
+            instance.execCmd(shellCmd);
             return new Message().ok("重启成功");
         } catch (Exception e) {
             log.error("执行重启引擎脚本失败:{}",e.getMessage());

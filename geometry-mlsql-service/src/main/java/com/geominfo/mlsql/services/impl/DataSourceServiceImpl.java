@@ -58,14 +58,8 @@ public class DataSourceServiceImpl implements DataSourceService {
         }
 
         //向mlsql发送固化请求
-        String sql = storageConnectInfoToMlsql(dataBaseDTO);
-        MlsqlExecuteSqlVO mlsqlExecuteSqlVO = new MlsqlExecuteSqlVO();
-        mlsqlExecuteSqlVO.setSql(sql);
-        mlsqlExecuteSqlVO.setAsync(false);
-        mlsqlExecuteSqlVO.setRefuseConnect(true);
-        mlsqlExecuteSqlVO.setOwner(userId.toString());
-        mlsqlExecuteSqlVO.setExecuteMode("query");
-        String s = mlsqlService.executeMlsql(mlsqlExecuteSqlVO);
+        storageConnectInfoToMlsql(dataBaseDTO,resourceId,userId);
+
 
         TSystemResources insertSystemResource = new TSystemResources();
         insertSystemResource.setResourceName(dataBaseDTO.getConnectName());
@@ -96,6 +90,11 @@ public class DataSourceServiceImpl implements DataSourceService {
             retMap.put("msg",dataBaseDTO.getConnectName() + "已存在");
             return retMap;
         }
+
+        //向engine发送固化请求
+        storageConnectInfoToMlsql(dataBaseDTO,resourceId,parentId);
+
+
         TSystemResources tSystemResources1 = new TSystemResources();
         tSystemResources1.setId(resourceId);
         tSystemResources1.setContentInfo(JSONObject.toJSONString(dataBaseDTO));
@@ -135,7 +134,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         return maps;
     }
 
-    String storageConnectInfoToMlsql(DataBaseDTO dataBaseDTO) {
+    void storageConnectInfoToMlsql(DataBaseDTO dataBaseDTO,BigDecimal resourceId,BigDecimal userId) {
 
         String url = "";
         String driver = "";
@@ -198,8 +197,15 @@ public class DataSourceServiceImpl implements DataSourceService {
         }else if (dataBaseDTO.getDataBaseType().equalsIgnoreCase("POSTGRESQL")) {
             driver ="com.postgresql.jdbc.driver";
         }
-        String sql = "connect jdbc where url= \""+ url +"\" and driver=\"" + driver + "\" and user=\" " +dataBaseDTO.getUsername() +"\" and password=\""+dataBaseDTO.getPassword()+"\" as " +dataBaseDTO.getConnectName()+ ";";
-        return sql;
+        String sql = "connect jdbc where url= \""+ url +"\" and driver=\"" + driver + "\" and user=\" " +dataBaseDTO.getUsername() +"\" and password=\""+dataBaseDTO.getPassword()+"\" as " +resourceId+"_"+dataBaseDTO.getConnectName()+ ";";
+
+        MlsqlExecuteSqlVO mlsqlExecuteSqlVO = new MlsqlExecuteSqlVO();
+        mlsqlExecuteSqlVO.setSql(sql);
+        mlsqlExecuteSqlVO.setAsync(false);
+        mlsqlExecuteSqlVO.setRefuseConnect(true);
+        mlsqlExecuteSqlVO.setOwner(userId.toString());
+        mlsqlExecuteSqlVO.setExecuteMode("query");
+        String s = mlsqlService.executeMlsql(mlsqlExecuteSqlVO);
     }
 
 }

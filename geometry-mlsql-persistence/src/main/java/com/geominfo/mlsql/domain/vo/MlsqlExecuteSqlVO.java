@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @title: MlsqlExecuteSqlVO
  * @date 2021/4/6 15:10
@@ -82,4 +84,7 @@ public class MlsqlExecuteSqlVO {
     private String authSecret;
 
     private Boolean refuseConnect;
+
+    @ApiModelProperty(name = "workSpaceId",value = "工作空间id")
+    private BigDecimal workSpaceId;
 }

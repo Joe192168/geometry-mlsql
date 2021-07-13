@@ -106,6 +106,7 @@ public class MlsqlServiceImpl implements MlsqlService {
         map.add("context.context.__auth_client__", mlsqlExecuteSqlVO.getAuthClient());
         map.add("context.__auth_server_url__", mlsqlExecuteSqlVO.getAuthServerUrl());
         map.add("context.__auth_secret__", mlsqlExecuteSqlVO.getAuthSecret());
+        map.add("context.workspace_id",mlsqlExecuteSqlVO.getWorkSpaceId());
 
 
         HttpHeaders headers = new HttpHeaders();
@@ -154,7 +155,7 @@ public class MlsqlServiceImpl implements MlsqlService {
     }
 
     @Override
-    public JSONObject getEngineState() {
+    public JSONObject getEngineState(String url) {
         ResponseEntity<JSONObject> Entity = restTemplate.getForEntity(url + engineUrl, JSONObject.class);
         if (Entity.getStatusCode().is2xxSuccessful()) {
             return Entity.getBody();
@@ -348,6 +349,7 @@ public class MlsqlServiceImpl implements MlsqlService {
         if (tSystemResources1 == null) {
             BigDecimal maxmum = numberControlService.getMaxNum(SystemTableName.T_SYSTEM_RESOURCES);
             TSystemResources tSystemResources = new TSystemResources();
+            tSystemResources.setCreateTime(new Date());
             tSystemResources.setCreateTime(new Date());
             tSystemResources.setOwner(owner);
             tSystemResources.setParentid(parentId);

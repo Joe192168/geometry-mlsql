@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geominfo.mlsql.dao.TEngineConfigDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.geominfo.mlsql.domain.po.EngineStatusMananer">
+        <id column="id" property="id"/>
+        <id column="engine_name" property="engineName"/>
+        <id column="engine_url" property="engineUrl"/>
+        <id column="interval" property="interval"/>
+        <id column="monitor_status" property="monitorStatus"/>
+        <id column="deal_type" property="dealType"/>
+        <id column="monitor_time" property="monitorTime"/>
+    </resultMap>
+
+    <select id="getLogByCondition" resultMap="BaseResultMap">
+        select a.id,tei.engine_name ,tei.engine_uri ,a.interval ,a.monitor_status ,a.deal_type,a.monitor_time
+        from t_engine_info tei ,(select teml.id as id,engine_id,interval,deal_type,monitor_status,monitor_time
+        from t_engine_config tec ,t_engine_monitor_log teml where tec.id = teml.config_id) a where a.engine_id = tei.id
+        <if test="engineName != null">
+            and engine_name = #{engineName}
+        </if>
+        <if test="engineUrl != null">
+            and engine_uri = #{engineUrl}
+        </if>
+        <if test="monitorStatus != null">
+            and monitor_status = #{monitorStatus}
+        </if>
+        <if test="dealType != null">
+            and deal_type = #{dealType}
+        </if>
+        <choose>
+            <when test="monitorStartTime != null and monitorEndTime != null">
+                and (monitor_time between #{monitorStartTime} and #{monitorEndTime})
+            </when>
+            <when test="monitorStartTime != null">
+                and monitor_time <![CDATA[ >= ]]> #{monitorStartTime}
+            </when>
+            <otherwise>
+                and monitor_time <![CDATA[ <= ]]> #{monitorEndTime}
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

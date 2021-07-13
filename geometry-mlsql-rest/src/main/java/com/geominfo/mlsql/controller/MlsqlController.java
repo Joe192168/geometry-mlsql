@@ -91,9 +91,9 @@ public class MlsqlController {
      */
     @ApiOperation(value = "获取引擎状态",httpMethod = "GET")
     @GetMapping("/getEngineState")
-    public Message getEngineState(){
+    public Message getEngineState(@RequestParam String engineUrl){
         try {
-            JSONObject allExecuteJobs = mlsqlService.getEngineState();
+            JSONObject allExecuteJobs = mlsqlService.getEngineState(engineUrl);
             return new Message().ok().addData("data",allExecuteJobs);
         } catch (Exception e) {
             log.error("getEngineState : {}",e.getMessage());
