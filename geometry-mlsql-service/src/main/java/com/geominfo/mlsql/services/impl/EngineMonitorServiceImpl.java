@@ -130,7 +130,7 @@ public class EngineMonitorServiceImpl implements EngineMonitorService {
         systemResourcesDao.deleteByMap(deleteMap);
 
         //监控配置删除
-        engineConfigDao.selectByMap()
+        //engineConfigDao.selectByMap()
         if (qrtzTriggers == null) {
             retMap.put("flag", true);
             retMap.put("msg","删除成功");
