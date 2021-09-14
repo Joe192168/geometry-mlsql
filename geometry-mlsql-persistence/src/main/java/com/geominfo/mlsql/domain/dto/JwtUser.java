@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,8 +14,7 @@ public class JwtUser implements UserDetails {
     private Integer id;
     private String username;
     private String password;
-    private String[] permissions;
-    private Collection<? extends GrantedAuthority> authorities;
+    private String[] roles;
 
     public JwtUser() {
     }
@@ -24,12 +24,12 @@ public class JwtUser implements UserDetails {
         id = user.getId();
         username = user.getLoginName();
         password = user.getPassword();
-        permissions = user.getPermissions();
+        roles = user.getRoles();
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String perm : permissions) {
+        for (String perm : roles) {
             authorities.add(new SimpleGrantedAuthority(perm));
         }
         return authorities;
@@ -73,12 +73,12 @@ public class JwtUser implements UserDetails {
         this.username = username;
     }
 
-    public String[] getPermissions() {
-        return permissions;
+    public String[] getRoles() {
+        return roles;
     }
 
-    public void setPermissions(String[] permissions) {
-        this.permissions = permissions;
+    public void setRoles(String[] roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -87,8 +87,7 @@ public class JwtUser implements UserDetails {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", authorities=" + authorities +
+                ", roles=" + Arrays.toString(roles) +
                 '}';
     }
-
 }

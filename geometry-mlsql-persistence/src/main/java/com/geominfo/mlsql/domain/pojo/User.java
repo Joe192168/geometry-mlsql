@@ -40,6 +40,6 @@ public class User {
     private String remark;
     //加密盐
     private String salt;
-    //权限
-    private String[] permissions;
+    //角色权限
+    private String[] roles;
 }

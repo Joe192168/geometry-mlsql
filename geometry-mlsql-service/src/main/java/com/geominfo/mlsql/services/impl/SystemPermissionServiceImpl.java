@@ -11,6 +11,7 @@ import com.geominfo.mlsql.services.AuthApiService;
 import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.SystemPermissionService;
 import com.geominfo.mlsql.utils.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,11 @@ public class SystemPermissionServiceImpl implements SystemPermissionService {
     @Override
     public UserPermissionInfosVo getUserPermissionInfos(String token, JwtUser jwtUser) {
         UserPermissionInfosVo userPermissionInfosVo = new UserPermissionInfosVo();
-        User user = new User();
+        User user = null;
         List<TreeVo<SystemResourceVo>> allPermissionTrees = null;
         TreeDataProcessor t = TreeDataProcessor.getInstance();
         try {
-            if (null != jwtUser ){
+            if(null != jwtUser ){
                 logger.info("getAccountPermissions request auth get userInfo param id:{}", jwtUser.getId());
                 user = FeignUtils.parseObject(authQueryApiService.getUserById(new BigDecimal(jwtUser.getId())), User.class);
                 logger.info("getAccountPermissions request auth get userInfo user:{}", user);
@@ -60,12 +61,22 @@ public class SystemPermissionServiceImpl implements SystemPermissionService {
                         allPermissionTrees = t.getTreeVoList(allPermissions, SystemCustomIdentification.TREE_ID, SystemCustomIdentification.TREE_NAME, SystemCustomIdentification.TREE_PARENT_ID);
                 }
                 String userRoles = FeignUtils.parseString(authQueryApiService.getUserRole(jwtUser.getUsername()));
-                String jwt = JsonWebTokenUtil.issueJWT(UUID.randomUUID().toString(), jwtUser.getUsername(),
-                        SystemCustomIdentification.TOKEN_SERVER, JsonWebTokenUtil.refreshPeriodTime >> SystemCustomIdentification.DEFAULT_INT_VALUE, userRoles, "");
-                userPermissionInfosVo.setJwt(jwt);
-                userPermissionInfosVo.setUser(user);
-                userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
-                return userPermissionInfosVo;
+                if(StringUtils.isNotBlank(userRoles)){
+                    String[] roleList = userRoles.split(",");
+                    jwtUser.setRoles(roleList);
+                    String jwt = JwtTokenUtils.createToken(jwtUser, false);
+                    userPermissionInfosVo.setJwt(jwt);
+                    userPermissionInfosVo.setUser(user);
+                    userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
+                    return userPermissionInfosVo;
+                }else{
+                    jwtUser.setRoles(null);
+                    String jwt = JwtTokenUtils.createToken(jwtUser, false);
+                    userPermissionInfosVo.setJwt(jwt);
+                    userPermissionInfosVo.setUser(user);
+                    userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
+                    return userPermissionInfosVo;
+                }
             }else {
                 return userPermissionInfosVo;
             }

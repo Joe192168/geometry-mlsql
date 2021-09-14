@@ -1,27 +1,29 @@
 package com.geominfo.mlsql.config;
 
+import com.geominfo.authing.common.utils.IdWorker;
 import com.geominfo.mlsql.encoder.LoginPasswordEncoder;
-import com.geominfo.mlsql.handler.JWTAccessDeniedHandler;
-import com.geominfo.mlsql.handler.JWTAuthenticationEntryPoint;
 import com.geominfo.mlsql.filter.JWTAuthenticationFilter;
 import com.geominfo.mlsql.filter.JWTAuthorizationFilter;
 import com.geominfo.mlsql.filter.TokenAuthenticationFilter;
 import com.geominfo.mlsql.filter.URLFilterSecurityInterceptor;
+import com.geominfo.mlsql.handler.JWTAccessDeniedHandler;
+import com.geominfo.mlsql.handler.JWTAuthenticationEntryPoint;
+import com.geominfo.mlsql.services.SystemPermissionService;
 import com.geominfo.mlsql.services.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 * @Description:    安全配置
@@ -43,6 +45,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JWTAccessDeniedHandler jwtAccessDeniedHandler;
+
+    @Autowired
+    private IdWorker idWorker;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private SystemPermissionService systemPermissionService;
 
     @Autowired
     private FilterIgnoreConfig filterIgnoreConfig;
@@ -74,8 +85,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
+        http.cors().and().csrf().disable().authorizeRequests()
+                // 不进行权限验证的请求或资源(从配置文件中读取)
+                .antMatchers(filterIgnoreConfig.getUrls().toString().split(",")).permitAll()
+                // 其他的需要登陆后才能访问  其他url都需要验证
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(new JWTAuthenticationFilter(idWorker,redisTemplate,authenticationManager(),systemPermissionService))//认证
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))//授权
                 //不需要session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -83,18 +100,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)//配置未登录自定义处理类
                 .and()
-                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)//添加无权限时的处理
-                .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))//认证
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))//授权
-                .cors().and().csrf().disable().authorizeRequests();//添加无权限时的处理
-
-        // 不进行权限验证的请求或资源(从配置文件中读取)
-        filterIgnoreConfig.getUrls().forEach(url->registry.antMatchers(url).permitAll());
-
-        registry.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()// 跨域预检请求
-                // 其他的需要登陆后才能访问  其他url都需要验证
-                .anyRequest().authenticated();
+                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler);//添加无权限时的处理
 
         // 拦截受保护的url
         http.addFilterBefore(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class);

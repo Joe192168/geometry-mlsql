@@ -34,7 +34,7 @@ public class JwtTokenUtils implements Serializable {
         long expiration = isRememberMe ? EXPIRATION_REMEMBER : EXPIRATION;
         JwtBuilder jwtBuilder = Jwts.builder();
         jwtBuilder.setId(UUID.randomUUID().toString());
-        jwtBuilder.claim("permissions",jwtUser.getPermissions());
+        jwtBuilder.claim("roles",jwtUser.getRoles());
         jwtBuilder.setSubject(jwtUser.getUsername());
         jwtBuilder.setIssuer(TOKEN_SERVER);
         jwtBuilder.signWith(SignatureAlgorithm.HS512, SECRET);
@@ -48,9 +48,9 @@ public class JwtTokenUtils implements Serializable {
         Claims claims = getAllClaimsFromToken(token);
         User user = new User();
         user.setUserName(claims.getSubject());
-        ArrayList<String> list = (ArrayList<String>) claims.get("permissions");
+        ArrayList<String> list = (ArrayList<String>) claims.get("roles");
         String[] perms = new String[list.size()];
-        user.setPermissions(list.toArray(perms));
+        user.setRoles(list.toArray(perms));
         return new JwtUser(user);
     }
 

@@ -1,15 +1,15 @@
 package com.geominfo.mlsql;
 
 import com.geominfo.authing.common.utils.IdWorker;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableFeignClients
-@ServletComponentScan
+@MapperScan("com.geominfo.mlsql.dao")
 public class GeometryMlsqlRestApplication {
 
 	public static void main(String[] args) {

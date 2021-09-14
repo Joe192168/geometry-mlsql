@@ -48,8 +48,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private SystemPermissionService systemPermissionService;
 
     //自定义登陆路由，相当Controller里增加一个/login路由方法一样，就不需要实现登陆方法了
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(IdWorker idWorker,StringRedisTemplate redisTemplate,AuthenticationManager authenticationManager,SystemPermissionService systemPermissionService) {
+        this.idWorker = idWorker;
+        this.redisTemplate = redisTemplate;
         this.authenticationManager = authenticationManager;
+        this.systemPermissionService = systemPermissionService;
         super.setFilterProcessesUrl("/login");
     }
 
@@ -89,7 +92,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     @GeometryLogAnno(operateType = EnumOperateLogType.MLSQL_LOGIN_OPERATE)
     protected void successfulAuthentication(HttpServletRequest request,HttpServletResponse response,FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException  {
+                                            Authentication authResult) throws IOException  {
         // 查看源代码会发现调用getPrincipal()方法会返回一个实现了`UserDetails`接口的对象
         // 所以就是JwtUser啦
         JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
@@ -97,8 +100,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 返回创建成功的token
         String token = JwtTokenUtils.createToken(jwtUser, false);
         //获取人员的权限信息
-        UserPermissionInfosVo userPermissionInfosVos =
-                systemPermissionService.getUserPermissionInfos(token,jwtUser);
+        UserPermissionInfosVo userPermissionInfosVos = systemPermissionService.getUserPermissionInfos(token,jwtUser);
         //用户的权限树
         List<TreeVo<SystemResourceVo>> allPermissionTrees = null;
         //用户信息
