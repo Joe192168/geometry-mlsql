@@ -64,15 +64,13 @@ public class SystemPermissionServiceImpl implements SystemPermissionService {
                 if(StringUtils.isNotBlank(userRoles)){
                     String[] roleList = userRoles.split(",");
                     jwtUser.setRoles(roleList);
-                    String jwt = JwtTokenUtils.createToken(jwtUser, false);
-                    userPermissionInfosVo.setJwt(jwt);
+                    userPermissionInfosVo.setJwt(token);
                     userPermissionInfosVo.setUser(user);
                     userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
                     return userPermissionInfosVo;
                 }else{
                     jwtUser.setRoles(null);
-                    String jwt = JwtTokenUtils.createToken(jwtUser, false);
-                    userPermissionInfosVo.setJwt(jwt);
+                    userPermissionInfosVo.setJwt(token);
                     userPermissionInfosVo.setUser(user);
                     userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
                     return userPermissionInfosVo;
@@ -88,7 +86,7 @@ public class SystemPermissionServiceImpl implements SystemPermissionService {
     }
 
     @Override
-    public void userSession(User user, String jwt, String token_ken, HttpServletRequest request) {
+    public void userSession(User user, String jwt, String tokenKey, HttpServletRequest request) {
         UserSessionVo userSessionVo = new UserSessionVo();
         //登录名
         userSessionVo.setLoginName(user.getLoginName());
@@ -98,8 +96,8 @@ public class SystemPermissionServiceImpl implements SystemPermissionService {
         userSessionVo.setIp(IpUtil.getIpFromRequest(request));
         //会话内容
         userSessionVo.setAccessToken(jwt);
-        //toke
-        userSessionVo.setTokenKey(token_ken);
+        //会话唯一标识
+        userSessionVo.setTokenKey(tokenKey);
         authApiService.userSessionManager(userSessionVo);
     }
 }

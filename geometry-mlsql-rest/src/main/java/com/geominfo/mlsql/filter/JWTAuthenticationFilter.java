@@ -99,6 +99,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         logger.info("jwtUser:"+jwtUser.toString());
         // 返回创建成功的token
         String token = JwtTokenUtils.createToken(jwtUser, false);
+        //获取token的唯一标识
+        String tokenId = idWorker.nextId()+"";
         //获取人员的权限信息
         UserPermissionInfosVo userPermissionInfosVos = systemPermissionService.getUserPermissionInfos(token,jwtUser);
         //用户的权限树
@@ -114,14 +116,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //获取jwt
             jwt = userPermissionInfosVos.getJwt();
             //会话管理
-            systemPermissionService.userSession(user,jwt,token,request);
+            systemPermissionService.userSession(user,jwt,tokenId,request);
         }
         // 但是这里创建的token只是单纯的token
         // 按照jwt的规定，最后请求的格式应该是 `Bearer token`
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        //获取token的唯一标识
-        String tokenId = idWorker.nextId()+"";
         // 将签发的JWT存储到Redis： {JWT-SESSION-{appID} , jwt}
         redisTemplate.opsForValue().set(SystemCustomIdentification.TOKEN_FOLDER+tokenId, JwtTokenUtils.TOKEN_PREFIX + token, 1800, TimeUnit.SECONDS);
         response.getWriter().write(JSON.toJSONString(new Message().ok("登陆成功")
