@@ -8,6 +8,7 @@ import com.geominfo.mlsql.filter.TokenAuthenticationFilter;
 import com.geominfo.mlsql.filter.URLFilterSecurityInterceptor;
 import com.geominfo.mlsql.handler.JWTAccessDeniedHandler;
 import com.geominfo.mlsql.handler.JWTAuthenticationEntryPoint;
+import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.SystemPermissionService;
 import com.geominfo.mlsql.services.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private FilterIgnoreConfig filterIgnoreConfig;
 
+    @Autowired
+    private AuthQueryApiService authQueryApiService;
+
     /**
      * 密码编码器
      * @return
@@ -88,7 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 其他的需要登陆后才能访问  其他url都需要验证
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(idWorker,redisTemplate,authenticationManager(),systemPermissionService))//认证
+                .addFilter(new JWTAuthenticationFilter(idWorker,redisTemplate,authenticationManager(),systemPermissionService,authQueryApiService))//认证
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))//授权
                 //不需要session
                 .sessionManagement()

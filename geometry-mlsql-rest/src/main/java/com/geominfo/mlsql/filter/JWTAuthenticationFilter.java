@@ -10,10 +10,13 @@ import com.geominfo.mlsql.domain.dto.JwtUser;
 import com.geominfo.mlsql.domain.pojo.User;
 import com.geominfo.mlsql.domain.vo.SystemResourceVo;
 import com.geominfo.mlsql.domain.vo.UserPermissionInfosVo;
+import com.geominfo.mlsql.services.AuthQueryApiService;
 import com.geominfo.mlsql.services.SystemPermissionService;
+import com.geominfo.mlsql.utils.FeignUtils;
 import com.geominfo.mlsql.utils.JwtTokenUtils;
 import com.geominfo.mlsql.utils.TreeVo;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,13 +49,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private AuthenticationManager authenticationManager;
     @Autowired
     private SystemPermissionService systemPermissionService;
+    @Autowired
+    private AuthQueryApiService authQueryApiService;
 
     //自定义登陆路由，相当Controller里增加一个/login路由方法一样，就不需要实现登陆方法了
-    public JWTAuthenticationFilter(IdWorker idWorker,StringRedisTemplate redisTemplate,AuthenticationManager authenticationManager,SystemPermissionService systemPermissionService) {
+    public JWTAuthenticationFilter(IdWorker idWorker,StringRedisTemplate redisTemplate,AuthenticationManager authenticationManager,SystemPermissionService systemPermissionService,AuthQueryApiService authQueryApiService) {
         this.idWorker = idWorker;
         this.redisTemplate = redisTemplate;
         this.authenticationManager = authenticationManager;
         this.systemPermissionService = systemPermissionService;
+        this.authQueryApiService = authQueryApiService;
         super.setFilterProcessesUrl("/login");
     }
 
@@ -97,6 +103,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 所以就是JwtUser啦
         JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
         logger.info("jwtUser:"+jwtUser.toString());
+        //根据用户名查询角色
+        String userRoles = FeignUtils.parseString(authQueryApiService.getUserRole(jwtUser.getUsername()));
+        if(StringUtils.isNotBlank(userRoles)){
+            String[] roleList = userRoles.split(",");
+            jwtUser.setRoles(roleList);
+        }
         // 返回创建成功的token
         String token = JwtTokenUtils.createToken(jwtUser, false);
         //获取token的唯一标识

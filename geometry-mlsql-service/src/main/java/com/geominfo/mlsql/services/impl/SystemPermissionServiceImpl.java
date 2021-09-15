@@ -60,21 +60,10 @@ public class SystemPermissionServiceImpl implements SystemPermissionService {
                     if (allPermissions != null && allPermissions.size() > 0)
                         allPermissionTrees = t.getTreeVoList(allPermissions, SystemCustomIdentification.TREE_ID, SystemCustomIdentification.TREE_NAME, SystemCustomIdentification.TREE_PARENT_ID);
                 }
-                String userRoles = FeignUtils.parseString(authQueryApiService.getUserRole(jwtUser.getUsername()));
-                if(StringUtils.isNotBlank(userRoles)){
-                    String[] roleList = userRoles.split(",");
-                    jwtUser.setRoles(roleList);
-                    userPermissionInfosVo.setJwt(token);
-                    userPermissionInfosVo.setUser(user);
-                    userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
-                    return userPermissionInfosVo;
-                }else{
-                    jwtUser.setRoles(null);
-                    userPermissionInfosVo.setJwt(token);
-                    userPermissionInfosVo.setUser(user);
-                    userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
-                    return userPermissionInfosVo;
-                }
+                userPermissionInfosVo.setJwt(token);
+                userPermissionInfosVo.setUser(user);
+                userPermissionInfosVo.setPermissionTrees(allPermissionTrees);
+                return userPermissionInfosVo;
             }else {
                 return userPermissionInfosVo;
             }
